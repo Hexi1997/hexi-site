@@ -19,8 +19,6 @@
 
 [/blogs](/blogs) 这个目录包含所有博客文章，每篇文章有独立的文件夹。
 
-> **说明**：目前 WORLD3 的博客主要是官方 Medium（[https://medium.com/@WORLD3_AI](https://medium.com/@WORLD3_AI)）的备份。可以通过 [https://github.com/WhiteMatrixTech/world3-medium-converter](https://github.com/WhiteMatrixTech/world3-medium-converter) 提供的工具将 Medium 文章转换成博客需要的数据格式。
-
 ### 文件格式
 
 每篇博客文章都在独立的文件夹中，文件夹名将作为 URL slug：

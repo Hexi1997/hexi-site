@@ -1,11 +1,11 @@
 {
-  "name": "blog-admin",
+  "name": "admin",
   "version": "1.0.0",
   "private": true,
   "description": "Blog admin dashboard",
   "scripts": {
-    "dev": "echo \"blog-admin dev\"",
-    "build": "echo \"blog-admin build\"",
+    "dev": "echo \"admin dev\"",
+    "build": "echo \"admin build\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -19,8 +19,6 @@ A modern blog system built on Next.js 16, supporting SSG (Static Site Generation
 
 The [/blogs](/blogs) directory contains all blog posts, with each post in its own folder.
 
-> **Note**: Currently, WORLD3's blog is primarily a backup of the official Medium publication ([https://medium.com/@WORLD3_AI](https://medium.com/@WORLD3_AI)). You can use the conversion tool provided by [https://github.com/WhiteMatrixTech/world3-medium-converter](https://github.com/WhiteMatrixTech/world3-medium-converter) to convert Medium articles into the required blog data format.
-
 ### File Structure
 
 Each blog post is in a separate folder, and the folder name serves as the URL slug:

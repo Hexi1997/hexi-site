@@ -4,12 +4,12 @@
   "description": "",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
-    "dev:blog-admin": "pnpm --filter blog-admin run dev",
-    "dev:my-site": "pnpm --filter my-site run dev",
-    "preview:my-site": "pnpm --filter my-site run preview",
+    "dev:admin": "pnpm --filter admin run dev",
+    "dev:site": "pnpm --filter site run dev",
+    "preview:site": "pnpm --filter site run preview",
     "build": "pnpm -r run build",
-    "build:blog-admin": "pnpm --filter blog-admin run build",
-    "build:my-site": "pnpm --filter my-site run build",
+    "build:admin": "pnpm --filter admin run build",
+    "build:site": "pnpm --filter site run build",
     "test": "pnpm -r run test"
   },
   "keywords": [],

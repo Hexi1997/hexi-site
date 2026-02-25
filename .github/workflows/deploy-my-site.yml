@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - apps/my-site/**
+      - apps/site/**
   workflow_dispatch:
 
 jobs:
@@ -30,10 +30,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Sync blog assets
-        run: pnpm --filter my-site run sync-assets
+        run: pnpm --filter site run sync-assets
 
       - name: Deploy
-        working-directory: apps/my-site
+        working-directory: apps/site
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
