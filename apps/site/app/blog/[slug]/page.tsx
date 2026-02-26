@@ -1,14 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { getBlogPostBySlug, getAllBlogSlugs } from "@/lib/blog";
 import { format } from "date-fns";
 import type { Metadata } from "next";
-import authorImg from "@/assets/author.svg";
 import { BlogPhotoViewEnhancer } from "@/components/blog/photo-view-enhancer";
 import { BlogImageSkeleton } from "@/components/blog/image-skeleton";
+import { BlogCodeCopyEnhancer } from "@/components/blog/code-copy-enhancer";
 import { ShareButtons } from "@/components/blog/share-buttons";
-import pinnedImg from "@/assets/pinned.png";
+import { ArrowLeft } from "lucide-react";
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -38,8 +37,7 @@ export async function generateMetadata({
   }
 
   // 获取基础 URL
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
 
   // 确保图片 URL 是完整的绝对 URL
   // 如果已经是完整的 URL（http/https），直接使用
@@ -95,68 +93,47 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   // 构建完整的文章 URL
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
   const postUrl = `${baseUrl}/blog/${slug}`;
 
   return (
-    <article className="mx-auto max-md:mt-10 max-w-[712px] sm:max-w-[728px] lg:max-w-[860px] px-4 sm:px-6 lg:px-8 pb-12">
-      {/* return button */}
-      <Link href="/blog">
-        <div className="transition-colors text-sm cursor-pointer gap-2 w-fit mb-7 text-[#a3a3a3] hover:text-white flex items-center">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Hexi Blog
-        </div>
-      </Link>
-
+    <article className="mx-auto mt-10 max-w-[732px] px-4 pb-12">
+      <div className="flex justify-between items-center mb-3">
+        <Link href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
+          <ArrowLeft className="h-4" />
+          Back
+        </Link>
+      </div>
       {/* Title */}
-      <h1 className="text-[#E6E6E6] mb-3 text-[26px] font-semibold">
+      <h1 className="text-neutral-900 mb-3 text-[26px] font-bold">
         {post.title}
       </h1>
 
-      {/* author */}
       <div className="flex gap-4 flex-wrap items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Image src={authorImg} alt="author" width={44} height={44} />
-          <div>
-            <p className="text-sm">{post.author}</p>
-            <time dateTime={post.date} className="text-sm text-[#737373]">
-              {format(new Date(post.date), "MMMM dd, yyyy")}
-            </time>
-          </div>
-        </div>
         <div className="flex items-center gap-2">
-          {post.pinned && <Image src={pinnedImg} alt="pinned" width={86} height={28} />}
-          <ShareButtons url={postUrl} title={post.title} />
+          <time dateTime={post.date} className="text-sm text-neutral-400">
+            {format(new Date(post.date), "yyyy-MM-dd")}
+          </time>
         </div>
+        <ShareButtons url={postUrl} title={post.title} />
+
       </div>
 
       {/* Blog Content */}
       <div
         id={`blog-content-${post.slug}`}
-        className="prose prose-headings:mb-4 leading-snug mt-6 prose-invert max-w-none
-            prose-headings:font-display
-            prose-a:text-blue-400 prose-a:wrap-anywhere prose-a:no-underline prose-a:hover:underline
-            prose-img:rounded-2xl prose-img:shadow-lg prose-img:w-full"
+        className="prose mt-6 max-w-none prose-headings:font-semibold
+            prose-img:rounded-2xl prose-img:shadow-lg prose-img:w-full
+            prose-pre:bg-[#f9f9f8]! prose-pre:font-geist-mono!
+            [&_:not(pre)>code]:bg-[#ececec]! [&_:not(pre)>code]:font-geist-mono!
+            prose-pre:p-0 [&_pre.shiki]:p-4 [&_pre.shiki]:rounded-lg [&_pre.shiki]:overflow-x-auto
+            [&_:not(pre)>code]:before:content-[''] [&_:not(pre)>code]:after:content-['']
+            [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-[4px]"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
       {post.source && (
-        <div className="mt-10 text-sm text-[#a3a3a3]">
+        <div className="mt-10 text-sm text-neutral-400">
           Source:{" "}
           <Link
             href={post.source}
@@ -169,13 +146,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       )}
       {/* 客户端组件：在客户端挂载后为图片添加预览功能 */}
-      <BlogPhotoViewEnhancer
-        containerId={`blog-content-${post.slug}`}
-      />
+      <BlogPhotoViewEnhancer containerId={`blog-content-${post.slug}`} />
       {/* 客户端组件：为图片添加 skeleton 加载效果 */}
-      <BlogImageSkeleton
-        containerId={`blog-content-${post.slug}`}
-      />
+      <BlogImageSkeleton containerId={`blog-content-${post.slug}`} />
+      {/* 客户端组件：为代码块添加复制按钮 */}
+      <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
     </article>
   );
 }

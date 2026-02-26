@@ -4,7 +4,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import { common, createLowlight } from "lowlight";
-import "highlight.js/styles/github-dark.css";
+import "highlight.js/styles/github.css";
 import { Table } from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";

@@ -18,8 +18,6 @@ interface FrontmatterFormProps {
   onSlugChange: (slug: string) => void;
 }
 
-const CATEGORIES = ["Product", "Company", "Engineering", "Community", "Tutorial"];
-
 export function FrontmatterForm({
   frontmatter,
   slug,
@@ -73,22 +71,6 @@ export function FrontmatterForm({
               URL-friendly identifier. Only lowercase letters, numbers, and hyphens.
             </p>
           )}
-        </div>
-
-        <div>
-          <Label htmlFor="category">Category</Label>
-          <select
-            id="category"
-            value={frontmatter.category}
-            onChange={(e) => onChange({ ...frontmatter, category: e.target.value })}
-            className="mt-1.5 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>

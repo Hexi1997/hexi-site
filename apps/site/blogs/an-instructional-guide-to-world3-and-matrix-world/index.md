@@ -1,7 +1,6 @@
 ---
 title: "An Instructional Guide to WORLD3 and Matrix World"
 date: "2024-05-18"
-category: Product
 ---
 
 ## Introduction

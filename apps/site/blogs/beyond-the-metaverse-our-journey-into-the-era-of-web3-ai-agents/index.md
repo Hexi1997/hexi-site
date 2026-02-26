@@ -1,10 +1,7 @@
 ---
 title: "Beyond the Metaverse: Our Journey into the Era of Web3 AI Agents"
-category: Product
 date: "2025-08-08"
 ---
-
-# **Beyond the Metaverse: Our Journey into the Era of Web3 AI Agents**
 
 ## 1. The Metaverse Dream and Our Origins2
 

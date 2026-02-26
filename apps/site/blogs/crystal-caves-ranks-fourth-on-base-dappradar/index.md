@@ -1,6 +1,5 @@
 ---
 title: "Crystal Caves Ranks Fourth on Base Chain on DappRadar"
-category: Announcement
 date: "2025-01-08"
 cover: "assets/banner.png"
 source: "https://www.chaincatcher.com/en/article/2161373"

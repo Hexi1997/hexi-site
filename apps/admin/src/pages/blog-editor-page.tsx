@@ -17,7 +17,6 @@ export function BlogEditorPage() {
   const [slug, setSlug] = useState(isNew ? "" : paramSlug || "");
   const [frontmatter, setFrontmatter] = useState<BlogFrontmatter>({
     title: "",
-    category: "Product",
     date: new Date().toISOString().slice(0, 10),
   });
   const [content, setContent] = useState("");

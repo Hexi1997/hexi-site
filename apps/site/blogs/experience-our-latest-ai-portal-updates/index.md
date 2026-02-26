@@ -1,6 +1,5 @@
 ---
 title: "Experience our latest AI portal updates ✨"
-category: Product
 date: "2025-07-12"
 ---
 

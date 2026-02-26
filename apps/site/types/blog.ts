@@ -5,7 +5,6 @@ export interface BlogPost {
   author: string;
   description: string; // 自动从内容提取，如果 frontmatter 中未指定
   cover: string;
-  category: string;
   content: string;
   sortIndex?: number;
   source?: string;
@@ -19,7 +18,6 @@ export interface BlogMetadata {
   author: string;
   description: string; // 自动从内容提取，如果 frontmatter 中未指定
   cover: string;
-  category: string;
   sortIndex?: number;
   source?: string;
   pinned?: boolean; // 是否为置顶文章（排序前四名）

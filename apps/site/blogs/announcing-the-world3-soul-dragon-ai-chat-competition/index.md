@@ -1,7 +1,6 @@
 ---
 title: "Announcing the WORLD3 SOUL Dragon AI Chat Competition!"
 date: "2024-08-27"
-category: "Product"
 ---
 
 ![Image](assets/image.png)

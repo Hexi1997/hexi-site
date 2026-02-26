@@ -1,6 +1,5 @@
 ---
 title: "Crystal Cave Open Beta Launch with Exclusive Rewards"
-category: Product
 date: "2024-09-19"
 ---
 

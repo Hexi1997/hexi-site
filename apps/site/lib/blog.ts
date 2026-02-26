@@ -5,6 +5,7 @@ import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeExternalLinks from "rehype-external-links";
+import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
 import type { BlogPost, BlogMetadata } from "@/types/blog";
 
@@ -183,7 +184,6 @@ export function getAllBlogPosts(): BlogMetadata[] {
         author: "WORLD3",
         description,
         cover,
-        category: matterResult.data.category || "Company",
         sortIndex: matterResult.data.sortIndex ?? 0,
         source,
       };
@@ -250,8 +250,11 @@ export async function getBlogPostBySlug(
       .use(rehypeExternalLinks, {
         target: "_blank",
         rel: ["noopener", "noreferrer"],
-      }) // 为所有外部链接添加 target 和 rel 属性
-      .use(rehypeStringify, { allowDangerousHtml: true }) // 转换为 HTML 字符串
+      })
+      .use(rehypeShiki, {
+        theme: "github-light",
+      })
+      .use(rehypeStringify, { allowDangerousHtml: true })
       .process(matterResult.content);
 
     let contentHtml = processedContent.toString();
@@ -315,7 +318,6 @@ export async function getBlogPostBySlug(
       author: "WORLD3",
       description,
       cover,
-      category: matterResult.data.category || "Company",
       content: contentHtml,
       sortIndex: matterResult.data.sortIndex ?? 0,
       source,

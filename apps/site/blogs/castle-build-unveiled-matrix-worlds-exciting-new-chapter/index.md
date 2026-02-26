@@ -1,6 +1,5 @@
 ---
 title: "Castle Build Unveiled: Matrix World’s Exciting New Chapter"
-category: Ecosystem
 date: "2023-12-01"
 ---
 

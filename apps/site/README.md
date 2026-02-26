@@ -12,7 +12,6 @@ A modern blog system built on Next.js 16, supporting SSG (Static Site Generation
 - 🎨 **Modern UI** - Beautiful interface built with Tailwind CSS
 - 🔍 **SEO Optimized** - Auto-generates sitemap, robots.txt, and complete meta tags
 - ⚡ **SSG Static Generation** - Ultra-fast page loading speeds
-- 🏷️ **Category System** - Article organization and related recommendations based on categories
 - 📱 **Responsive Design** - Perfect support for mobile and desktop
 
 ## 🗂️ Content Management
@@ -42,14 +41,12 @@ blogs/
 - **title** (required): Article title
 - **date** (required): Publication date, format: YYYY-MM-DD
 - **cover** (optional): Cover image path, supports relative paths (e.g., `assets/cover.jpg`) or external URLs (e.g., `https://example.com/image.jpg`). If not set, the system will automatically extract the first image from the markdown content as the cover; if there are no images in the content, it will use the placeholder image `/default-cover.webp`
-- **category** (optional): Article category, defaults to `Company`, used for content categorization
 - **sortIndex** (optional): Sort weight, default is 0. Higher values appear first. Articles with the same sortIndex are sorted by date in descending order
 - **source** (optional): External article URL. When set, clicking the blog card in the list will navigate directly to this external URL (opens in a new tab) instead of the internal blog detail page. The source link will also be displayed at the bottom of the blog detail page. This is useful for linking to third-party content
 
 ### Content Management Tips
 
-2. **Image Optimization**: Compress images to improve loading speed
-3. **Category Usage**: Use a consistent category system for better content organization
+1. **Image Optimization**: Compress images to improve loading speed
 
 ### Adding New Posts
 
@@ -69,7 +66,6 @@ If you want to link to an external article instead of hosting the full content, 
 title: "Our Latest Announcement on X"
 date: "2025-01-20"
 cover: "https://example.com/cover.jpg"
-category: "Product"
 source: "https://x.com/WORLD3_AI/status/1234567890"
 ---
 
@@ -95,6 +91,4 @@ Example:
 - Article D: sortIndex = 0, date = "2025-12-20"
 
 Display order: A → B → C → D
-
-> **Pinned Label**: The top 4 articles (after sorting) will automatically display a "Pinned" badge on their blog cards, making them stand out in the list.
 

@@ -1,26 +1,18 @@
 import type { Metadata } from "next";
-import { Wix_Madefor_Text, Wix_Madefor_Display, Onest } from "next/font/google";
+import { Geist,Geist_Mono as GeistMono } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
 import { ToastContainer } from "react-toastify";
 import Providers from "./providers";
 
-const wixText = Wix_Madefor_Text({
-  variable: "--font-wix-text",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const wixDisplay = Wix_Madefor_Display({
-  variable: "--font-wix-display",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const onest = Onest({
-  variable: "--font-onest",
+const geistMono = GeistMono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
@@ -30,30 +22,30 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || ""
   ),
   title: {
-    default: "Blog - WORLD3",
-    template: "%s - WORLD3",
+    default: "HEXI SPACE",
+    template: "%s - HEXI SPACE",
   },
   description:
-    "Explore the latest product updates, industry insights, and technical articles from WORLD3.",
-  keywords: ["WORLD3", "blogs", "technology", "insights", "updates"],
-  authors: [{ name: "WORLD3" }],
-  creator: "WORLD3",
-  publisher: "WORLD3",
+    "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
+  keywords: ["HEXI SPACE", "blogs", "technology", "insights", "updates"],
+  authors: [{ name: "Hexi1997" }],
+  creator: "@Hexi1997",
+  publisher: "@Hexi1997",
   openGraph: {
     type: "website",
     locale: "zh_CN",
     url: "/",
-    siteName: "Blog | WORLD3",
-    title: "Blog - WORLD3",
+    siteName: "HEXI SPACE",
+    title: "HEXI SPACE",
     description:
-      "Explore the latest product updates, industry insights, and technical articles from WORLD3.",
+      "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blog - WORLD3",
+    title: "HEXI SPACE",
     description:
-      "Explore the latest product updates, industry insights, and technical articles from WORLD3.",
-    creator: "@world3",
+      "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
+    creator: "@Hexi1997",
   },
   robots: {
     index: true,
@@ -67,7 +59,7 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icons/favicon.png",
   },
 };
 
@@ -79,16 +71,14 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body
-        className={`${wixText.variable} ${wixDisplay.variable} ${onest.variable} antialiased`}
+        className={`${geist.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-[#080808] flex flex-col">
-          <Header />
-          <main className="py-12 md:py-[144px]">
+        <div className="min-h-screen flex flex-col">
+          <main>
             <Providers>{children}</Providers>
           </main>
-          <Footer />
         </div>
-        <ToastContainer position="top-center" autoClose={3000} theme="dark" />
+        <ToastContainer position="top-right" autoClose={3000} theme="light" />
       </body>
     </html>
   );

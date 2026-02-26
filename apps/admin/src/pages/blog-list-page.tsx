@@ -4,7 +4,6 @@ import { useAuth } from "@/lib/auth";
 import { listBlogs, deleteBlog } from "@/lib/github";
 import type { BlogListItem } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -101,7 +100,6 @@ export function BlogListPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="truncate font-medium">{blog.title}</h3>
-                  <Badge variant="secondary">{blog.category}</Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {blog.date} &middot; {blog.slug}

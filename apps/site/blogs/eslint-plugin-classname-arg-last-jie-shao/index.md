@@ -1,12 +1,11 @@
 ---
 title: "eslint-plugin-classname-arg-last 介绍"
-category: Product
 date: "2025-04-21"
 ---
 
 ## 前置知识
 
-使用 Tailwind CSS 时，合并类名称是常见的需求。我们通常使用一种叫做`cn` 的方法来高效且优雅地管理类，通常包含以下两种常用工具：
+使用 Tailwind CSS 时，合并类名称是常见的需求。我们通常使用一种叫做 `cn` 的方法来高效且优雅地管理类，通常包含以下两种常用工具：
 
 ### 1. clsx
 

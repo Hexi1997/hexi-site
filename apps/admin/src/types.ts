@@ -12,7 +12,6 @@ export interface AuthState {
 
 export interface BlogFrontmatter {
   title: string;
-  category: string;
   date: string;
   cover?: string;
   sortIndex?: number;
@@ -29,7 +28,6 @@ export interface BlogPost {
 export interface BlogListItem {
   slug: string;
   title: string;
-  category: string;
   date: string;
 }
 

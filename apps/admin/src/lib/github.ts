@@ -48,7 +48,7 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
     return {
-      frontmatter: { title: "Untitled", category: "Company", date: new Date().toISOString().slice(0, 10) },
+      frontmatter: { title: "Untitled", date: new Date().toISOString().slice(0, 10) },
       content: raw,
     };
   }
@@ -72,7 +72,6 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   return {
     frontmatter: {
       title: fm.title || "Untitled",
-      category: fm.category || "Company",
       date: fm.date || new Date().toISOString().slice(0, 10),
       cover: fm.cover,
       sortIndex: fm.sortIndex ? parseInt(fm.sortIndex, 10) : undefined,
@@ -85,7 +84,6 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
 function serializeFrontmatter(fm: BlogFrontmatter): string {
   const lines = ["---"];
   lines.push(`title: "${fm.title}"`);
-  lines.push(`category: ${fm.category}`);
   lines.push(`date: "${fm.date}"`);
   if (fm.cover) lines.push(`cover: "${fm.cover}"`);
   if (fm.sortIndex !== undefined) lines.push(`sortIndex: ${fm.sortIndex}`);
@@ -109,7 +107,7 @@ export async function listBlogs(token: string): Promise<BlogListItem[]> {
   const dirs = data.filter((item) => item.type === "dir");
   const blogs: BlogListItem[] = [];
 
-  // Fetch frontmatter for each blog to get title/date/category
+  // Fetch frontmatter for each blog to get title/date
   const results = await Promise.allSettled(
     dirs.map(async (dir) => {
       const { data: fileData } = await octokit.rest.repos.getContent({
@@ -127,7 +125,6 @@ export async function listBlogs(token: string): Promise<BlogListItem[]> {
       return {
         slug: dir.name,
         title: frontmatter.title,
-        category: frontmatter.category,
         date: frontmatter.date,
       };
     })

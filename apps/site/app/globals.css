@@ -49,7 +49,7 @@
 }
 
 body {
-  font-family: var(--font-wix-text), system-ui, sans-serif;
+  font-family: var(--font-geist), system-ui, sans-serif;
   color: white;
   overscroll-behavior-y: none; /* 禁用垂直方向的弹性滚动 */
 }
@@ -58,35 +58,12 @@ html {
   overscroll-behavior-y: none; /* 禁用HTML元素的弹性滚动 */
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-wix-display), system-ui, sans-serif;
+@utility font-geist {
+  font-family: var(--font-geist), system-ui, sans-serif;
 }
 
-@utility font-display {
-  font-family: var(--font-wix-display), system-ui, sans-serif;
-}
-
-@utility font-onest {
-  font-family: var(--font-onest), system-ui, sans-serif;
-}
-
-/* Custom scrollbar styles */
-.custom-scrollbar::-webkit-scrollbar {
-  height: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #262626;
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #737373;
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #8a8a8a;
+@utility font-geist-mono {
+  font-family: var(--font-geist-mono), system-ui, sans-serif;
 }
 
 :root {

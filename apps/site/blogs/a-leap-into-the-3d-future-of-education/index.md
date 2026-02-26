@@ -1,7 +1,6 @@
 ---
 title: "A Leap into the 3D Future of Education"
 date: "2023-07-21"
-category: Company
 ---
 
 University of Alberta Joins Matrix World’s University Park!
