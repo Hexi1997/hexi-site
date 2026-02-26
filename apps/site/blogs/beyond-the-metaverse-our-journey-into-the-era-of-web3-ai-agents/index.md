@@ -4,7 +4,7 @@ category: Product
 date: "2025-08-08"
 ---
 
-# **Beyond the Metaverse: Our Journey into the Era of Web3 AI Agents**
+# **Bey2ond the Metaverse: Our Journey into the Era of Web3 AI Agents**
 
 ![img_1.jpg](https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/blogs/beyond-the-metaverse-our-journey-into-the-era-of-web3-ai-agents/assets/img_1.jpg)## 1. The Metaverse Dream and Our Origins
 
