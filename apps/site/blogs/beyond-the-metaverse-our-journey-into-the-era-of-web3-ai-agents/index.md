@@ -4,9 +4,9 @@ category: Product
 date: "2025-08-08"
 ---
 
-# **Bey2ond the Metaverse: Our Journey into the Era of Web3 AI Agents**
+# **Beyond the Metaverse: Our Journey into the Era of Web3 AI Agents**
 
-![img_1.jpg](https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/blogs/beyond-the-metaverse-our-journey-into-the-era-of-web3-ai-agents/assets/img_1.jpg)## 1. The Metaverse Dream and Our Origins
+![img_1.jpg](https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/blogs/beyond-the-metaverse-our-journey-into-the-era-of-web3-ai-agents/assets/img_1.jpg)## 1. The Metaverse Dream and Our Origins2
 
 Our story began with a belief in the metaverse as the inevitable destination of digital civilization. In 2021, we launched **Matrix World** — a bold experiment in building a decentralized world where digital land ownership and autonomous economies thrived on the blockchain. Users could own their avatars, land, and digital assets, shaping a parallel life that mirrored reality. This immersive environment, highlighted by successes like our sell-out NFT land sale, felt like a perfect realization of our vision.
 
