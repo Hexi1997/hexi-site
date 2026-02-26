@@ -13,7 +13,7 @@ date: "2025-04-21"
 - 比 `classname` 更轻便、更高性能的替代方案
 - 支持以字符串、对象、数组等形式组合类
 
-```
+```javascript
 clsx('btn', { 'btn-primary': isPrimary }) // => 'btn btn-primary'
 ```
 
@@ -22,7 +22,7 @@ clsx('btn', { 'btn-primary': isPrimary }) // => 'btn btn-primary'
 - 合并冲突的 Tailwind CSS 类名称
 - 处理冲突，比如 `text-sm text-lg`， **保留优先级更高的最后一个类**
 
-```
+```javascript
 twMerge('text-sm text-lg') // => 'text-lg'
 ```
 
@@ -30,7 +30,7 @@ twMerge('text-sm text-lg') // => 'text-lg'
 
 将上述两个库合并为统一的`cn` 方法：
 
-```
+```javascript
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -43,7 +43,7 @@ export function cn(...inputs: ClassValue[]) {
 
 为了确保用户提供的样式能够覆盖默认样式，建议将 `className` 放在最后
 
-```
+```javascript
 cn('default-class', className)
 ```
 
@@ -57,7 +57,7 @@ cn('default-class', className)
 
 ### 1. Example
 
-```
+```javascript
 // Error example
 cn(className, 'text-sm')
 
@@ -67,7 +67,7 @@ cn('text-sm', className)
 
 ### 2. 配置
 
-```
+```javascript
 module.exports = {
   // ...
   plugins: ['classname-arg-last'],
