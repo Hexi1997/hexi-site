@@ -97,3 +97,4 @@ Example:
 Display order: A → B → C → D
 
 > **Pinned Label**: The top 4 articles (after sorting) will automatically display a "Pinned" badge on their blog cards, making them stand out in the list.
+

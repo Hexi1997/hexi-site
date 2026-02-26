@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { getBlog, saveBlog, getBlogAssets } from "@/lib/github";
+import { getBlog, saveBlog } from "@/lib/github";
 import type { BlogFrontmatter, PendingImage } from "@/types";
-import { TipTapEditor } from "@/components/editor/TipTapEditor";
-import { FrontmatterForm } from "@/components/editor/FrontmatterForm";
+import { TipTapEditor } from "@/components/editor/tiptap-editor";
+import { FrontmatterForm } from "@/components/editor/frontmatter-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 
@@ -22,26 +22,33 @@ export function BlogEditorPage() {
   });
   const [content, setContent] = useState("");
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
-  const [existingAssets, setExistingAssets] = useState<
-    Array<{ name: string; download_url: string }>
-  >([]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Track blob URL -> filename mappings for replacement at save time
-  const blobMapRef = useRef<Map<string, string>>(new Map());
+  // Map: display URL -> relative path (for save-time replacement)
+  const urlMapRef = useRef<Map<string, string>>(new Map());
 
   useEffect(() => {
     if (isNew || !token || !paramSlug) return;
     setLoading(true);
 
-    Promise.all([getBlog(token, paramSlug), getBlogAssets(token, paramSlug)])
-      .then(([blog, assets]) => {
+    getBlog(token, paramSlug)
+      .then((blog) => {
         setFrontmatter(blog.frontmatter);
-        setContent(blog.content);
-        setExistingAssets(assets);
+
+        // Replace relative asset paths (assets/xxx or ./assets/xxx) with GitHub raw URLs
+        const rawBase = `https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/blogs/${paramSlug}`;
+        const displayContent = blog.content.replace(
+          /(?<!\/)(?:\.\/)?assets\/([^\s)]+)/g,
+          (_match, filename) => {
+            const rawUrl = `${rawBase}/assets/${filename}`;
+            urlMapRef.current.set(rawUrl, `assets/${filename}`);
+            return rawUrl;
+          }
+        );
+        setContent(displayContent);
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
@@ -49,7 +56,7 @@ export function BlogEditorPage() {
 
   const handleImageAdd = useCallback((image: PendingImage) => {
     setPendingImages((prev) => [...prev, image]);
-    blobMapRef.current.set(image.blobUrl, image.filename);
+    urlMapRef.current.set(image.blobUrl, `assets/${image.filename}`);
   }, []);
 
   const handleContentChange = useCallback((md: string) => {
@@ -73,10 +80,10 @@ export function BlogEditorPage() {
     setSuccess(false);
 
     try {
-      // Replace blob URLs in content with relative asset paths
+      // Replace all display URLs (blob URLs + GitHub raw URLs) back to relative paths
       let finalContent = content;
-      for (const [blobUrl, filename] of blobMapRef.current.entries()) {
-        finalContent = finalContent.replaceAll(blobUrl, `assets/${filename}`);
+      for (const [displayUrl, relativePath] of urlMapRef.current.entries()) {
+        finalContent = finalContent.replaceAll(displayUrl, relativePath);
       }
 
       await saveBlog(token, slug, frontmatter, finalContent, pendingImages, isNew);
@@ -86,7 +93,7 @@ export function BlogEditorPage() {
         URL.revokeObjectURL(img.blobUrl);
       }
       setPendingImages([]);
-      blobMapRef.current.clear();
+      urlMapRef.current.clear();
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -150,7 +157,6 @@ export function BlogEditorPage() {
         content={content}
         onChange={handleContentChange}
         onImageAdd={handleImageAdd}
-        existingAssets={existingAssets}
       />
     </div>
   );

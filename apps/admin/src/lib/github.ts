@@ -1,6 +1,19 @@
 import { Octokit } from "octokit";
 import type { BlogFrontmatter, BlogListItem, BlogPost, PendingImage } from "@/types";
 
+function decodeBase64UTF8(base64: string): string {
+  const binary = atob(base64);
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function encodeUTF8Base64(text: string): string {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+
 const OWNER = "Hexi1997";
 const REPO = "hexi-site";
 const BLOG_PATH = "apps/site/blogs";
@@ -108,7 +121,7 @@ export async function listBlogs(token: string): Promise<BlogListItem[]> {
 
       if (Array.isArray(fileData) || fileData.type !== "file") return null;
 
-      const raw = atob(fileData.content);
+      const raw = decodeBase64UTF8(fileData.content);
       const { frontmatter } = parseFrontmatter(raw);
 
       return {
@@ -143,7 +156,7 @@ export async function getBlog(token: string, slug: string): Promise<BlogPost> {
     throw new Error("Blog not found");
   }
 
-  const raw = atob(data.content);
+  const raw = decodeBase64UTF8(data.content);
   const { frontmatter, content } = parseFrontmatter(raw);
 
   return { slug, frontmatter, content, sha: data.sha };
@@ -199,7 +212,7 @@ export async function saveBlog(
   const { data: mdBlob } = await octokit.rest.git.createBlob({
     owner: _owner,
     repo: _repo,
-    content: btoa(unescape(encodeURIComponent(fullMarkdown))),
+    content: encodeUTF8Base64(fullMarkdown),
     encoding: "base64",
   });
 
@@ -244,8 +257,8 @@ export async function saveBlog(
 
   // 6. Create commit
   const message = isNew
-    ? `feat(blog): add "${frontmatter.title}"`
-    : `feat(blog): update "${frontmatter.title}"`;
+    ? `feat(blog): add blog post`
+    : `feat(blog): update blog post`;
 
   const { data: newCommit } = await octokit.rest.git.createCommit({
     owner: _owner,

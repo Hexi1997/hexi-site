@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { Editor } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -14,10 +15,27 @@ import {
   Quote,
   Minus,
   ImagePlus,
+  Link,
+  Unlink,
   Undo,
   Redo,
   CodeSquare,
+  Table,
+  BetweenVerticalEnd,
+  BetweenVerticalStart,
+  BetweenHorizontalEnd,
+  BetweenHorizontalStart,
+  Columns2,
+  Rows2,
+  Trash2,
 } from "lucide-react";
+
+const CODE_LANGUAGES = [
+  "", "javascript", "typescript", "html", "css", "json",
+  "python", "rust", "go", "java", "c", "cpp", "csharp",
+  "ruby", "php", "swift", "kotlin", "sql", "bash", "yaml",
+  "markdown", "xml", "graphql",
+];
 
 interface EditorToolbarProps {
   editor: Editor;
@@ -25,8 +43,19 @@ interface EditorToolbarProps {
 }
 
 export function EditorToolbar({ editor, onImageUpload }: EditorToolbarProps) {
+  const [, rerender] = useState(0);
+  useEffect(() => {
+    const handler = () => rerender((n) => n + 1);
+    editor.on("selectionUpdate", handler);
+    editor.on("transaction", handler);
+    return () => {
+      editor.off("selectionUpdate", handler);
+      editor.off("transaction", handler);
+    };
+  }, [editor]);
+
   return (
-    <div className="flex flex-wrap items-center gap-0.5 border-b p-1.5">
+    <div className="sticky top-14 z-40 flex flex-wrap items-center gap-0.5 border-b bg-card p-1.5 rounded-t-lg">
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         active={editor.isActive("bold")}
@@ -110,6 +139,21 @@ export function EditorToolbar({ editor, onImageUpload }: EditorToolbarProps) {
       >
         <CodeSquare className="h-4 w-4" />
       </ToolbarButton>
+      {editor.isActive("codeBlock") && (
+        <select
+          value={editor.getAttributes("codeBlock").language || ""}
+          onChange={(e) =>
+            editor.chain().focus().updateAttributes("codeBlock", { language: e.target.value }).run()
+          }
+          className="h-8 rounded-md border bg-transparent px-1.5 text-xs outline-none"
+        >
+          {CODE_LANGUAGES.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang || "plain"}
+            </option>
+          ))}
+        </select>
+      )}
       <ToolbarButton
         onClick={() => editor.chain().focus().setHorizontalRule().run()}
         title="Horizontal Rule"
@@ -122,6 +166,82 @@ export function EditorToolbar({ editor, onImageUpload }: EditorToolbarProps) {
       <ToolbarButton onClick={onImageUpload} title="Insert Image">
         <ImagePlus className="h-4 w-4" />
       </ToolbarButton>
+      {editor.isActive("link") ? (
+        <ToolbarButton
+          onClick={() => editor.chain().focus().unsetLink().run()}
+          active
+          title="Remove Link"
+        >
+          <Unlink className="h-4 w-4" />
+        </ToolbarButton>
+      ) : (
+        <ToolbarButton
+          onClick={() => {
+            const url = window.prompt("Enter URL:");
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run();
+            }
+          }}
+          title="Insert Link"
+        >
+          <Link className="h-4 w-4" />
+        </ToolbarButton>
+      )}
+      <ToolbarButton
+        onClick={() =>
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+        }
+        title="Insert Table"
+      >
+        <Table className="h-4 w-4" />
+      </ToolbarButton>
+      {editor.isActive("table") && (
+        <>
+          <Separator orientation="vertical" className="mx-1 h-6" />
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addColumnBefore().run()}
+            title="Add Column Before"
+          >
+            <BetweenVerticalEnd className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addColumnAfter().run()}
+            title="Add Column After"
+          >
+            <BetweenVerticalStart className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addRowBefore().run()}
+            title="Add Row Before"
+          >
+            <BetweenHorizontalEnd className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addRowAfter().run()}
+            title="Add Row After"
+          >
+            <BetweenHorizontalStart className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteColumn().run()}
+            title="Delete Column"
+          >
+            <Columns2 className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteRow().run()}
+            title="Delete Row"
+          >
+            <Rows2 className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteTable().run()}
+            title="Delete Table"
+          >
+            <Trash2 className="h-4 w-4" />
+          </ToolbarButton>
+        </>
+      )}
 
       <div className="flex-1" />
 
