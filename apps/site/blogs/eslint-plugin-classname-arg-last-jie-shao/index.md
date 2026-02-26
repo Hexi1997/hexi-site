@@ -53,7 +53,7 @@ cn('default-class', className)
 
 为了保持参数末尾放置 `className` 的一致性，我开发了一个 ESLint 插件，用于静态检测和自动修复，借助 Grok3，兼容 Eslint v7-v9
 
-<https://www.npmjs.com/package/eslint-plugin-classname-arg-last>
+[eslint-plugin-classname-arg-last](https://www.npmjs.com/package/eslint-plugin-classname-arg-last)
 
 ### 1. Example
 
