@@ -127,7 +127,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
       <div className="mt-8 flex flex-col items-center gap-3">
         {query.trim() && filtered.length > 0 && (
           <p className="text-sm text-gray-500">
-            {filtered.length} article{filtered.length !== 1 ? "s" : ""} found
+            {filtered.length} post{filtered.length !== 1 ? "s" : ""} found
           </p>
         )}
 

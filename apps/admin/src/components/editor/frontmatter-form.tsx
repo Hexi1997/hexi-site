@@ -6,7 +6,8 @@ import type { BlogFrontmatter } from "@/types";
 
 function generateSlug(title: string): string {
   const cleaned = title.replace(/[''\u2019]s\b/gi, "");
-  const full = slugify(cleaned, { lowercase: true, separator: "-" });
+  const full = slugify(cleaned, { lowercase: true, separator: "-" })
+    .replace(/\./g, "-"); // slug must not contain dots (e.g. from "17.8万")
   return full.split("-").slice(0, 8).join("-");
 }
 
@@ -37,6 +38,7 @@ export function FrontmatterForm({
   function handleSlugChange(value: string) {
     const cleaned = value
       .toLowerCase()
+      .replace(/\./g, "") // slug must not contain dots
       .replace(/[^a-z0-9-]/g, "")
       .replace(/-+/g, "-");
     slugManuallyEdited.current = cleaned.length > 0;
