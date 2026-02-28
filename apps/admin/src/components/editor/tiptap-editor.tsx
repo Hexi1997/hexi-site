@@ -173,7 +173,7 @@ export function TipTapEditor({
   if (!editor) return null;
 
   return (
-    <div className="relative rounded-lg border bg-card" ref={editorContainerRef}>
+    <div className="relative rounded-lg border bg-card text-[16px]" ref={editorContainerRef}>
       <EditorToolbar editor={editor} onImageUpload={handleImageUploadClick} />
       <div
         className="prose prose-headings:font-bold max-w-none p-4 prose-pre:!text-inherit [&_pre_code.hljs]:block [&_pre_code.hljs]:rounded-md [&_pre_code.hljs]:p-4 [&_.tiptap]:min-h-[400px] [&_.tiptap]:outline-none [&_.tiptap_p.is-editor-empty:first-child::before]:text-muted-foreground [&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap_p.is-editor-empty:first-child::before]:float-left [&_.tiptap_p.is-editor-empty:first-child::before]:h-0 [&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_img]:w-full [&_.tiptap_img]:h-auto [&_.tiptap_img]:rounded-md [&_.tiptap_img]:my-4 [&_.tiptap_img]:cursor-pointer [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:p-2 [&_th]:bg-muted prose-headings:font-semibold

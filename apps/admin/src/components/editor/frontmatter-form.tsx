@@ -47,7 +47,7 @@ export function FrontmatterForm({
     <div className="space-y-4 rounded-lg border bg-card p-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title" className="text-base">Title</Label>
           <Input
             id="title"
             value={frontmatter.title}
@@ -57,7 +57,7 @@ export function FrontmatterForm({
         </div>
 
         <div className="sm:col-span-2">
-          <Label htmlFor="slug">Slug</Label>
+          <Label htmlFor="slug" className="text-base">Slug</Label>
           <Input
             id="slug"
             value={slug}
@@ -74,7 +74,7 @@ export function FrontmatterForm({
         </div>
 
         <div>
-          <Label htmlFor="date">Date</Label>
+          <Label htmlFor="date" className="text-base">Date</Label>
           <Input
             id="date"
             type="date"

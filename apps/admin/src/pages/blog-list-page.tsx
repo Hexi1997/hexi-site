@@ -78,7 +78,7 @@ export function BlogListPage() {
         </div>
         <Button asChild>
           <Link to="/editor/new">
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-0 size-[18px]" />
             New Post
           </Link>
         </Button>
@@ -100,9 +100,9 @@ export function BlogListPage() {
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="truncate font-medium">{blog.title}</h3>
+                  <h3 className="truncate font-medium text-[17px]">{blog.title}</h3>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-[13px] text-muted-foreground">
                   {blog.date} &middot; {blog.slug}
                 </p>
               </div>

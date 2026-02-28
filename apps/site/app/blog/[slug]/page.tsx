@@ -101,7 +101,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <article className="mx-auto mt-10 max-w-[732px] px-4 pb-12">
       <div className="flex justify-between items-center mb-3">
         <Link href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
-          <ArrowLeft className="h-4" />
+          <ArrowLeft className="mr-0 size-[18px]" />
           Back
         </Link>
       </div>

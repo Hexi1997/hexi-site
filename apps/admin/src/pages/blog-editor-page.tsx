@@ -119,8 +119,8 @@ export function BlogEditorPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={() => navigate("/")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          <ArrowLeft className="mr-1 size-[18px]" />
+          <span className="text-[16px]">Back</span>
         </Button>
         <div className="flex items-center gap-3">
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -135,11 +135,11 @@ export function BlogEditorPage() {
           )}
           <Button onClick={handleSave} disabled={saving}>
             {saving ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-0 !size-[18px] animate-spin" />
             ) : (
-              <Save className="mr-2 h-4 w-4" />
+              <Save className="mr-0 !size-[18px]" />
             )}
-            {isNew ? "Publish" : "Save"}
+            <span className="text-[15px]">{isNew ? "Publish" : "Save"}</span>
           </Button>
         </div>
       </div>
