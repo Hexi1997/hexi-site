@@ -95,13 +95,18 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   };
 }
 
+/** Escape string for YAML frontmatter - handles ", ', :, #, \, etc. */
+function escapeYamlString(s: string): string {
+  return "'" + s.replace(/'/g, "''") + "'";
+}
+
 function serializeFrontmatter(fm: BlogFrontmatter): string {
   const lines = ["---"];
-  lines.push(`title: "${fm.title}"`);
-  lines.push(`date: "${fm.date}"`);
-  if (fm.cover) lines.push(`cover: "${fm.cover}"`);
+  lines.push(`title: ${escapeYamlString(fm.title)}`);
+  lines.push(`date: ${escapeYamlString(fm.date)}`);
+  if (fm.cover) lines.push(`cover: ${escapeYamlString(fm.cover)}`);
   if (fm.sortIndex !== undefined) lines.push(`sortIndex: ${fm.sortIndex}`);
-  if (fm.source) lines.push(`source: "${fm.source}"`);
+  if (fm.source) lines.push(`source: ${escapeYamlString(fm.source)}`);
   lines.push("---");
   return lines.join("\n");
 }

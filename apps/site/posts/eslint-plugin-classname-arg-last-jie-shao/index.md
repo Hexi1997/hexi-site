@@ -1,6 +1,6 @@
 ---
-title: "eslint-plugin-classname-arg-last 介绍"
-date: "2025-04-21"
+title: 'eslint-plugin-classname-arg-last 介绍'
+date: '2025-04-21'
 ---
 
 ## 前置知识
