@@ -58,7 +58,7 @@ if (loading) {
 使用示例：
 
 ```typescript
-<Component skeleton />
+<Component skeleton={true} />
 ```
 
 而不是：
