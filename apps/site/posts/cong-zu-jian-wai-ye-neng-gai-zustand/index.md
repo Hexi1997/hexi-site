@@ -27,7 +27,7 @@ date: '2026-02-28'
 
 如果你这样创建一个 store：
 
-```
+```typescript
 export const usePluginStore = create<PluginState>((set, get) => ({
   ...
 }));
@@ -57,7 +57,7 @@ export const usePluginStore = create<PluginState>((set, get) => ({
 
 可以把它想象成这样一个结构：
 
-```
+```typescript
 const store = {
   state: {...},
   listeners: new Set(),
@@ -92,13 +92,13 @@ const store = {
 
 从 React 18 开始，React 提供了一个专门用于订阅外部状态的 API：
 
-```
+```typescript
 useSyncExternalStore(subscribe, getSnapshot)
 ```
 
 Zustand 内部的 `useStore(selector)` 本质上就是：
 
-```
+```typescript
 useSyncExternalStore(
   store.subscribe,
   () => selector(store.getState())
@@ -125,7 +125,7 @@ useSyncExternalStore(
 
 因为 store 本身是一个普通的 JS 对象，存在于模块作用域中。
 
-```
+```typescript
 usePluginStore.getState().setCcSkillInstalled(false);
 ```
 
@@ -147,7 +147,7 @@ usePluginStore.getState().setCcSkillInstalled(false);
 
 默认情况下：
 
-```
+```typescript
 const useStore = create(...)
 ```
 
@@ -155,7 +155,7 @@ const useStore = create(...)
 
 但如果你使用的是：
 
-```
+```typescript
 createStore() + Context + Provider
 ```
 
