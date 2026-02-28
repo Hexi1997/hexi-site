@@ -100,9 +100,23 @@ function escapeYamlString(s: string): string {
   return "'" + s.replace(/'/g, "''") + "'";
 }
 
+export function safeYamlTitle(input: string): string {
+  if (!input) return "title: ''";
+
+  const title = input
+    .replace(/^\uFEFF/, '')
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/---/g, '')
+    .replace(/\.\.\./g, '')
+    .trim()
+    .replace(/'/g, "''");
+
+  return `title: '${title}'`;
+}
+
 function serializeFrontmatter(fm: BlogFrontmatter): string {
   const lines = ["---"];
-  lines.push(`title: ${escapeYamlString(fm.title)}`);
+  lines.push(safeYamlTitle(fm.title));
   lines.push(`date: ${escapeYamlString(fm.date)}`);
   if (fm.cover) lines.push(`cover: ${escapeYamlString(fm.cover)}`);
   if (fm.sortIndex !== undefined) lines.push(`sortIndex: ${fm.sortIndex}`);
