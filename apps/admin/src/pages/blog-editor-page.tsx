@@ -38,7 +38,7 @@ export function BlogEditorPage() {
         setFrontmatter(blog.frontmatter);
 
         // Replace relative asset paths (assets/xxx or ./assets/xxx) with GitHub raw URLs
-        const rawBase = `https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/blogs/${paramSlug}`;
+        const rawBase = `https://raw.githubusercontent.com/Hexi1997/hexi-site/main/apps/site/posts/${paramSlug}`;
         const displayContent = blog.content.replace(
           /(?<!\/)(?:\.\/)?assets\/([^\s)]+)/g,
           (_match, filename) => {

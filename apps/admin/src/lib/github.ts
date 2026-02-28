@@ -1,5 +1,12 @@
 import { Octokit } from "octokit";
-import type { BlogFrontmatter, BlogListItem, BlogPost, PendingImage } from "@/types";
+import type { BlogFrontmatter, PostItem, PendingImage } from "@/types";
+
+interface BlogPost {
+  slug: string;
+  frontmatter: BlogFrontmatter;
+  content: string;
+  sha?: string;
+}
 
 function decodeBase64UTF8(base64: string): string {
   const binary = atob(base64);
@@ -16,7 +23,7 @@ function encodeUTF8Base64(text: string): string {
 
 const OWNER = "Hexi1997";
 const REPO = "hexi-site";
-const BLOG_PATH = "apps/site/blogs";
+const BLOG_PATH = "apps/site/posts";
 const BRANCH = "main";
 
 let _owner = OWNER;
@@ -92,7 +99,7 @@ function serializeFrontmatter(fm: BlogFrontmatter): string {
   return lines.join("\n");
 }
 
-export async function listBlogs(token: string): Promise<BlogListItem[]> {
+export async function listBlogs(token: string): Promise<PostItem[]> {
   const octokit = createOctokit(token);
 
   const { data } = await octokit.rest.repos.getContent({
@@ -105,7 +112,7 @@ export async function listBlogs(token: string): Promise<BlogListItem[]> {
   if (!Array.isArray(data)) return [];
 
   const dirs = data.filter((item) => item.type === "dir");
-  const blogs: BlogListItem[] = [];
+  const posts: PostItem[] = [];
 
   // Fetch frontmatter for each blog to get title/date
   const results = await Promise.allSettled(
@@ -132,11 +139,11 @@ export async function listBlogs(token: string): Promise<BlogListItem[]> {
 
   for (const result of results) {
     if (result.status === "fulfilled" && result.value) {
-      blogs.push(result.value);
+      posts.push(result.value);
     }
   }
 
-  return blogs.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
 export async function getBlog(token: string, slug: string): Promise<BlogPost> {

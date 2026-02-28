@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { listBlogs, deleteBlog } from "@/lib/github";
-import type { BlogListItem } from "@/types";
+import type { PostItem } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -18,17 +18,17 @@ import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 
 export function BlogListPage() {
   const { token } = useAuth();
-  const [blogs, setBlogs] = useState<BlogListItem[]>([]);
+  const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<BlogListItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<PostItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!token) return;
     setLoading(true);
     listBlogs(token)
-      .then(setBlogs)
+      .then(setPosts)
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, [token]);
@@ -38,7 +38,7 @@ export function BlogListPage() {
     setDeleting(true);
     try {
       await deleteBlog(token, deleteTarget.slug);
-      setBlogs((prev) => prev.filter((b) => b.slug !== deleteTarget.slug));
+      setPosts((prev) => prev.filter((b) => b.slug !== deleteTarget.slug));
       setDeleteTarget(null);
     } catch (e) {
       setError((e as Error).message);
@@ -72,7 +72,7 @@ export function BlogListPage() {
         <div>
           <h1 className="text-2xl font-bold">Blog Posts</h1>
           <p className="text-sm text-muted-foreground">
-            {blogs.length} post{blogs.length !== 1 ? "s" : ""}
+            {posts.length} post{posts.length !== 1 ? "s" : ""}
           </p>
         </div>
         <Button asChild>
@@ -83,7 +83,7 @@ export function BlogListPage() {
         </Button>
       </div>
 
-      {blogs.length === 0 ? (
+      {posts.length === 0 ? (
         <div className="rounded-lg border border-dashed p-12 text-center">
           <p className="text-muted-foreground">No blog posts yet.</p>
           <Button asChild variant="outline" className="mt-4">
@@ -92,7 +92,7 @@ export function BlogListPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {blogs.map((blog) => (
+          {posts.map((blog) => (
             <div
               key={blog.slug}
               className="flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"

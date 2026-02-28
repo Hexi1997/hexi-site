@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   description:
     "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
-  keywords: ["HEXI SPACE", "blogs", "technology", "insights", "updates"],
+  keywords: ["HEXI SPACE", "blog posts", "blog", "technology", "insights", "updates"],
   authors: [{ name: "Hexi1997" }],
   creator: "@Hexi1997",
   publisher: "Hexi1997",

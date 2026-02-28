@@ -18,14 +18,7 @@ export interface BlogFrontmatter {
   source?: string;
 }
 
-export interface BlogPost {
-  slug: string;
-  frontmatter: BlogFrontmatter;
-  content: string;
-  sha?: string;
-}
-
-export interface BlogListItem {
+export interface PostItem {
   slug: string;
   title: string;
   date: string;

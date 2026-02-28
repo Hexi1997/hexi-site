@@ -25,15 +25,15 @@ export async function GET(
   try {
     const { path: pathSegments } = await params;
 
-    // Build file path: blogs/[...path]
+    // Build file path: posts/[...path]
     const filePath = path.join(
       process.cwd(),
-      "blogs",
+      "posts",
       ...pathSegments
     );
 
-    // Security check: ensure path is within blogs directory
-    const contentDir = path.join(process.cwd(), "blogs");
+    // Security check: ensure path is within posts directory
+    const contentDir = path.join(process.cwd(), "posts");
     const resolvedPath = path.resolve(filePath);
     if (!resolvedPath.startsWith(contentDir)) {
       return NextResponse.json({ error: "Invalid path" }, { status: 403 });

@@ -9,7 +9,7 @@ import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
 import type { BlogPost, BlogMetadata } from "@/types/blog";
 
-const BLOG_DIRECTORY = path.join(process.cwd(), "blogs");
+const BLOG_DIRECTORY = path.join(process.cwd(), "posts");
 
 /**
  * 从 markdown 内容中提取第一张图片

@@ -16,14 +16,14 @@ A modern blog system built on Next.js 16, supporting SSG (Static Site Generation
 
 ## 🗂️ Content Management
 
-The [/blogs](/blogs) directory contains all blog posts, with each post in its own folder.
+The [/posts](/posts) directory contains all blog posts, with each post in its own folder.
 
 ### File Structure
 
 Each blog post is in a separate folder, and the folder name serves as the URL slug:
 
 ```
-blogs/
+posts/
 ├── my-blog-post/          # slug: my-blog-post
 │   ├── index.md           # Blog content
 │   └── assets/            # All resource files

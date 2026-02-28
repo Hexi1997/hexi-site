@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const BLOGS_DIR = path.join(process.cwd(), 'blogs');
+const BLOGS_DIR = path.join(process.cwd(), 'posts');
 const PUBLIC_ASSETS_DIR = path.join(process.cwd(), 'public', 'blog-assets');
 
 /**
@@ -30,7 +30,7 @@ function copyFolderRecursive(source, target) {
 }
 
 /**
- * Remove assets for blogs that no longer exist
+ * Remove assets for posts that no longer exist
  */
 function cleanupOrphanedAssets(blogsDir, publicAssetsDir) {
   if (!fs.existsSync(publicAssetsDir)) {
@@ -85,7 +85,7 @@ function main() {
   console.log('🔄 Syncing blog assets...\n');
 
   if (!fs.existsSync(BLOGS_DIR)) {
-    console.error(`❌ Error: blogs directory not found at ${BLOGS_DIR}`);
+    console.error(`❌ Error: posts directory not found at ${BLOGS_DIR}`);
     process.exit(1);
   }
 
@@ -93,7 +93,7 @@ function main() {
     fs.mkdirSync(PUBLIC_ASSETS_DIR, { recursive: true });
   }
 
-  // Sync all blogs
+  // Sync all posts
   const entries = fs.readdirSync(BLOGS_DIR, { withFileTypes: true });
   const blogDirs = entries.filter((entry) => 
     entry.isDirectory() && entry.name !== 'images' && !entry.name.startsWith('.')

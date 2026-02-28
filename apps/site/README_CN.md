@@ -16,14 +16,14 @@
 
 ## 🗂️ 文章管理
 
-[/blogs](/blogs) 这个目录包含所有博客文章，每篇文章有独立的文件夹。
+[/posts](/posts) 这个目录包含所有博客文章，每篇文章有独立的文件夹。
 
 ### 文件格式
 
 每篇博客文章都在独立的文件夹中，文件夹名将作为 URL slug：
 
 ```
-blogs/
+posts/
 ├── my-blog-post/          # slug: my-blog-post
 │   ├── index.md           # 博客内容
 │   └── assets/            # 所有资源文件

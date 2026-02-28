@@ -59,14 +59,14 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${post.title} | Hexi Blog`,
+    title: `${post.title}`,
     description: post.description,
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       publishedTime: post.date,
-      authors: ["WORLD3"],
+      authors: ["Hexi1997"],
       images: [
         {
           url: imageUrl,

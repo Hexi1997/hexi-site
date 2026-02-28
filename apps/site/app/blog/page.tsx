@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import { BlogList } from "@/components/blog/blog-list";
 
 export const metadata: Metadata = {
-  title: "BLOG - HEXI SPACE",
+  title: "BLOG",
   description:
     "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
   openGraph: {
-    title: "BLOG - HEXI SPACE",
+    title: "BLOG",
     description:
       "Explore the latest product updates, industry insights, and technical articles from HEXI SPACE.",
     type: "website",
