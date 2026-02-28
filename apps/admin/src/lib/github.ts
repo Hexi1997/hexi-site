@@ -34,8 +34,15 @@ export function configureRepo(owner: string, repo: string) {
   _repo = repo;
 }
 
+/** Custom fetch that bypasses browser cache - avoids stale ref when remote moved */
+const noCacheFetch: typeof fetch = (input, init) =>
+  fetch(input, { ...init, cache: "no-store" });
+
 function createOctokit(token: string) {
-  return new Octokit({ auth: token });
+  return new Octokit({
+    auth: token,
+    request: { fetch: noCacheFetch },
+  });
 }
 
 // Detect owner/repo from the authenticated user's token by reading the remote

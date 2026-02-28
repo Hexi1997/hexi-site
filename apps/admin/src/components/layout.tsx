@@ -25,7 +25,7 @@ export function Layout() {
   return (
     <div className="min-h-svh bg-background">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mx-auto flex h-14 max-w-[700px] items-center justify-between px-4">
+        <div className="mx-auto flex h-14 max-w-[766px] items-center justify-between px-4">
           <Link to="/" className="text-lg font-bold">
             <img src="/icons/combination-mark.svg" alt="Blog Admin" className="h-8" />
           </Link>
@@ -62,7 +62,7 @@ export function Layout() {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-[700px] px-4 py-6">
+      <main className="mx-auto max-w-[766px] px-4 py-6">
         <Outlet />
       </main>
     </div>
