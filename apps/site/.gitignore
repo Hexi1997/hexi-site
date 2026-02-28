@@ -2,3 +2,4 @@
 .open-next
 .wrangler
 public/blog-assets
+.env.local

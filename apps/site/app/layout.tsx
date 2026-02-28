@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   keywords: ["HEXI SPACE", "blogs", "technology", "insights", "updates"],
   authors: [{ name: "Hexi1997" }],
   creator: "@Hexi1997",
-  publisher: "@Hexi1997",
+  publisher: "Hexi1997",
   openGraph: {
     type: "website",
     locale: "zh_CN",

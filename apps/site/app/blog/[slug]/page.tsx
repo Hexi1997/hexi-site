@@ -7,6 +7,7 @@ import { BlogPhotoViewEnhancer } from "@/components/blog/photo-view-enhancer";
 import { BlogImageSkeleton } from "@/components/blog/image-skeleton";
 import { BlogCodeCopyEnhancer } from "@/components/blog/code-copy-enhancer";
 import { ShareButtons } from "@/components/blog/share-buttons";
+import { GiscusComments } from "@/components/blog/giscus-comments";
 import { ArrowLeft } from "lucide-react";
 
 interface BlogPostPageProps {
@@ -151,6 +152,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <BlogImageSkeleton containerId={`blog-content-${post.slug}`} />
       {/* 客户端组件：为代码块添加复制按钮 */}
       <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
+
+      {/* 评论区 */}
+      <GiscusComments />
     </article>
   );
 }
