@@ -3,7 +3,7 @@ title: 'Nextjs 16.1 文件系统缓存升级，冷启动速度提升明显'
 date: '2025-12-20'
 ---
 
-Nextjs 16.1 版本中 Turbopack 文件**系统缓存（File System Caching**）稳定并默认启用：
+![img_1.webp](assets/img_1.webp)Nextjs 16.1 版本中 Turbopack 文件**系统缓存（File System Caching**）稳定并默认启用：
 
 - **重启开发服务器（next dev）** 时，不需要从零重新编译，而是直接复用缓存，导致启动时间大幅缩短，尤其在大项目中。
 - 官方基准数据：
