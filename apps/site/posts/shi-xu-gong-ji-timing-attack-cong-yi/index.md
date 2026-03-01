@@ -3,7 +3,7 @@ title: '时序攻击（Timing Attack）：从一条 Twitter 推文说起'
 date: '2025-06-10'
 ---
 
-在 X（Twitter）刷到一条 [推文](https://x.com/sebastienlorber/status/1932367017065025675)，作者提出以下的代码存在 **timing attack 漏洞**
+![img_3.webp](assets/img_3.webp)在 X（Twitter）刷到一条 [推文](https://x.com/sebastienlorber/status/1932367017065025675)，作者提出以下的代码存在 **timing attack 漏洞**
 
 ```javascript
 if (req.body.apikey === SECRET_API_KEY) { ... }
