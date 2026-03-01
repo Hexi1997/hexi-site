@@ -3,7 +3,7 @@ title: '从 "组件外也能改 Zustand 状态" 聊到它的底层原理'
 date: '2026-02-28'
 ---
 
-这次对 Zustand 的理解升级，其实是从一个很简单的问题开始的：
+![img_1.webp](assets/img_1.webp)这次对 Zustand 的理解升级，其实是从一个很简单的问题开始的：
 
 > 为什么我可以在组件外面通过 `store.getState().setXXX()` 修改状态，而且组件里的值还能自动更新？
 
