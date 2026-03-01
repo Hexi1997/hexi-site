@@ -3,7 +3,7 @@ title: 'eslint-plugin-classname-arg-last：让外部 className 永远拥有最�
 date: '2025-04-22'
 ---
 
-在 React 组件封装中，有一个非常常见的模式：
+![img_5.webp](assets/img_5.webp)在 React 组件封装中，有一个非常常见的模式：
 
 ```typescript
 cn("base-style", props.className)
