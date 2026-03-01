@@ -42,7 +42,7 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
         const wrapper = document.createElement('div');
         wrapper.className = 'relative';
         wrapper.style.width = '100%';
-        wrapper.style.minHeight = '300px';
+        wrapper.style.minHeight = '370px';
 
         // 创建 skeleton 元素 - 使用 animate-pulse 和 bg-opacity
         const skeleton = document.createElement('div');
