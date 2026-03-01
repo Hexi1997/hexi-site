@@ -40,7 +40,7 @@ posts/
 
 - **title** (必需)：文章标题
 - **date** (必需)：发布日期，格式：YYYY-MM-DD
-- **cover** (可选)：封面图片路径，支持相对路径（如 `assets/cover.jpg`）或外部 URL（如 `https://example.com/image.jpg`）。如果未设置，系统会自动提取 markdown 内容中的第一张图片作为封面；如果内容中没有图片，则使用占位图 `/default-cover.webp`
+- **cover** (可选)：封面图片路径，支持相对路径（如 `assets/cover.jpg`）或外部 URL（如 `https://example.com/image.jpg`）。如果未设置，系统会自动提取 markdown 内容中的第一张图片作为封面；如果内容中没有图片，则使用占位图 `/default-og-image.webp`
 - **sortIndex** (可选)：排序权重，默认为 0。值越大，文章显示越靠前。相同 sortIndex 的文章按日期降序排序
 - **source** (可选)：外部文章链接。当设置此字段时，点击博客列表中的文章会直接跳转到该外部链接（新标签页打开），而不是内部博客详情页。在博客详情页底部也会显示来源链接。适用于引用第三方内容的场景
 

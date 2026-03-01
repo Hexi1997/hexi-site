@@ -40,7 +40,7 @@ posts/
 
 - **title** (required): Article title
 - **date** (required): Publication date, format: YYYY-MM-DD
-- **cover** (optional): Cover image path, supports relative paths (e.g., `assets/cover.jpg`) or external URLs (e.g., `https://example.com/image.jpg`). If not set, the system will automatically extract the first image from the markdown content as the cover; if there are no images in the content, it will use the placeholder image `/default-cover.webp`
+- **cover** (optional): Cover image path, supports relative paths (e.g., `assets/cover.jpg`) or external URLs (e.g., `https://example.com/image.jpg`). If not set, the system will automatically extract the first image from the markdown content as the cover; if there are no images in the content, it will use the placeholder image `/default-og-image.webp`
 - **sortIndex** (optional): Sort weight, default is 0. Higher values appear first. Articles with the same sortIndex are sorted by date in descending order
 - **source** (optional): External article URL. When set, clicking the blog card in the list will navigate directly to this external URL (opens in a new tab) instead of the internal blog detail page. The source link will also be displayed at the bottom of the blog detail page. This is useful for linking to third-party content
 
