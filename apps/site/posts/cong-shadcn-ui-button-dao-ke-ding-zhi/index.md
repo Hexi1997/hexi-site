@@ -3,7 +3,7 @@ title: '从 shadcn/ui Button 到可定制 loading 的业务按钮'
 date: '2026-02-28'
 ---
 
-在前端开发中，按钮是最常用的组件之一。shadcn/ui 提供了默认的 Button 组件，但在实际业务中，它存在一些不足：
+![img_2.webp](assets/img_2.webp)在前端开发中，按钮是最常用的组件之一。shadcn/ui 提供了默认的 Button 组件，但在实际业务中，它存在一些不足：
 
 - 默认按钮没有 loading 状态
 
