@@ -28,10 +28,9 @@ export function Layout() {
         <div className="mx-auto flex h-14 max-w-[766px] items-center justify-between px-4">
           <Link to="/" className="text-lg font-bold">
           <div className="flex items-center gap-1">
-            <img src="/icons/logo-mark.svg" alt="Blog Admin" className="h-8" />
-            <span className="text-lg bg-black text-white font-anta">BLOGIT</span>
+            <img src="/icons/logo-mark.svg" alt="Hexi Space" className="h-8" />
+            <span className="text-lg bg-black text-white font-anta">HEXI SPACE</span>
           </div>
-            {/* <img src="/icons/combination-mark.svg" alt="Blog Admin" className="h-8" /> */}
           </Link>
           <div className="flex items-center gap-3">
             {user && (

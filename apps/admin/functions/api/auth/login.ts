@@ -47,7 +47,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
     const userRes = await fetch("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${env.ADMIN_PAT}`,
-        "User-Agent": "blogit-admin",
+        "User-Agent": "hexi-admin",
       },
     });
 

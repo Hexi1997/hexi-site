@@ -135,110 +135,110 @@
     }
 }
 
-.blogit-milkdown-editor .ProseMirror {
+.hexi-milkdown-editor .ProseMirror {
   font-family: var(--font-geist), sans-serif !important;
 }
 
-.blogit-milkdown-editor.milkdown {
+.hexi-milkdown-editor.milkdown {
   --crepe-font-title: var(--font-geist), sans-serif !important;
   --crepe-font-default: var(--font-geist), sans-serif !important;
   --crepe-font-code: var(--font-geist-mono), monospace !important;
 }
 
-.blogit-milkdown-editor .ProseMirror code,
-.blogit-milkdown-editor .ProseMirror pre,
-.blogit-milkdown-editor .ProseMirror pre *,
-.blogit-milkdown-editor .milkdown-code-block .cm-content,
-.blogit-milkdown-editor .milkdown-code-block .cm-content * {
+.hexi-milkdown-editor .ProseMirror code,
+.hexi-milkdown-editor .ProseMirror pre,
+.hexi-milkdown-editor .ProseMirror pre *,
+.hexi-milkdown-editor .milkdown-code-block .cm-content,
+.hexi-milkdown-editor .milkdown-code-block .cm-content * {
   font-family: var(--font-geist-mono), monospace !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h1,
-.blogit-milkdown-editor .ProseMirror h2,
-.blogit-milkdown-editor .ProseMirror h3,
-.blogit-milkdown-editor .ProseMirror h4,
-.blogit-milkdown-editor .ProseMirror h5,
-.blogit-milkdown-editor .ProseMirror h6 {
+.hexi-milkdown-editor .ProseMirror h1,
+.hexi-milkdown-editor .ProseMirror h2,
+.hexi-milkdown-editor .ProseMirror h3,
+.hexi-milkdown-editor .ProseMirror h4,
+.hexi-milkdown-editor .ProseMirror h5,
+.hexi-milkdown-editor .ProseMirror h6 {
   font-family: var(--font-geist), sans-serif !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h1 {
+.hexi-milkdown-editor .ProseMirror h1 {
   font-size: 2.25rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h2 {
+.hexi-milkdown-editor .ProseMirror h2 {
   font-size: 1.5rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h3 {
+.hexi-milkdown-editor .ProseMirror h3 {
   font-size: 1.25rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h4 {
+.hexi-milkdown-editor .ProseMirror h4 {
   font-size: 1rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h5 {
+.hexi-milkdown-editor .ProseMirror h5 {
   font-size: 0.875rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h6 {
+.hexi-milkdown-editor .ProseMirror h6 {
   font-size: 0.85rem !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h1,
-.blogit-milkdown-editor .ProseMirror h2 {
+.hexi-milkdown-editor .ProseMirror h1,
+.hexi-milkdown-editor .ProseMirror h2 {
   font-weight: 600 !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h3,
-.blogit-milkdown-editor .ProseMirror h4 {
+.hexi-milkdown-editor .ProseMirror h3,
+.hexi-milkdown-editor .ProseMirror h4 {
   font-weight: 600 !important;
 }
 
-.blogit-milkdown-editor .ProseMirror h5,
-.blogit-milkdown-editor .ProseMirror h6 {
+.hexi-milkdown-editor .ProseMirror h5,
+.hexi-milkdown-editor .ProseMirror h6 {
   font-weight: 600 !important;
 }
 
-.blogit-milkdown-editor .ProseMirror strong {
+.hexi-milkdown-editor .ProseMirror strong {
   font-weight: 600 !important;
 }
 
-.blogit-milkdown-editor.milkdown .milkdown-image-block .image-wrapper {
+.hexi-milkdown-editor.milkdown .milkdown-image-block .image-wrapper {
   width: 100% !important;
 }
 
-.blogit-milkdown-editor .ProseMirror p,
-.blogit-milkdown-editor .ProseMirror li,
-.blogit-milkdown-editor .ProseMirror blockquote {
+.hexi-milkdown-editor .ProseMirror p,
+.hexi-milkdown-editor .ProseMirror li,
+.hexi-milkdown-editor .ProseMirror blockquote {
   line-height: 1.9 !important;
 }
 
-.blogit-milkdown-editor .ProseMirror {
+.hexi-milkdown-editor .ProseMirror {
   scrollbar-width: thin;
   scrollbar-color: #ffffff transparent;
 }
 
-.blogit-milkdown-editor
+.hexi-milkdown-editor
   .ProseMirror::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.blogit-milkdown-editor
+.hexi-milkdown-editor
   .ProseMirror::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.blogit-milkdown-editor
+.hexi-milkdown-editor
   .ProseMirror::-webkit-scrollbar-thumb {
   background: #ffffff;
   border-radius: 9999px;
 }
 
-.blogit-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(1),
-.blogit-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(2),
-.blogit-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(3) {
+.hexi-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(1),
+.hexi-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(2),
+.hexi-milkdown-editor .milkdown-table-block [data-role='col-drag-handle'] .button-group > button:nth-child(3) {
   display: none !important;
 }

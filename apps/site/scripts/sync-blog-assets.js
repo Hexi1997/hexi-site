@@ -62,12 +62,12 @@ function syncBlogAssets(slug) {
 
   if (fs.existsSync(assetsSourceDir)) {
     console.log(`📁 ${slug}`);
-    
+
     // Remove existing target directory to ensure deleted files are also synced
     if (fs.existsSync(assetsTargetDir)) {
       fs.rmSync(assetsTargetDir, { recursive: true, force: true });
     }
-    
+
     copyFolderRecursive(assetsSourceDir, assetsTargetDir);
   } else {
     // Clean up target assets if source doesn't exist

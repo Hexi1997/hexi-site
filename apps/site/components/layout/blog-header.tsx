@@ -8,18 +8,18 @@ export function BlogHeader() {
           <div className="flex items-center gap-1">
             <Image
               src="/icons/logo-mark.svg"
-              alt="BLOGIT"
+              alt="Hexi Space"
               width={32}
               height={32}
               className="h-8 w-8"
               priority
             />
-            <span className="bg-black text-lg text-white font-anta">BLOGIT</span>
+            <span className="bg-black text-lg text-white font-anta">HEXI SPACE</span>
           </div>
         </a>
         <nav>
           <a
-            href="https://github.com/Hexi1997/Blogit"
+            href="https://github.com/Hexi1997/hexi-site"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"

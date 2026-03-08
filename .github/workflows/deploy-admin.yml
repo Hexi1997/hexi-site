@@ -38,7 +38,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          npx wrangler pages project create blogit-admin --production-branch main || true
-          echo "${{ secrets.ADMIN_PAT }}" | npx wrangler pages secret put ADMIN_PAT --project-name blogit-admin
-          echo "${{ secrets.ADMIN_PASSWORD_HASH }}" | npx wrangler pages secret put ADMIN_PASSWORD_HASH --project-name blogit-admin
-          npx wrangler pages deploy dist --project-name blogit-admin
+          npx wrangler pages project create hexi-admin --production-branch main || true
+          echo "${{ secrets.ADMIN_PAT }}" | npx wrangler pages secret put ADMIN_PAT --project-name hexi-admin
+          echo "${{ secrets.ADMIN_PASSWORD_HASH }}" | npx wrangler pages secret put ADMIN_PASSWORD_HASH --project-name hexi-admin
+          npx wrangler pages deploy dist --project-name hexi-admin

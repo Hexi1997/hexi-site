@@ -1,11 +1,11 @@
-name: Sync Blog Post Index
+name: Sync Site Post Index
 
 on:
   push:
     branches:
       - main
     paths:
-      - apps/blog/posts/**/index.md
+      - apps/site/posts/**/index.md
   workflow_dispatch:
 
 permissions:
@@ -33,17 +33,17 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate posts index
-        run: pnpm --filter blog run generate-index
+        run: pnpm --filter site run generate-index
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet -- apps/blog/posts/_index.json; then
+          if git diff --quiet -- apps/site/posts/_index.json; then
             echo "No index changes detected."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/blog/posts/_index.json
-          git commit -m "chore(blog): sync posts index"
+          git add apps/site/posts/_index.json
+          git commit -m "chore(site): sync posts index"
           git push
