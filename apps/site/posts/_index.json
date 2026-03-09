@@ -2,6 +2,13 @@
   "count": 7,
   "posts": [
     {
+      "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
+      "title": "基于真实 DOM 还原 Skeleton 的工程思考",
+      "date": "2024-01-04",
+      "pinned": true,
+      "tags": []
+    },
+    {
       "slug": "cong-shadcn-ui-button-dao-ke-ding-zhi",
       "title": "从 shadcn/ui Button 到可定制 loading 的业务按钮",
       "date": "2026-02-28",
@@ -43,13 +50,6 @@
       "slug": "tailwind-css-dong-tai-pin-jie-lei-ming",
       "title": "Tailwind CSS 动态拼接类名居然有效？记一次 Code Review 引发的思考",
       "date": "2025-03-13",
-      "pinned": false,
-      "tags": []
-    },
-    {
-      "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
-      "title": "基于真实 DOM 还原 Skeleton 的工程思考",
-      "date": "2024-01-04",
       "pinned": false,
       "tags": []
     }
