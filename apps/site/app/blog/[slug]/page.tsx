@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <article className="mx-auto mt-10 max-w-[732px] px-4 pb-12">
       <div className="flex justify-between items-center mb-3">
-        <a href="/" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
+        <a href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
           <ArrowLeft className="mr-0 size-[18px]" />
           Back
         </a>
@@ -118,7 +118,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {post.tags.map((tag) => (
                 <a
                   key={`${post.slug}-${tag}`}
-                  href={`/?tag=${encodeURIComponent(tag)}`}
+                  href={`/blog?tag=${encodeURIComponent(tag)}`}
                   className="text-xs text-neutral-500"
                 >
                   #{tag}
