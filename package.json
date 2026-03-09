@@ -1,0 +1,19 @@
+{
+  "name": "Blogit",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "dev:admin": "pnpm --filter admin run dev",
+    "dev:blog": "pnpm --filter blog run dev",
+    "preview:blog": "pnpm --filter blog run preview",
+    "build": "pnpm -r run build",
+    "build:admin": "pnpm --filter admin run build",
+    "build:blog": "pnpm --filter blog run build",
+    "test": "pnpm -r run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.30.0"
+}

@@ -1,0 +1,49 @@
+name: Sync Blog Post Index
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/blog/posts/**/index.md
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-index:
+    name: Generate posts _index.json
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate posts index
+        run: pnpm --filter blog run generate-index
+
+      - name: Commit and push changes
+        run: |
+          if git diff --quiet -- apps/blog/posts/_index.json; then
+            echo "No index changes detected."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/blog/posts/_index.json
+          git commit -m "chore(blog): sync posts index"
+          git push

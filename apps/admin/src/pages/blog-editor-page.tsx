@@ -1,0 +1,175 @@
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { getBlog, saveBlog } from "@/lib/github";
+import type { BlogFrontmatter, PendingImage } from "@/types";
+import { FrontmatterForm } from "@/components/editor/frontmatter-form";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { BLOG_REPO_CONFIG } from "@/lib/config";
+import MilkdownEditor from "@/components/editor/milkdown-editor";
+
+function normalizeFenceLanguageCase(markdown: string): string {
+  return markdown.replace(
+    /^([ \t]*)(`{3,}|~{3,})([ \t]*)([A-Za-z][\w-]*)([^\n\r]*)$/gm,
+    (_match, indent, fence, spacing, lang, tail) =>
+      `${indent}${fence}${spacing}${lang.toLowerCase()}${tail}`
+  );
+}
+
+export function BlogEditorPage() {
+  const { slug: paramSlug } = useParams<{ slug: string }>();
+  const isNew = paramSlug === "new";
+  const { token } = useAuth();
+  const navigate = useNavigate();
+
+  const [slug, setSlug] = useState(isNew ? "" : paramSlug || "");
+  const [frontmatter, setFrontmatter] = useState<BlogFrontmatter>({
+    title: "",
+    date: new Date().toISOString().slice(0, 10),
+    tags: [],
+  });
+  const [content, setContent] = useState("");
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+  const [loading, setLoading] = useState(!isNew);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  // Map: display URL -> relative path (for save-time replacement)
+  const urlMapRef = useRef<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    if (isNew || !token || !paramSlug) return;
+    setLoading(true);
+
+    getBlog(token, paramSlug)
+      .then((blog) => {
+        setFrontmatter(blog.frontmatter);
+
+        // Replace relative asset paths (assets/xxx or ./assets/xxx) with GitHub raw URLs
+        const rawBase = `https://raw.githubusercontent.com/${BLOG_REPO_CONFIG.owner}/${BLOG_REPO_CONFIG.repo}/${BLOG_REPO_CONFIG.branch}/${BLOG_REPO_CONFIG.blogPath}/${paramSlug}`;
+        const displayContent = blog.content.replace(
+          /(?<!\/)(?:\.\/)?assets\/([^\s)]+)/g,
+          (_match, filename) => {
+            const rawUrl = `${rawBase}/assets/${filename}`;
+            urlMapRef.current.set(rawUrl, `assets/${filename}`);
+            return rawUrl;
+          }
+        );
+        setContent(displayContent);
+      })
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [isNew, token, paramSlug]);
+
+  const handleImageAdd = useCallback((image: PendingImage) => {
+    setPendingImages((prev) => [...prev, image]);
+    urlMapRef.current.set(image.blobUrl, `assets/${image.filename}`);
+  }, []);
+
+  const handleContentChange = useCallback((md: string) => {
+    setContent(md);
+  }, []);
+
+  async function handleSave() {
+    if (!token) return;
+
+    if (!slug.trim()) {
+      setError("Slug is required");
+      return;
+    }
+    if (!frontmatter.title.trim()) {
+      setError("Title is required");
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      // Replace all display URLs (blob URLs + GitHub raw URLs) back to relative paths
+      let finalContent = content;
+      for (const [displayUrl, relativePath] of urlMapRef.current.entries()) {
+        finalContent = finalContent.replaceAll(displayUrl, relativePath);
+      }
+      finalContent = normalizeFenceLanguageCase(finalContent);
+
+      await saveBlog(token, slug, frontmatter, finalContent, pendingImages, isNew);
+
+      // Clear pending images after successful save
+      for (const img of pendingImages) {
+        URL.revokeObjectURL(img.blobUrl);
+      }
+      setPendingImages([]);
+      urlMapRef.current.clear();
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+
+      if (isNew) {
+        navigate(`/editor/${slug}`, { replace: true });
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" onClick={() => navigate("/")}>
+          <ArrowLeft className="mr-1 size-[18px]" />
+          <span className="text-[16px]">Back</span>
+        </Button>
+        <div className="flex items-center gap-3">
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          {success && (
+            <p className="text-sm text-green-600">Saved successfully!</p>
+          )}
+          {pendingImages.length > 0 && (
+            <span className="text-xs text-muted-foreground">
+              {pendingImages.length} image{pendingImages.length > 1 ? "s" : ""}{" "}
+              to upload
+            </span>
+          )}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? (
+              <Loader2 className="mr-0 !size-[18px] animate-spin" />
+            ) : (
+              <Save className="mr-0 !size-[18px]" />
+            )}
+            <span className="text-[15px]">{isNew ? "Publish" : "Save"}</span>
+          </Button>
+        </div>
+      </div>
+
+      <FrontmatterForm
+        frontmatter={frontmatter}
+        slug={slug}
+        isNew={isNew}
+        onChange={setFrontmatter}
+        onSlugChange={setSlug}
+      />
+
+      <div className="relative left-1/2 w-[974px] max-w-[calc(100vw-2rem)] -translate-x-1/2">
+        <MilkdownEditor
+          content={content}
+          onChange={handleContentChange}
+          onImageAdd={handleImageAdd}
+        />
+      </div>
+    </div>
+  );
+}

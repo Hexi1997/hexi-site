@@ -1,0 +1,36 @@
+{
+  "count": 3,
+  "posts": [
+    {
+      "slug": "the-story-behind-blogit-why-i-built-a",
+      "title": "The Story Behind Blogit: Why I Built a Git-Powered, Local-First Blogging System",
+      "date": "2026-03-06",
+      "pinned": true,
+      "tags": [
+        "Blogit"
+      ]
+    },
+    {
+      "slug": "markdown-syntax-showcase",
+      "title": "Markdown Syntax Showcase",
+      "date": "2026-03-06",
+      "pinned": false,
+      "tags": [
+        "Blogit",
+        "Markdown Preview"
+      ]
+    },
+    {
+      "slug": "why-i-chose-milkdown-for-blogit-admin",
+      "title": "Why I Chose Milkdown as the Markdown Editor for Blogit Admin",
+      "date": "2026-03-06",
+      "pinned": false,
+      "tags": [
+        "Blogit",
+        "Admin",
+        "Milkdown"
+      ],
+      "cover": "assets/cover.png"
+    }
+  ]
+}

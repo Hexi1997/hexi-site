@@ -1,0 +1,2 @@
+ADMIN_PAT=ghp_your_personal_access_token_here
+ADMIN_PASSWORD_HASH=your_sha256_hash_here

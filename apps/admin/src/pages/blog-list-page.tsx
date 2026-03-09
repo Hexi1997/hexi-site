@@ -1,0 +1,220 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { listBlogs, deleteBlog, setBlogPinned } from "@/lib/github";
+import type { PostItem } from "@/types";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+
+function sortPosts(posts: PostItem[]): PostItem[] {
+  return [...posts].sort((a, b) => {
+    if (Boolean(a.pinned) !== Boolean(b.pinned)) {
+      return a.pinned ? -1 : 1;
+    }
+    return a.date < b.date ? 1 : -1;
+  });
+}
+
+export function BlogListPage() {
+  const { token } = useAuth();
+  const [posts, setPosts] = useState<PostItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<PostItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [pinningSlug, setPinningSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    setLoading(true);
+    listBlogs(token)
+      .then((items) => setPosts(sortPosts(items)))
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  async function handleTogglePinned(post: PostItem) {
+    if (!token) return;
+    setPinningSlug(post.slug);
+    setError(null);
+
+    try {
+      const nextPinned = !post.pinned;
+      await setBlogPinned(token, post.slug, nextPinned);
+      setPosts((prev) =>
+        sortPosts(
+          prev.map((item) =>
+            item.slug === post.slug ? { ...item, pinned: nextPinned } : item
+          )
+        )
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setPinningSlug(null);
+    }
+  }
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!token || !deleteTarget) return;
+    setDeleting(true);
+    try {
+      await deleteBlog(token, deleteTarget.slug);
+      setPosts((prev) => prev.filter((b) => b.slug !== deleteTarget.slug));
+      setDeleteTarget(null);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-20 text-center">
+        <p className="text-destructive">{error}</p>
+        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Blog Posts</h1>
+          <p className="text-sm text-muted-foreground">
+            {posts.length} post{posts.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+        <Button asChild>
+          <Link to="/editor/new">
+            <Plus className="mr-0 size-[18px]" />
+            New Post
+          </Link>
+        </Button>
+      </div>
+
+      {posts.length === 0 ? (
+        <div className="rounded-lg border border-dashed p-12 text-center">
+          <p className="text-muted-foreground">No blog posts yet.</p>
+          <Button asChild variant="outline" className="mt-4">
+            <Link to="/editor/new">Create your first post</Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((blog) => (
+            <div
+              key={blog.slug}
+              className="flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="truncate font-medium text-[17px]">{blog.title}</h3>
+                </div>
+                <p className="mt-1 text-[13px] text-muted-foreground">
+                  {blog.date} &middot; {blog.slug}
+                </p>
+                {blog.tags && blog.tags.length > 0 && (
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    {blog.tags.map((tag) => (
+                      <span
+                        key={`${blog.slug}-${tag}`}
+                        className="text-[11px] text-muted-foreground"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="ml-4 flex items-center gap-2">
+                <Button
+                  variant={blog.pinned ? "default" : "outline"}
+                  size="sm"
+                  disabled={pinningSlug === blog.slug}
+                  onClick={() => handleTogglePinned(blog)}
+                >
+                  {pinningSlug === blog.slug ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : blog.pinned ? (
+                    "Unpin"
+                  ) : (
+                    "Pin"
+                  )}
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to={`/editor/${blog.slug}`}>
+                    <Pencil className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDeleteTarget(blog)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && !deleting && setDeleteTarget(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete blog post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete &ldquo;{deleteTarget?.title}&rdquo; and
+              all its assets. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
