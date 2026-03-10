@@ -3,6 +3,7 @@ title: '小小倒计时，没那么简单'
 date: '2025-12-26'
 tags:
   - 'Frontend'
+  - 'CountDown'
 ---
 
 倒计时是一个非常常见的 UI：
@@ -15,19 +16,70 @@ tags:
 
 看起来只是简单地显示：
 
-```
+```html
 00:10 → 00:09 → 00:08
 ```
 
 但当你真正实现一个体验不错的倒计时页面时，其实有不少细节需要考虑。
 
-## 1. 时区问题
+## 1. 数字要等宽显示（tabular-nums)
+
+这是一个我最近才注意到的小细节。很多字体里，数字宽度其实是不同的。
+
+例如：
+
+```html
+1  很窄
+8  很宽
+0  也比较宽
+```
+
+所以倒计时变化时：
+
+```html
+10
+09
+08
+07
+```
+
+整个容器宽度会 **轻微变化**。
+
+如果你给数字加了动画，就会出现一种微妙的 **抖动感**。
+
+CSS 其实提供了一个专门的属性：
+
+```css
+font-variant-numeric: tabular-nums;
+```
+
+作用是：
+
+> 让所有数字使用等宽排列。
+
+也就是：
+
+```html
+0 1 2 3 4 5 6 7 8 9
+```
+
+每个数字占用的宽度一致。
+
+如果你使用 Tailwind：
+
+```html
+<span class="tabular-nums">
+```
+
+就可以了。
+
+## 2. 时区问题
 
 倒计时最容易出问题的其实是 **时区**。
 
 比如活动时间是：
 
-```
+```html
 2026-05-01 12:00
 ```
 
@@ -35,7 +87,7 @@ tags:
 
 如果你直接写：
 
-```
+```html
 new Date("2026-05-01 12:00")
 ```
 
@@ -69,7 +121,7 @@ const targetTimeStamp = new Date("2026-05-01T12:00:00+08:00").getTime()；
 
 即可获取到正确的时间戳，这样所有用户看到的倒计时都是一致的。
 
-## 2. 如何准确更新倒计时？
+## 3. 如何准确更新倒计时？
 
 ### 常见写法
 
@@ -162,31 +214,35 @@ export default function Countdown() {
 }
 ```
 
-### Webworker 版本
+### webworker 版本
 
-```ts
+```typescript
 // countdown.worker.ts
 let targetTimestamp: number
+let timer: number | undefined
 
 self.onmessage = (e: MessageEvent) => {
   if (e.data.type === "start") {
     targetTimestamp = e.data.targetTimestamp
-    tick()
+    startInterval()
   }
 }
 
-function tick() {
-  const remain = targetTimestamp - Date.now()
-  if (remain > 0) {
-    postMessage(remain)
-    requestAnimationFrame(tick)
-  } else {
-    postMessage(0)
-  }
+function startInterval() {
+  if (timer) clearInterval(timer) // 防止重复启动
+  timer = setInterval(() => {
+    const remain = targetTimestamp - Date.now()
+    if (remain > 0) {
+      postMessage(remain)
+    } else {
+      postMessage(0)
+      clearInterval(timer)
+    }
+  }, 16) // 每16ms ≈ 60fps，可根据需求调整
 }
 ```
 
-```ts
+```tsx
 import React, { useEffect, useState } from "react"
 import CountdownWorker from "./countdown.worker.ts?worker"
 
