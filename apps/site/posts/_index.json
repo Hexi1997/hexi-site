@@ -1,5 +1,5 @@
 {
-  "count": 8,
+  "count": 9,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -23,6 +23,16 @@
       "tags": [
         "Frontend",
         "Zustand"
+      ]
+    },
+    {
+      "slug": "miao-sha-xi-tong-zhong-de-qian-duan",
+      "title": "秒杀系统中的前端倒计时设计",
+      "date": "2025-12-31",
+      "pinned": false,
+      "tags": [
+        "Frontend",
+        "CountDown"
       ]
     },
     {
