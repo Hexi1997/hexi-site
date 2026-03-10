@@ -1,8 +1,37 @@
+import type { Metadata } from "next";
 import { BlogList } from "@/components/blog/blog-list";
 import { TypewriterSlogan } from "@/components/home/typewriter-slogan";
 import { getAllBlogPosts } from "@/lib/blog";
 
 export const dynamic = "force-static";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description:
+    "Articles, notes, and tutorials about building, writing, and shipping.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Blog",
+    description:
+      "Articles, notes, and tutorials about building, writing, and shipping.",
+    url: "/blog",
+    type: "website",
+    images: [
+      {
+        url: "/default-cover.png",
+      },
+    ],
+  },
+  twitter: {
+    title: "Blog",
+    description:
+      "Articles, notes, and tutorials about building, writing, and shipping.",
+    card: "summary_large_image",
+    images: ["/default-cover.png"],
+  },
+};
 
 export default function BlogListPage() {
   const posts = getAllBlogPosts();
