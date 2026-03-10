@@ -9,12 +9,12 @@ export default function BlogListPage() {
 
   return (
     <div className="mx-auto max-w-[732px]">
-      <section className="mb-8">
+      {/* <section className="mb-8">
         <TypewriterSlogan text="A Git-powered, local-first blogging system" />
         <p className="mt-2 text-sm text-neutral-500">
           Content as code, writing as commit, publishing as push, cloneable and forkable, with no platform lock-in, SEO optimized by default with SSG, and a visual Markdown block editor.
         </p>
-      </section>
+      </section> */}
       <BlogList posts={posts} />
     </div>
   );
