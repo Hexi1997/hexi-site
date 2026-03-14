@@ -17,14 +17,18 @@ export function BlogHeader() {
             <span className="bg-black text-lg text-white font-anta">HEXI SPACE</span>
           </div>
         </a>
-        <nav>
+        <nav className="flex items-center gap-4">
           <a
-            href="https://github.com/Hexi1997/hexi-site"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/agent"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
-            GitHub
+            Agent
+          </a>
+          <a
+            href="/blog"
+            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
+          >
+            Blog
           </a>
         </nav>
       </div>

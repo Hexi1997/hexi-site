@@ -51,7 +51,6 @@
 
 body {
   font-family: var(--font-geist), system-ui, sans-serif;
-  color: white;
   overscroll-behavior-y: none; /* Disable vertical rubber-band scrolling */
 }
 
