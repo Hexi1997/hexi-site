@@ -4,10 +4,10 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { RotateCcw } from "lucide-react";
 import { Streamdown, defaultRehypePlugins } from "streamdown";
 import { code } from "@streamdown/code";
-import { mermaid } from "@streamdown/mermaid";
-import { math } from "@streamdown/math";
-import { cjk } from "@streamdown/cjk";
-import "katex/dist/katex.min.css";
+// import { mermaid } from "@streamdown/mermaid";
+// import { math } from "@streamdown/math";
+// import { cjk } from "@streamdown/cjk";
+// import "katex/dist/katex.min.css";
 import "streamdown/styles.css";
 import { cn } from "@/lib/utils";
 
@@ -172,7 +172,7 @@ export default function AgentPage() {
                 <Streamdown
                   animated
                   key={`${i}-${isLoading && i === messages.length - 1}`}
-                  plugins={{ code, mermaid, math, cjk }}
+                  plugins={{ code }}
                   isAnimating={isLoading && i === messages.length - 1}
                   linkSafety={{ enabled: false }}
                   rehypePlugins={[
