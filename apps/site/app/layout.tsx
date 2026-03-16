@@ -69,9 +69,9 @@ export default function RootLayout({
       <body
         className={`${geist.variable} ${anta.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-background">
+        <div className="bg-background">
           <BlogHeader />
-          <main className="mx-auto w-full max-w-[766px] px-4 py-8">
+          <main className="mx-auto w-full max-w-[766px] px-4">
             <Providers>{children}</Providers>
           </main>
         </div>

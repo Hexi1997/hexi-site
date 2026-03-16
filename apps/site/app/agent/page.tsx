@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Bot, User, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
+import { Streamdown, defaultRehypePlugins } from "streamdown";
+import { code } from "@streamdown/code";
+import { mermaid } from "@streamdown/mermaid";
+import { math } from "@streamdown/math";
+import { cjk } from "@streamdown/cjk";
+import "katex/dist/katex.min.css";
+import "streamdown/styles.css";
 import { cn } from "@/lib/utils";
 
 type Message = {
@@ -19,13 +26,30 @@ const FAQ_QUESTIONS = [
 ];
 
 const AGENT_API_URL = "/api/agent/chat";
+const STORAGE_KEY = "agent-messages";
 
 export default function AgentPage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) setMessages(JSON.parse(stored) as Message[]);
+    } catch {}
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch {}
+  }, [messages, isHydrated]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,7 +79,9 @@ export default function AgentPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ messages: newMessages }),
+          body: JSON.stringify({
+            messages: [userMessage],
+          }),
         });
 
         if (!response.ok) throw new Error("请求失败，请稍后重试。");
@@ -79,7 +105,8 @@ export default function AgentPage() {
           });
         }
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "请求失败，请稍后重试。";
+        const msg =
+          err instanceof Error ? err.message : "请求失败，请稍后重试。";
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { role: "assistant", content: msg };
@@ -89,7 +116,7 @@ export default function AgentPage() {
         setIsLoading(false);
       }
     },
-    [messages, isLoading]
+    [messages, isLoading],
   );
 
   const reset = () => {
@@ -101,63 +128,27 @@ export default function AgentPage() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex flex-col gap-6 pb-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">与 Hexi 对话</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            你可以向 Hexi Agent 提问，了解关于 Hexi 的一切
-          </p>
-        </div>
-        {!isEmpty && (
-          <button
-            onClick={reset}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg border border-border hover:bg-accent"
-          >
-            <RotateCcw size={13} />
-            重置对话
-          </button>
-        )}
-      </div>
-
-      {/* FAQ chips */}
-      {isEmpty && (
-        <div className="flex flex-col gap-3">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            常见问题
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {FAQ_QUESTIONS.map((q) => (
-              <button
-                key={q}
-                onClick={() => sendMessage(q)}
-                disabled={isLoading}
-                className="text-left text-sm px-4 py-3 rounded-xl border border-border bg-card hover:bg-accent hover:border-foreground/20 transition-all duration-150 disabled:opacity-50"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
+    <div className="flex flex-col gap-6 pb-0 pt-8">
       {/* Messages */}
-      {!isEmpty && (
-        <div className="flex flex-col gap-4 min-h-[300px]">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={cn(
-                "flex gap-3 items-start",
-                msg.role === "user" ? "flex-row-reverse" : "flex-row"
-              )}
-            >
-              <div
+      <div
+        className={cn(
+          "flex flex-col gap-4",
+          isEmpty ? "min-h-[120px]" : "min-h-[300px]",
+        )}
+      >
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex gap-3 items-start",
+              msg.role === "user" ? "flex-row-reverse" : "flex-row",
+            )}
+          >
+            {/* <div
                 className={cn(
                   "shrink-0 w-7 h-7 mt-0.5 rounded-full flex items-center justify-center",
                   msg.role === "user"
-                    ? "bg-foreground text-background"
+                    ? "bg-muted"
                     : "bg-muted border border-border"
                 )}
               >
@@ -166,60 +157,106 @@ export default function AgentPage() {
                 ) : (
                   <Bot size={13} className="text-foreground" />
                 )}
-              </div>
-              <div
-                className={cn(
-                  "max-w-[82%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
-                  msg.role === "user"
-                    ? "bg-foreground text-background rounded-tr-sm"
-                    : "bg-muted rounded-tl-sm"
-                )}
-              >
-                {msg.content ||
-                  (isLoading && i === messages.length - 1 ? (
-                    <span className="flex gap-1 items-center h-5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:0ms]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:150ms]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
-                    </span>
-                  ) : (
-                    ""
-                  ))}
-              </div>
+              </div> */}
+            <div
+              className={cn(
+                "max-w-full px-4 py-2.5 text-sm leading-relaxed",
+                msg.role === "user"
+                  ? "bg-muted rounded-2xl whitespace-pre-wrap"
+                  : "px-0",
+              )}
+            >
+              {msg.role === "user" ? (
+                msg.content
+              ) : msg.content ? (
+                <Streamdown
+                  animated
+                  key={`${i}-${isLoading && i === messages.length - 1}`}
+                  plugins={{ code, mermaid, math, cjk }}
+                  isAnimating={isLoading && i === messages.length - 1}
+                  linkSafety={{ enabled: false }}
+                  rehypePlugins={[
+                    defaultRehypePlugins.raw,
+                    defaultRehypePlugins.sanitize,
+                  ]}
+                  className="streamdown-container [&_pre_code]:text-xs"
+                >
+                  {msg.content}
+                </Streamdown>
+              ) : isLoading && i === messages.length - 1 ? (
+                <span className="flex gap-1 items-center h-5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:0ms]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:150ms]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
+                </span>
+              ) : null}
             </div>
-          ))}
-          <div ref={bottomRef} />
-        </div>
-      )}
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
 
       {/* Input area */}
-      <div className="flex gap-2 items-end sticky bottom-4 bg-background/80 backdrop-blur-sm pt-2">
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            autoResize();
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(input);
-            }
-          }}
-          placeholder="发送消息… (Enter 发送，Shift+Enter 换行)"
-          rows={1}
-          disabled={isLoading}
-          className="flex-1 resize-none rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
-          style={{ minHeight: "42px" }}
-        />
-        <button
-          onClick={() => sendMessage(input)}
-          disabled={isLoading || !input.trim()}
-          className="shrink-0 w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
-        >
-          <Send size={15} />
-        </button>
+      <div className="flex flex-col gap-2 sticky bottom-0 pb-4 bg-background pt-2">
+        {messages.length === 0 && (
+          <h2 className="text-xl uppercase sm:text-2xl font-geist-mono mb-4 text-center">
+            Attention Is All You Need.
+          </h2>
+        )}
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              autoResize();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(input);
+              }
+            }}
+            placeholder="Enter your question..."
+            rows={4}
+            disabled={isLoading}
+            className="w-full resize-none rounded-xl border border-border bg-card pl-4 pr-24 py-2.5 pb-11 text-sm focus:outline-none focus:ring-0 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
+            style={{ minHeight: "42px" }}
+          />
+          <div className="absolute right-2 bottom-4 flex gap-1.5">
+            {messages.length > 0 && (
+              <button
+                onClick={reset}
+                disabled={isLoading}
+                title="Reset conversation"
+                className="w-9 h-9 rounded-lg border border-border bg-card text-muted-foreground flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
+              >
+                <RotateCcw size={14} />
+              </button>
+            )}
+            {/* <button
+              onClick={() => sendMessage(input)}
+              disabled={isLoading || !input.trim()}
+              className="w-9 h-9 rounded-lg bg-secondary text-background flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
+            >
+              <Send size={14} />
+            </button> */}
+          </div>
+        </div>
+
+        {/* FAQ chips */}
+        <div className="flex flex-no-wrap gap-1.5 scrollbar-none overflow-x-auto">
+          {FAQ_QUESTIONS.map((q) => (
+            <button
+              key={q}
+              onClick={() => sendMessage(q)}
+              disabled={isLoading}
+              className="text-xs px-3 shrink-0 py-1.5 rounded-full border border-border bg-card hover:bg-accent hover:border-foreground/20 transition-all duration-150 disabled:opacity-50 text-muted-foreground hover:text-foreground"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

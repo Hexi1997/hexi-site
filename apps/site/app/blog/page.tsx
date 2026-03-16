@@ -37,7 +37,7 @@ export default function BlogListPage() {
   const posts = getAllBlogPosts();
 
   return (
-    <div className="mx-auto max-w-[732px]">
+    <div className="mx-auto max-w-[732px] py-8">
       {/* <section className="mb-8">
         <TypewriterSlogan text="A Git-powered, local-first blogging system" />
         <p className="mt-2 text-sm text-neutral-500">
