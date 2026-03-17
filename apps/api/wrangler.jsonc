@@ -3,6 +3,9 @@
 	"name": "api",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-03-17",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"d1_databases": [
 		{
 			"binding": "hexi_site",
@@ -11,9 +14,6 @@
 			"remote": true
 		}
 	],
-	// "compatibility_flags": [
-	//   "nodejs_compat"
-	// ],
 	// "vars": {
 	//   "MY_VAR": "my-variable"
 	// },

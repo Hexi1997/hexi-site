@@ -1,12 +1,7 @@
 import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { auth } from "./lib/auth"
-
-export const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://hexi.men",
-  "https://2437951611.workers.dev",
-]
+import { ALLOWED_ORIGINS } from "./constants"
 
 const app = new Hono()
 
