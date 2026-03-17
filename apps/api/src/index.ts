@@ -1,11 +1,12 @@
 import { Hono } from "hono"
 import { cors } from "hono/cors"
-import { createAuth } from "./lib/auth"
 import { ALLOWED_ORIGINS } from "./constants"
+import type { AppEnv } from "./types"
+import authRouter from "./routes/auth"
+import profileRouter from "./routes/profile"
 
-const app = new Hono()
+const app = new Hono<AppEnv>()
 
-// 非 /api 开头的路径全部 302 重定向到主站 https://hexi.men，保留原始 path 与 query。
 app.use("*", async (c, next) => {
   const url = new URL(c.req.url)
   if (!url.pathname.startsWith("/api")) {
@@ -15,11 +16,10 @@ app.use("*", async (c, next) => {
   return next()
 })
 
-// 简单健康检查（供 /api/health 使用）
 app.get("/api/health", (c) => c.text("OK"))
 
 app.use(
-  "/api/auth/*",
+  "/api/*",
   cors({
     origin: (origin) =>
       origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
@@ -30,9 +30,7 @@ app.use(
   })
 )
 
-app.all("/api/auth/*", async (c) => {
-  const auth = createAuth(c.env as any)
-  return auth.handler(c.req.raw)
-})
+app.route("/api/auth", authRouter)
+app.route("/api/profile", profileRouter)
 
 export default app
