@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession, authClient } from "@/lib/auth-client";
+import { NAV_MENUS } from "@/components/layout/nav-menus";
 
 function avatarColor(seed: string): string {
   const colors = [
@@ -49,8 +51,10 @@ export function BlogHeader() {
   const { data: session, isPending } = useSession();
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const signInHref = pathname && pathname !== "/sign-in"
     ? `/sign-in?redirect=${encodeURIComponent(pathname)}`
@@ -58,8 +62,11 @@ export function BlogHeader() {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+        setMobileMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -67,7 +74,7 @@ export function BlogHeader() {
   }, []);
 
   async function handleSignOut() {
-    setOpen(false);
+    setProfileOpen(false);
     await authClient.signOut();
     router.refresh();
   }
@@ -88,43 +95,34 @@ export function BlogHeader() {
             <span className="bg-black text-lg text-white font-anta">HEXI SPACE</span>
           </div>
         </Link>
-        <nav className="flex items-center gap-4 md:gap-6">
-          <Link
-            href="/agent"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
-          >
-            Agent
-          </Link>
-          <Link
-            href="/blog"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
-          >
-            Blog
-          </Link>
-          <Link
-            href="/notes"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
-          >
-            Notes
-          </Link>
+        <nav className="hidden items-center gap-4 md:flex md:gap-6">
+          {NAV_MENUS.map((menu) => (
+            <Link
+              key={menu.href}
+              href={menu.href}
+              className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
+            >
+              {menu.label}
+            </Link>
+          ))}
         </nav>
 
-        <div className="flex items-center justify-end w-20">
+        <div className="flex items-center justify-end gap-2">
           {isPending ? (
             <span className="h-8 w-8 rounded-full bg-neutral-100 animate-pulse" />
           ) : session?.user ? (
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative" ref={profileDropdownRef}>
               <button
                 type="button"
-                onClick={() => setOpen((v) => !v)}
+                onClick={() => setProfileOpen((v) => !v)}
                 className="flex items-center gap-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
                 aria-haspopup="true"
-                aria-expanded={open}
+                aria-expanded={profileOpen}
               >
                 <UserAvatar user={session.user} />
               </button>
 
-              {open && (
+              {profileOpen && (
                 <div className="absolute right-0 mt-2 w-44 rounded-xl border bg-white shadow-lg py-1 z-50">
                   <div className="px-4 py-2 border-b">
                     <p className="text-sm font-medium text-neutral-800 truncate">
@@ -136,7 +134,7 @@ export function BlogHeader() {
                   </div>
                   <Link
                     href="/profile"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setProfileOpen(false)}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                   >
                     Profile
@@ -154,11 +152,39 @@ export function BlogHeader() {
           ) : (
             <Link
               href={signInHref}
-              className="inline-flex items-center rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+              className="inline-flex items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 md:px-4"
             >
               Login
             </Link>
           )}
+
+          <div className="relative md:hidden" ref={mobileMenuRef}>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 text-neutral-700 transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-haspopup="true"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+
+            {mobileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-44 rounded-xl border bg-white py-1 shadow-lg z-50">
+                {NAV_MENUS.map((menu) => (
+                  <Link
+                    key={menu.href}
+                    href={menu.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                  >
+                    {menu.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
