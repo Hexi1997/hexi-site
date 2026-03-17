@@ -8,6 +8,10 @@ type EnvWithD1 = {
   hexi_site: D1Database
   BETTER_AUTH_URL: string
   BETTER_AUTH_SECRET: string
+  GOOGLE_CLIENT_ID: string
+  GOOGLE_CLIENT_SECRET: string
+  GH_CLIENT_ID: string
+  GH_CLIENT_SECRET: string
 }
 
 const enc = new TextEncoder()
@@ -61,6 +65,17 @@ export const createAuth = (env: EnvWithD1) =>
     emailAndPassword: {
       enabled: true,
       password,
+    },
+
+    socialProviders: {
+      google: {
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      },
+      github: {
+        clientId: env.GH_CLIENT_ID,
+        clientSecret: env.GH_CLIENT_SECRET,
+      },
     },
 
     session: {

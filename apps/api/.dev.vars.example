@@ -3,3 +3,16 @@
 
 BETTER_AUTH_SECRET=your-32-char-minimum-secret-from-openssl-rand-base64-32
 BETTER_AUTH_URL=http://localhost:3000
+
+# Google OAuth
+# Get credentials from https://console.cloud.google.com/apis/credentials
+# Callback URL: {BETTER_AUTH_URL}/api/auth/callback/google
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# GitHub OAuth
+# Get credentials from https://github.com/settings/developers
+# Callback URL: {BETTER_AUTH_URL}/api/auth/callback/github
+# Note: Using GH_ prefix because GITHUB_ is reserved by GitHub Actions
+GH_CLIENT_ID=your-github-client-id
+GH_CLIENT_SECRET=your-github-client-secret
