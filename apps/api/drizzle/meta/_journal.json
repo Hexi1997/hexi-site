@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1773732690904,
+      "tag": "0000_perfect_romulus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1773733005931,
+      "tag": "0001_lowly_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1773733413081,
+      "tag": "0002_elite_echo",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1773733675630,
+      "tag": "0003_add_book_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1773733717994,
+      "tag": "0004_remove_book_table",
+      "breakpoints": true
+    }
+  ]
+}

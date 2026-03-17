@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             [&_thead>tr:first-child>th]:bg-gray-100 dark:[&_thead>tr:first-child>th]:bg-gray-800
             [&_table:not(:has(thead))>tbody>tr:first-child>td]:bg-gray-100 dark:[&_table:not(:has(thead))>tbody>tr:first-child>td]:bg-gray-800
             [&_:not(pre)>code]:before:content-[''] [&_:not(pre)>code]:after:content-['']
-            [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-[4px]"
+            [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-[4px] prose-code:text-[#24292E]"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 

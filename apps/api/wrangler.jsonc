@@ -11,7 +11,8 @@
 			"binding": "hexi_site",
 			"database_name": "hexi-site",
 			"database_id": "eca703c5-f303-4146-9ab6-eac5bf0fc35b",
-			"remote": true
+			"remote": true,
+			"migrations_dir": "drizzle"
 		}
 	],
 	"vars": {

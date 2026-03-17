@@ -1,9 +1,0 @@
-CREATE TABLE user (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  emailVerified INTEGER NOT NULL DEFAULT 0,
-  image TEXT,
-  createdAt INTEGER NOT NULL,
-  updatedAt INTEGER NOT NULL
-)
