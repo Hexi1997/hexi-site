@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -23,11 +24,11 @@ function GitHubIcon({ className }: { className?: string }) {
   );
 }
 
-export default function SignInPage() {
+function SignInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/";
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -85,7 +86,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)] items-center justify-center bg-neutral-50 px-4 py-12">
+    <div className="flex min-h-[calc(100vh-57px)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Card Container */}
         <div className="rounded-xl border border-neutral-200 bg-white p-8 shadow-sm">
@@ -210,5 +211,13 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInContent />
+    </Suspense>
   );
 }
