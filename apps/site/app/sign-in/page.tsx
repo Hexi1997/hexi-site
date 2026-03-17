@@ -46,7 +46,7 @@ function SignInContent() {
         callbackURL: redirectUrl,
       });
     } catch {
-      setError(`${provider === "google" ? "Google" : "GitHub"} 登录失败`);
+      setError(`${provider === "google" ? "Google" : "GitHub"} sign-in failed`);
       setSocialLoading(null);
     }
   }
@@ -93,57 +93,58 @@ function SignInContent() {
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-semibold text-neutral-900">
-              {isSignUp ? "创建账号" : "欢迎回来"}
+              {isSignUp ? "Create account" : "Welcome back"}
             </h1>
-            <p className="mt-2 text-sm text-neutral-500">
-              {isSignUp ? "注册以开始使用" : "登录您的账号"}
-            </p>
           </div>
 
-          {/* Social Login Buttons */}
-          <div className="flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={() => handleSocialLogin("google")}
-              disabled={socialLoading !== null || loading}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 transition-all hover:bg-neutral-50 hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <GoogleIcon className="h-5 w-5" />
-              {socialLoading === "google" ? "连接中…" : "使用 Google 继续"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSocialLogin("github")}
-              disabled={socialLoading !== null || loading}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-transparent bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <GitHubIcon className="h-5 w-5" />
-              {socialLoading === "github" ? "连接中…" : "使用 GitHub 继续"}
-            </button>
-          </div>
+          {/* Social Login Buttons (only when logging in) */}
+          {!isSignUp && (
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => handleSocialLogin("google")}
+                disabled={socialLoading !== null || loading}
+                className="flex w-full sm:flex-1 items-center justify-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 transition-all hover:bg-neutral-50 hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <GoogleIcon className="h-5 w-5" />
+                {socialLoading === "google" ? "Connecting…" : "Google"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSocialLogin("github")}
+                disabled={socialLoading !== null || loading}
+                className="flex w-full sm:flex-1 items-center justify-center gap-3 rounded-lg border border-transparent bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <GitHubIcon className="h-5 w-5" />
+                {socialLoading === "github" ? "Connecting…" : "GitHub"}
+              </button>
+            </div>
+          )}
 
           {/* Divider */}
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200" />
+          {!isSignUp && (
+            <div className="relative my-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-neutral-400">or continue with email</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-neutral-400">或使用邮箱</span>
-            </div>
-          </div>
+          )}
 
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {isSignUp && (
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-neutral-700">
-                  昵称
-                  <span className="ml-1 text-neutral-400 font-normal">（选填）</span>
+                  Name
+                  <span className="ml-1 text-neutral-400 font-normal">(optional)</span>
                 </label>
                 <input
                   id="name"
                   type="text"
-                  placeholder="您的昵称"
+                  placeholder="Enter name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
@@ -152,13 +153,13 @@ function SignInContent() {
             )}
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-neutral-700">
-                邮箱
+                Email
               </label>
               <input
                 id="email"
                 type="email"
                 required
-                placeholder="name@example.com"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
@@ -166,13 +167,13 @@ function SignInContent() {
             </div>
             <div>
               <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-neutral-700">
-                密码
+                Password
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                placeholder="输入您的密码"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
@@ -190,13 +191,13 @@ function SignInContent() {
               disabled={loading || socialLoading !== null}
               className="mt-2 w-full rounded-lg bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "处理中…" : isSignUp ? "创建账号" : "登录"}
+              {loading ? "Processing…" : isSignUp ? "Create account" : "Sign in"}
             </button>
           </form>
 
           {/* Toggle Sign In/Up */}
           <p className="mt-6 text-center text-sm text-neutral-500">
-            {isSignUp ? "已有账号？" : "还没有账号？"}
+            {isSignUp ? "Already have an account?" : "Don’t have an account?"}
             <button
               type="button"
               onClick={() => {
@@ -205,7 +206,7 @@ function SignInContent() {
               }}
               className="ml-1 font-medium text-neutral-900 hover:underline"
             >
-              {isSignUp ? "立即登录" : "立即注册"}
+              {isSignUp ? "Sign in" : "Sign up"}
             </button>
           </p>
         </div>
