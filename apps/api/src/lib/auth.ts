@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth"
+import { ALLOWED_ORIGINS } from ".."
 
 export const auth = betterAuth({
   database: {
@@ -21,9 +22,5 @@ export const auth = betterAuth({
   },
 
   // 允许站点跨域登录（前端与 Workers 不同域名时必配）
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://hexi.men",
-    "https://2437951611.workers.dev",
-  ],
-})
+    trustedOrigins: ALLOWED_ORIGINS,
+  })
