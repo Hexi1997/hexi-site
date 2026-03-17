@@ -10,6 +10,45 @@ type EnvWithD1 = {
   BETTER_AUTH_SECRET: string
 }
 
+const enc = new TextEncoder()
+
+function toHex(buf: ArrayBuffer) {
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+}
+
+function fromHex(hex: string) {
+  const arr = hex.match(/.{2}/g)!.map((b) => parseInt(b, 16))
+  return new Uint8Array(arr)
+}
+
+// PBKDF2-based password hashing — much lighter on CPU than scrypt/bcrypt,
+// safe to use within Cloudflare Workers' CPU time budget.
+const password = {
+  hash: async (plain: string) => {
+    const salt = crypto.getRandomValues(new Uint8Array(16))
+    const key = await crypto.subtle.importKey("raw", enc.encode(plain), "PBKDF2", false, ["deriveBits"])
+    const bits = await crypto.subtle.deriveBits(
+      { name: "PBKDF2", salt, iterations: 200_000, hash: "SHA-256" },
+      key,
+      256,
+    )
+    return `pbkdf2:${toHex(salt.buffer)}:${toHex(bits)}`
+  },
+  verify: async ({ hash, password: plain }: { hash: string; password: string }) => {
+    const [, saltHex, hashHex] = hash.split(":")
+    const salt = fromHex(saltHex)
+    const key = await crypto.subtle.importKey("raw", enc.encode(plain), "PBKDF2", false, ["deriveBits"])
+    const bits = await crypto.subtle.deriveBits(
+      { name: "PBKDF2", salt, iterations: 200_000, hash: "SHA-256" },
+      key,
+      256,
+    )
+    return toHex(bits) === hashHex
+  },
+}
+
 export const createAuth = (env: EnvWithD1) =>
   betterAuth({
     baseURL: env.BETTER_AUTH_URL,
@@ -21,6 +60,7 @@ export const createAuth = (env: EnvWithD1) =>
 
     emailAndPassword: {
       enabled: true,
+      password,
     },
 
     session: {
