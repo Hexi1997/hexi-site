@@ -15,6 +15,12 @@
 			"migrations_dir": "drizzle"
 		}
 	],
+	"r2_buckets": [
+		{
+			"binding": "AVATAR_BUCKET",
+			"bucket_name": "hexi-avatar"
+		}
+	],
 	"vars": {
 		"BETTER_AUTH_URL": "https://api.hexi.men"
 	},
