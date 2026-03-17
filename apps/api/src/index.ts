@@ -4,6 +4,7 @@ import { ALLOWED_ORIGINS } from "./constants"
 import type { AppEnv } from "./types"
 import authRouter from "./routes/auth"
 import profileRouter from "./routes/profile"
+import commentsRouter from "./routes/comments"
 
 const app = new Hono<AppEnv>()
 
@@ -32,5 +33,6 @@ app.use(
 
 app.route("/api/auth", authRouter)
 app.route("/api/profile", profileRouter)
+app.route("/api/comments", commentsRouter)
 
 export default app

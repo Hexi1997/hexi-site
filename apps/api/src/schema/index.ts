@@ -49,3 +49,15 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 })
+
+export const comment = sqliteTable("comment", {
+  id: text("id").primaryKey(),
+  postSlug: text("postSlug").notNull(),
+  parentId: text("parentId"),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  content: text("content").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+})
