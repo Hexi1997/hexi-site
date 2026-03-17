@@ -2,10 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, authClient } from "@/lib/auth-client";
 
 export function BlogHeader() {
   const { data: session, isPending } = useSession();
+  const pathname = usePathname();
+  
+  const signInHref = pathname && pathname !== "/sign-in" 
+    ? `/sign-in?redirect=${encodeURIComponent(pathname)}`
+    : "/sign-in";
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,7 +59,7 @@ export function BlogHeader() {
             </span>
           ) : (
             <Link
-              href="/sign-in"
+              href={signInHref}
               className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
             >
               Login
