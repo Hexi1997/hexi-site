@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth"
 import { drizzle } from "drizzle-orm/d1"
+import { eq } from "drizzle-orm"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { ALLOWED_ORIGINS } from "../constants"
 import * as schema from "../schema"
@@ -53,11 +54,13 @@ const password = {
   },
 }
 
-export const createAuth = (env: EnvWithD1) =>
-  betterAuth({
+export const createAuth = (env: EnvWithD1) => {
+  const db = drizzle(env.hexi_site)
+
+  return betterAuth({
     baseURL: env.BETTER_AUTH_URL,
     secret: env.BETTER_AUTH_SECRET,
-    database: drizzleAdapter(drizzle(env.hexi_site), {
+    database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
@@ -71,10 +74,45 @@ export const createAuth = (env: EnvWithD1) =>
       google: {
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
+        overrideUserInfoOnSignIn: true,
       },
       github: {
         clientId: env.GH_CLIENT_ID,
         clientSecret: env.GH_CLIENT_SECRET,
+      },
+    },
+
+    databaseHooks: {
+      user: {
+        update: {
+          before: async (data, ctx) => {
+            // Only during OAuth callback: backfill image/name if not yet set,
+            // but never override values the user has manually customized.
+            const path = ctx?.context?.path ?? ""
+            const isOAuthCallback = path.startsWith("/callback/") || path.startsWith("/auth/callback/") || path.startsWith("/api/auth/callback/")
+            if (!isOAuthCallback) return { data }
+
+            const needsCheck = ("image" in data && data.image) || ("name" in data && data.name)
+            if (!needsCheck) return { data }
+
+            const current = await db
+              .select({ image: schema.user.image, name: schema.user.name })
+              .from(schema.user)
+              .where(eq(schema.user.id, data.id as string))
+              .get()
+
+            let filtered = { ...data }
+            if (current?.image && "image" in filtered) {
+              const { image: _, ...rest } = filtered
+              filtered = rest
+            }
+            if (current?.name && "name" in filtered) {
+              const { name: _, ...rest } = filtered
+              filtered = rest
+            }
+            return { data: filtered }
+          },
+        },
       },
     },
 
@@ -83,3 +121,4 @@ export const createAuth = (env: EnvWithD1) =>
     },
     trustedOrigins: ALLOWED_ORIGINS,
   })
+}
