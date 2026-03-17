@@ -13,5 +13,6 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 # GitHub OAuth
 # Get credentials from https://github.com/settings/developers
 # Callback URL: {BETTER_AUTH_URL}/api/auth/callback/github
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
+# Note: Using GH_ prefix because GITHUB_ is reserved by GitHub Actions
+GH_CLIENT_ID=your-github-client-id
+GH_CLIENT_SECRET=your-github-client-secret

@@ -10,8 +10,8 @@ type EnvWithD1 = {
   BETTER_AUTH_SECRET: string
   GOOGLE_CLIENT_ID: string
   GOOGLE_CLIENT_SECRET: string
-  GITHUB_CLIENT_ID: string
-  GITHUB_CLIENT_SECRET: string
+  GH_CLIENT_ID: string
+  GH_CLIENT_SECRET: string
 }
 
 const enc = new TextEncoder()
@@ -73,8 +73,8 @@ export const createAuth = (env: EnvWithD1) =>
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
       github: {
-        clientId: env.GITHUB_CLIENT_ID,
-        clientSecret: env.GITHUB_CLIENT_SECRET,
+        clientId: env.GH_CLIENT_ID,
+        clientSecret: env.GH_CLIENT_SECRET,
       },
     },
 
