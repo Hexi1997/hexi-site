@@ -13,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Link from "next/link";
 
 const PAGE_SIZE = 5;
 
@@ -92,7 +93,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
   return (
     <div>
       {/* Search box */}
-      <div className="mb-6">
+      <div className="mb-6 mt-10">
         <div className="relative">
           <svg
             className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
@@ -159,7 +160,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
               : { href: `/blog/${post.slug}` };
 
             return (
-              <a
+              <Link
                 key={post.slug}
                 {...linkProps}
                 className="block py-5 -mx-3 px-3 rounded-lg group hover:bg-gray-50 transition-colors"
@@ -190,7 +191,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
                     ))}
                   </div>
                 )}
-              </a>
+              </Link>
             );
           })
         )}

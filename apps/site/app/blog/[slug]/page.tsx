@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug, getAllBlogSlugs } from "@/lib/blog";
 import { format } from "date-fns";
@@ -98,10 +99,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <article className="mx-auto mt-10 max-w-[732px] px-4 pt-8 pb-12">
       <div className="flex justify-between items-center mb-3">
-        <a href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
+        <Link href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
           <ArrowLeft className="mr-0 size-[18px]" />
           Back
-        </a>
+        </Link>
       </div>
       {/* Title */}
       <h1 className="text-neutral-900 mb-3 text-[26px] font-bold">
@@ -116,13 +117,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               {post.tags.map((tag) => (
-                <a
+                <Link
                   key={`${post.slug}-${tag}`}
                   href={`/blog?tag=${encodeURIComponent(tag)}`}
                   className="text-xs text-neutral-500"
                 >
                   #{tag}
-                </a>
+                </Link>
               ))}
             </div>
           )}

@@ -75,7 +75,7 @@ export function BlogHeader() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 w-full max-w-[766px] items-center justify-between px-4">
-        <a href="/" className="text-lg font-bold">
+        <Link href="/" className="text-lg font-bold">
           <div className="flex items-center gap-1">
             <Image
               src="/icons/logo-mark.svg"
@@ -87,26 +87,26 @@ export function BlogHeader() {
             />
             <span className="bg-black text-lg text-white font-anta">HEXI SPACE</span>
           </div>
-        </a>
+        </Link>
         <nav className="flex items-center gap-4 md:gap-6">
-          <a
+          <Link
             href="/agent"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             Agent
-          </a>
-          <a
+          </Link>
+          <Link
             href="/blog"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             Blog
-          </a>
-          <a
+          </Link>
+          <Link
             href="/notes"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             Notes
-          </a>
+          </Link>
         </nav>
 
         <div className="flex items-center justify-end w-20">
