@@ -6,12 +6,14 @@ import * as schema from "../schema"
 
 type EnvWithD1 = {
   hexi_site: D1Database
+  BETTER_AUTH_URL: string
+  BETTER_AUTH_SECRET: string
 }
 
 export const createAuth = (env: EnvWithD1) =>
   betterAuth({
-    // baseURL: process.env.BETTER_AUTH_URL,
-    // secret: process.env.BETTER_AUTH_SECRET,
+    baseURL: env.BETTER_AUTH_URL,
+    secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(drizzle(env.hexi_site), {
       provider: "sqlite",
       schema,

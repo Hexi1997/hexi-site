@@ -14,9 +14,9 @@
 			"remote": true
 		}
 	],
-	// "vars": {
-	//   "MY_VAR": "my-variable"
-	// },
+	"vars": {
+		"BETTER_AUTH_URL": "https://api.2437951611.workers.dev"
+	},
 	// "kv_namespaces": [
 	//   {
 	//     "binding": "MY_KV_NAMESPACE",
