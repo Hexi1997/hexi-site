@@ -42,11 +42,16 @@ function normalizeBaseURL(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url
 }
 
-function avatarPathFromURL(url: string | null | undefined, baseURL: string) {
+function avatarPathFromURL(url: string | null | undefined) {
   if (!url) return null
-  const base = normalizeBaseURL(baseURL)
-  if (!url.startsWith(`${base}/api/profile/avatar/`)) return null
-  return url.slice(`${base}/api/profile/avatar/`.length)
+  try {
+    const parsed = new URL(url)
+    const prefix = "/api/profile/avatar/"
+    if (!parsed.pathname.startsWith(prefix)) return null
+    return decodeURIComponent(parsed.pathname.slice(prefix.length))
+  } catch {
+    return null
+  }
 }
 
 function extFromType(contentType: string) {
@@ -266,7 +271,7 @@ app.post("/api/profile/avatar", sessionAuth, async (c) => {
     },
   })
 
-  const imageURL = `${normalizeBaseURL(c.env.BETTER_AUTH_URL)}/api/profile/avatar/${avatarPath}`
+  const imageURL = `${new URL(c.req.url).origin}/api/profile/avatar/${avatarPath}`
 
   const db = drizzle(c.env.hexi_site)
   await db
@@ -277,7 +282,7 @@ app.post("/api/profile/avatar", sessionAuth, async (c) => {
     })
     .where(eq(schema.user.id, user.id))
 
-  const previous = avatarPathFromURL(user.image, c.env.BETTER_AUTH_URL)
+  const previous = avatarPathFromURL(user.image)
   if (previous && previous !== avatarPath) {
     await c.env.AVATAR_BUCKET.delete(`avatars/${previous}`)
   }

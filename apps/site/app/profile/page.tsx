@@ -202,7 +202,7 @@ export default function ProfilePage() {
             type="button"
             disabled={savingName}
             onClick={() => void handleNameUpdate()}
-            className="inline-flex h-[42px] items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-[42px] min-w-[104px] items-center justify-center whitespace-nowrap rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {savingName ? "保存中..." : "保存用户名"}
           </button>
