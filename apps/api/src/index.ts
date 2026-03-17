@@ -5,6 +5,8 @@ import { ALLOWED_ORIGINS } from "./constants"
 
 const app = new Hono()
 
+app.get("/", (c) => c.text("OK"))
+
 app.use(
   "/api/auth/*",
   cors({
