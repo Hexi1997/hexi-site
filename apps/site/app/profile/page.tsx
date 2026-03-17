@@ -57,7 +57,6 @@ export default function ProfilePage() {
 
   async function refreshSessionAndPage() {
     await authClient.getSession();
-    router.refresh();
   }
 
   async function handleNameUpdate() {
