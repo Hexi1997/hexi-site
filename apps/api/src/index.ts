@@ -1,6 +1,6 @@
 import { Hono } from "hono"
 import { cors } from "hono/cors"
-import { auth } from "./lib/auth"
+import { createAuth } from "./lib/auth"
 import { ALLOWED_ORIGINS } from "./constants"
 
 const app = new Hono()
@@ -18,6 +18,7 @@ app.use(
 )
 
 app.all("/api/auth/*", async (c) => {
+  const auth = createAuth(c.env as any)
   return auth.handler(c.req.raw)
 })
 
