@@ -1,0 +1,5 @@
+# Better Auth – copy to .dev.vars and fill in real values.
+# See https://better-auth.com/docs/installation#set-environment-variables
+
+BETTER_AUTH_SECRET=your-32-char-minimum-secret-from-openssl-rand-base64-32
+BETTER_AUTH_URL=http://localhost:3000
