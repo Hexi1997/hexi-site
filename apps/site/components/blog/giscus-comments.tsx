@@ -273,13 +273,14 @@ export function GiscusComments({ postSlug }: { postSlug: string }) {
       if (!response.ok || !data?.comment) {
         throw new Error(data?.error || "评论发布失败");
       }
+      const createdComment = data.comment;
 
       setComments((prev) => {
-        if (prev.some((item) => item.id === data.comment?.id)) return prev;
-        if (data.comment?.parentId) {
-          return [...prev, data.comment];
+        if (prev.some((item) => item.id === createdComment.id)) return prev;
+        if (createdComment.parentId) {
+          return [...prev, createdComment];
         }
-        return [data.comment, ...prev];
+        return [createdComment, ...prev];
       });
       setDraft("");
       setReplyTo(null);
