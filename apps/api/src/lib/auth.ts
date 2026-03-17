@@ -7,8 +7,8 @@ export const auth = betterAuth({
   database: {
     provider: "sqlite",
     client: {
-      execute: async (query: string, params: unknown[], ctx: { env: { DB: D1Database } }) => {
-        const stmt = ctx.env.DB.prepare(query)
+      execute: async (query: string, params: unknown[], ctx: { env: { hexi_site: D1Database } }) => {
+        const stmt = ctx.env.hexi_site.prepare(query)
         const result = await stmt.bind(...params).all()
         return result
       }
