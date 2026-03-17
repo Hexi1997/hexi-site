@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth"
 import { drizzle } from "drizzle-orm/d1"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { ALLOWED_ORIGINS } from "../constants"
+import * as schema from "../schema"
 
 type EnvWithD1 = {
   hexi_site: D1Database
@@ -13,6 +14,7 @@ export const createAuth = (env: EnvWithD1) =>
     // secret: process.env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(drizzle(env.hexi_site), {
       provider: "sqlite",
+      schema,
     }),
 
     emailAndPassword: {
