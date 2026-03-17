@@ -1,19 +1,30 @@
 ```txt
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
+## Deploy
+
 ```txt
-npm run deploy
+pnpm run deploy
 ```
+
+## DB
+
+```txt
+pnpm run db:generate   # drizzle-kit generate
+pnpm run db:migrate    # apply migrations to remote D1
+```
+
+## Types
 
 [For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
 
 ```txt
-npm run cf-typegen
+pnpm run cf-typegen
 ```
 
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+Pass the `CloudflareBindings` as generics when instantiating `Hono`:
 
 ```ts
 // src/index.ts
