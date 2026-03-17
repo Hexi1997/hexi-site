@@ -6,10 +6,10 @@ CREATE TABLE account (
   accessToken TEXT,
   refreshToken TEXT,
   idToken TEXT,
-  accessTokenExpiresAt TEXT,
-  refreshTokenExpiresAt TEXT,
+  accessTokenExpiresAt INTEGER,
+  refreshTokenExpiresAt INTEGER,
   scope TEXT,
   password TEXT,
-  createdAt TEXT NOT NULL,
-  updatedAt TEXT NOT NULL
+  createdAt INTEGER NOT NULL,
+  updatedAt INTEGER NOT NULL
 )

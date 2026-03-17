@@ -4,6 +4,6 @@ CREATE TABLE user (
   email TEXT NOT NULL UNIQUE,
   emailVerified INTEGER NOT NULL DEFAULT 0,
   image TEXT,
-  createdAt TEXT NOT NULL,
-  updatedAt TEXT NOT NULL
+  createdAt INTEGER NOT NULL,
+  updatedAt INTEGER NOT NULL
 )

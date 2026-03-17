@@ -1,9 +1,9 @@
 CREATE TABLE session (
   id TEXT PRIMARY KEY,
-  expiresAt TEXT NOT NULL,
+  expiresAt INTEGER NOT NULL,
   token TEXT NOT NULL UNIQUE,
-  createdAt TEXT NOT NULL,
-  updatedAt TEXT NOT NULL,
+  createdAt INTEGER NOT NULL,
+  updatedAt INTEGER NOT NULL,
   ipAddress TEXT,
   userAgent TEXT,
   userId TEXT NOT NULL REFERENCES user(id)
