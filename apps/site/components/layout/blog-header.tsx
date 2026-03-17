@@ -73,11 +73,6 @@ export function BlogHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    setProfileOpen(false);
-    setMobileMenuOpen(false);
-  }, [pathname]);
-
   async function handleSignOut() {
     setProfileOpen(false);
     await authClient.signOut();
