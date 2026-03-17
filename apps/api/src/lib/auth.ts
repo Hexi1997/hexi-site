@@ -81,7 +81,5 @@ export const createAuth = (env: EnvWithD1) =>
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days
     },
-
-    // 允许站点跨域登录（前端与 Workers 不同域名时必配）
     trustedOrigins: ALLOWED_ORIGINS,
   })
