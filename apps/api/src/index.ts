@@ -5,7 +5,18 @@ import { ALLOWED_ORIGINS } from "./constants"
 
 const app = new Hono()
 
-app.get("/", (c) => c.text("OK"))
+// 非 /api 开头的路径全部 302 重定向到主站 https://hexi.men，保留原始 path 与 query。
+app.use("*", async (c, next) => {
+  const url = new URL(c.req.url)
+  if (!url.pathname.startsWith("/api")) {
+    const target = `https://hexi.men${url.pathname}${url.search}`
+    return c.redirect(target, 302)
+  }
+  return next()
+})
+
+// 简单健康检查（供 /api/health 使用）
+app.get("/api/health", (c) => c.text("OK"))
 
 app.use(
   "/api/auth/*",
