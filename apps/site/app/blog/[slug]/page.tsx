@@ -174,7 +174,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
 
       {/* Comment section */}
-      <GiscusComments />
+      <GiscusComments postSlug={slug} />
     </article>
   );
 }

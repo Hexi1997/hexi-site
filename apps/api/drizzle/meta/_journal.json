@@ -36,6 +36,13 @@
       "when": 1773733717994,
       "tag": "0004_remove_book_table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1773768405063,
+      "tag": "0005_cooing_miss_america",
+      "breakpoints": true
     }
   ]
 }
