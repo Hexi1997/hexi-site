@@ -4,24 +4,9 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import type { InferResponseType } from "@workspace/api-rpc/client";
 import { authClient, useSession } from "@/lib/auth-client";
 import { apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
-
-type ProfileResponse = InferResponseType<typeof apiClient.api.profile.$get, 200>;
-type ChangePasswordResponse = Extract<
-  InferResponseType<typeof apiClient.api.profile.password.$post, 200>,
-  { success: true }
->;
-type UploadAvatarResponse = Extract<
-  InferResponseType<typeof apiClient.api.profile.avatar.$post, 200>,
-  { image: string }
->;
-type GetProfileResponse = Extract<
-  InferResponseType<typeof apiClient.api.profile.$get, 200>,
-  { user: unknown }
->;
 
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { BlogList } from "@/components/blog/blog-list";
-import { TypewriterSlogan } from "@/components/home/typewriter-slogan";
 import { getAllBlogPosts } from "@/lib/blog";
 
 export const dynamic = "force-static";

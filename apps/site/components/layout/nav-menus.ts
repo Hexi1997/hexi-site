@@ -6,5 +6,5 @@ export type NavMenuItem = {
 export const NAV_MENUS: NavMenuItem[] = [
   { href: "/agent", label: "Agent" },
   { href: "/blog", label: "Blog" },
-  { href: "/notes", label: "Notes" },
+  { href: "/broadcast", label: "Broadcast" },
 ];
