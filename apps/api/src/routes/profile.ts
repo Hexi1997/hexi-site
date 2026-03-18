@@ -1,26 +1,70 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
+import type { InferSelectModel } from "drizzle-orm"
 import { eq } from "drizzle-orm"
+import { createSelectSchema } from "drizzle-zod"
+import type { ApiError } from "@workspace/api-rpc"
+import { z } from "zod"
 import { createAuth } from "../lib/auth"
 import { sessionAuth } from "../middleware/auth"
 import * as schema from "../schema"
 import type { AppEnv } from "../types"
 import {
-  jsonError,
   avatarPathFromURL,
   extFromType,
   errorMessageFromUnknown,
   errorStatusFromUnknown,
 } from "../lib/utils"
+import { zodValidator } from "../lib/zod-validator"
 
 const AVATAR_MAX_SIZE = 2 * 1024 * 1024
 const AVATAR_ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"])
 
 const profile = new Hono<AppEnv>()
 
-profile.get("/", sessionAuth, async (c) => {
+const UserSelectSchema = createSelectSchema(schema.user)
+
+const ProfileUserSchema = UserSelectSchema.pick({
+  id: true,
+  email: true,
+  name: true,
+  image: true,
+})
+
+const ProfileResponseSchema = z.object({
+  user: ProfileUserSchema,
+})
+
+const UpdateProfileBodySchema = z
+  .object({
+    name: z.string().trim().min(2).max(32).optional(),
+    image: z.string().nullable().optional(),
+  })
+  .refine((value) => value.name !== undefined || value.image !== undefined, {
+    message: "No valid fields to update",
+  })
+
+const ChangePasswordBodySchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8).max(72),
+})
+
+const ChangePasswordResponseSchema = z.object({
+  success: z.literal(true),
+})
+
+const UploadAvatarResponseSchema = z.object({
+  image: z.string(),
+})
+
+type ProfileResponse = z.infer<typeof ProfileResponseSchema>
+type ChangePasswordResponse = z.infer<typeof ChangePasswordResponseSchema>
+type UploadAvatarResponse = z.infer<typeof UploadAvatarResponseSchema>
+
+const profileRouter = profile
+  .get("/", sessionAuth, async (c) => {
   const user = c.get("user")
-  return c.json({
+  const response = ProfileResponseSchema.parse({
     user: {
       id: user.id,
       email: user.email,
@@ -28,43 +72,19 @@ profile.get("/", sessionAuth, async (c) => {
       image: user.image ?? null,
     },
   })
+  return c.json<ProfileResponse>(response, 200)
 })
 
-profile.patch("/", sessionAuth, async (c) => {
-  let body: unknown
-  try {
-    body = await c.req.json()
-  } catch {
-    return jsonError("Invalid JSON body")
-  }
-
-  if (!body || typeof body !== "object") {
-    return jsonError("Invalid request body")
-  }
-
-  const payload = body as { name?: unknown; image?: unknown }
+  .patch("/", sessionAuth, zodValidator("json", UpdateProfileBodySchema), async (c) => {
+  const payload = c.req.valid("json")
   const updates: { name?: string; image?: string | null; updatedAt?: Date } = {}
 
   if (payload.name !== undefined) {
-    if (typeof payload.name !== "string") {
-      return jsonError("name must be a string")
-    }
-    const name = payload.name.trim()
-    if (name.length < 2 || name.length > 32) {
-      return jsonError("name length must be 2-32 characters")
-    }
-    updates.name = name
+    updates.name = payload.name
   }
 
   if (payload.image !== undefined) {
-    if (payload.image !== null && typeof payload.image !== "string") {
-      return jsonError("image must be null or string")
-    }
     updates.image = payload.image
-  }
-
-  if (!("name" in updates) && !("image" in updates)) {
-    return jsonError("No valid fields to update")
   }
 
   updates.updatedAt = new Date()
@@ -85,32 +105,12 @@ profile.patch("/", sessionAuth, async (c) => {
     .where(eq(schema.user.id, user.id))
     .get()
 
-  return c.json({ user: updated })
+  const response = ProfileResponseSchema.parse({ user: updated })
+  return c.json<ProfileResponse>(response, 200)
 })
 
-profile.post("/password", sessionAuth, async (c) => {
-  let body: unknown
-  try {
-    body = await c.req.json()
-  } catch {
-    return jsonError("Invalid JSON body")
-  }
-
-  if (!body || typeof body !== "object") {
-    return jsonError("Invalid request body")
-  }
-
-  const payload = body as { currentPassword?: unknown; newPassword?: unknown }
-  if (typeof payload.currentPassword !== "string" || typeof payload.newPassword !== "string") {
-    return jsonError("currentPassword and newPassword are required")
-  }
-
-  const currentPassword = payload.currentPassword
-  const newPassword = payload.newPassword
-
-  if (newPassword.length < 8 || newPassword.length > 72) {
-    return jsonError("newPassword length must be 8-72 characters")
-  }
+  .post("/password", sessionAuth, zodValidator("json", ChangePasswordBodySchema), async (c) => {
+  const { currentPassword, newPassword } = c.req.valid("json")
 
   try {
     const auth = createAuth(c.env as any)
@@ -122,33 +122,37 @@ profile.post("/password", sessionAuth, async (c) => {
         revokeOtherSessions: false,
       },
     })
-    return c.json({ success: true })
+    const response = ChangePasswordResponseSchema.parse({ success: true })
+    return c.json<ChangePasswordResponse>(response, 200)
   } catch (err) {
-    return jsonError(errorMessageFromUnknown(err), errorStatusFromUnknown(err))
+    return c.json<ApiError>(
+      { error: errorMessageFromUnknown(err) },
+      errorStatusFromUnknown(err) as any,
+    )
   }
 })
 
-profile.post("/avatar", sessionAuth, async (c) => {
+  .post("/avatar", sessionAuth, async (c) => {
   if (!c.env.AVATAR_BUCKET) {
-    return jsonError("AVATAR_BUCKET is not configured", 500)
+    return c.json<ApiError>({ error: "AVATAR_BUCKET is not configured" }, 500)
   }
 
   const form = await c.req.formData()
   const fileCandidate = form.get("file")
 
   if (!fileCandidate || typeof fileCandidate === "string") {
-    return jsonError("file is required")
+    return c.json<ApiError>({ error: "file is required" }, 400)
   }
 
   const file = fileCandidate as Blob
   const contentType = file.type || "application/octet-stream"
 
   if (!AVATAR_ALLOWED_TYPES.has(contentType)) {
-    return jsonError("Only jpg/png/webp/gif are supported")
+    return c.json<ApiError>({ error: "Only jpg/png/webp/gif are supported" }, 400)
   }
 
   if (file.size > AVATAR_MAX_SIZE) {
-    return jsonError("Avatar must be <= 2MB")
+    return c.json<ApiError>({ error: "Avatar must be <= 2MB" }, 400)
   }
 
   const user = c.get("user")
@@ -179,10 +183,11 @@ profile.post("/avatar", sessionAuth, async (c) => {
     await c.env.AVATAR_BUCKET.delete(`avatars/${previous}`)
   }
 
-  return c.json({ image: imageURL })
+  const response = UploadAvatarResponseSchema.parse({ image: imageURL })
+  return c.json<UploadAvatarResponse>(response, 200)
 })
 
-profile.get("/avatar/:userId/:filename", async (c) => {
+  .get("/avatar/:userId/:filename", async (c) => {
   if (!c.env.AVATAR_BUCKET) {
     return c.text("Bucket not configured", 500)
   }
@@ -206,4 +211,4 @@ profile.get("/avatar/:userId/:filename", async (c) => {
   return new Response(object.body, { headers })
 })
 
-export default profile
+export { profileRouter }

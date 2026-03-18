@@ -1,36 +1,74 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
+import type { InferSelectModel } from "drizzle-orm"
 import { and, desc, eq } from "drizzle-orm"
+import { createSelectSchema } from "drizzle-zod"
+import type { ApiError } from "@workspace/api-rpc"
+import { z } from "zod"
 import { sessionAuth } from "../middleware/auth"
 import * as schema from "../schema"
 import type { AppEnv } from "../types"
-import { jsonError } from "../lib/utils"
+import { zodValidator } from "../lib/zod-validator"
 
-const MAX_CONTENT_LENGTH = 2000
 const DEFAULT_PAGE_SIZE = 20
 const MAX_PAGE_SIZE = 50
 
-type CommentRow = {
-  id: string
-  postSlug: string
-  parentId: string | null
-  content: string
-  createdAt: Date
-  user: {
-    id: string
-    name: string
-    image: string | null
-  }
+const UserSelectSchema = createSelectSchema(schema.user)
+const CommentSelectSchema = createSelectSchema(schema.comment)
+
+const CommentUserSchema = UserSelectSchema.pick({
+  id: true,
+  name: true,
+  image: true,
+})
+
+const CommentSchema = CommentSelectSchema.pick({
+  id: true,
+  postSlug: true,
+  parentId: true,
+  content: true,
+}).extend({
+  createdAt: z.string(),
+  user: CommentUserSchema,
+})
+
+const GetCommentsQuerySchema = CommentSelectSchema.pick({
+  postSlug: true,
+}).extend({
+  limit: z.string().optional(),
+  cursor: z.string().optional(),
+})
+
+const GetCommentsResponseSchema = z.object({
+  comments: z.array(CommentSchema),
+  nextCursor: z.string().nullable(),
+  hasMore: z.boolean(),
+})
+
+const CreateCommentBodySchema = CommentSelectSchema.pick({
+  postSlug: true,
+  parentId: true,
+  content: true,
+})
+
+const CreateCommentResponseSchema = z.object({
+  comment: CommentSchema,
+})
+
+type GetCommentsResponse = z.infer<typeof GetCommentsResponseSchema>
+type CreateCommentResponse = z.infer<typeof CreateCommentResponseSchema>
+type CommentModel = InferSelectModel<typeof schema.comment>
+type UserModel = InferSelectModel<typeof schema.user>
+type CommentUserDto = Pick<UserModel, "id" | "name" | "image">
+type CommentDto = Pick<CommentModel, "id" | "postSlug" | "parentId" | "content"> & {
+  createdAt: string
+  user: CommentUserDto
+}
+type CommentRow = Pick<CommentModel, "id" | "postSlug" | "parentId" | "content" | "createdAt"> & {
+  user: CommentUserDto
 }
 
 const comments = new Hono<AppEnv>()
-
-function normalizePostSlug(input: unknown) {
-  if (typeof input !== "string") return null
-  const slug = input.trim()
-  if (!slug || slug.length > 200) return null
-  return slug
-}
 
 function parsePageSize(input: string | undefined) {
   if (!input) return DEFAULT_PAGE_SIZE
@@ -76,16 +114,24 @@ function collectSubtreeIds(childrenByParent: Map<string, string[]>, rootIds: str
   return included
 }
 
-comments.get("/", async (c) => {
-  const postSlug = normalizePostSlug(c.req.query("postSlug"))
-  if (!postSlug) {
-    return jsonError("postSlug is required")
+function toCommentDto(item: CommentRow): CommentDto {
+  return {
+    id: item.id,
+    postSlug: item.postSlug,
+    parentId: item.parentId,
+    content: item.content,
+    createdAt: item.createdAt.toISOString(),
+    user: item.user,
   }
+}
 
-  const pageSize = parsePageSize(c.req.query("limit"))
-  const cursor = parseCursor(c.req.query("cursor"))
-  if (c.req.query("cursor") && !cursor) {
-    return jsonError("Invalid cursor")
+const commentsRouter = comments
+  .get("/", zodValidator("query", GetCommentsQuerySchema), async (c) => {
+  const { postSlug, limit, cursor: rawCursor } = c.req.valid("query")
+  const pageSize = parsePageSize(limit)
+  const cursor = parseCursor(rawCursor)
+  if (rawCursor && !cursor) {
+    return c.json({ error: "Invalid cursor" }, 400)
   }
 
   const db = drizzle(c.env.hexi_site)
@@ -144,14 +190,7 @@ comments.get("/", async (c) => {
       if (diff !== 0) return diff
       return a.id.localeCompare(b.id)
     })
-    .map((item) => ({
-      id: item.id,
-      postSlug: item.postSlug,
-      parentId: item.parentId,
-      content: item.content,
-      createdAt: item.createdAt.toISOString(),
-      user: item.user,
-    }))
+    .map(toCommentDto)
 
   const nextCursor =
     hasMore && currentRoots.length > 0
@@ -161,50 +200,19 @@ comments.get("/", async (c) => {
         )
       : null
 
-  return c.json({
+  const response = GetCommentsResponseSchema.parse({
     comments: commentsForPage,
     nextCursor,
     hasMore,
   })
+  return c.json<GetCommentsResponse>(response, 200)
 })
 
-comments.post("/", sessionAuth, async (c) => {
-  let body: unknown
-  try {
-    body = await c.req.json()
-  } catch {
-    return jsonError("Invalid JSON body")
-  }
-
-  if (!body || typeof body !== "object") {
-    return jsonError("Invalid request body")
-  }
-
-  const payload = body as { postSlug?: unknown; parentId?: unknown; content?: unknown }
-
-  const postSlug = normalizePostSlug(payload.postSlug)
-  if (!postSlug) {
-    return jsonError("postSlug is required")
-  }
-
-  if (typeof payload.content !== "string") {
-    return jsonError("content must be a string")
-  }
-  const content = payload.content.trim()
-  if (!content) {
-    return jsonError("content cannot be empty")
-  }
-  if (content.length > MAX_CONTENT_LENGTH) {
-    return jsonError(`content must be <= ${MAX_CONTENT_LENGTH} characters`)
-  }
-
-  let parentId: string | null = null
-  if (payload.parentId !== undefined && payload.parentId !== null) {
-    if (typeof payload.parentId !== "string" || !payload.parentId.trim()) {
-      return jsonError("parentId must be a non-empty string when provided")
-    }
-    parentId = payload.parentId.trim()
-  }
+  .post("/", sessionAuth, zodValidator("json", CreateCommentBodySchema), async (c) => {
+  const payload = c.req.valid("json")
+  const postSlug = payload.postSlug
+  const content = payload.content
+  const parentId = payload.parentId ?? null
 
   const db = drizzle(c.env.hexi_site)
   if (parentId) {
@@ -214,7 +222,7 @@ comments.post("/", sessionAuth, async (c) => {
       .where(and(eq(schema.comment.id, parentId), eq(schema.comment.postSlug, postSlug)))
       .get()
     if (!parent) {
-      return jsonError("parent comment not found", 404)
+      return c.json<ApiError>({ error: "parent comment not found" }, 404)
     }
   }
 
@@ -251,15 +259,13 @@ comments.post("/", sessionAuth, async (c) => {
     .get()
 
   if (!created) {
-    return jsonError("Failed to create comment", 500)
+    return c.json<ApiError>({ error: "Failed to create comment" }, 500)
   }
 
-  return c.json({
-    comment: {
-      ...created,
-      createdAt: created.createdAt.toISOString(),
-    },
+  const response = CreateCommentResponseSchema.parse({
+    comment: toCommentDto(created as CommentRow),
   })
+  return c.json<CreateCommentResponse>(response, 200)
 })
 
-export default comments
+export { commentsRouter }

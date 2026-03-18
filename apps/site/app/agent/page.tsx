@@ -84,11 +84,11 @@ export default function AgentPage() {
           }),
         });
 
-        if (!response.ok) throw new Error("请求失败，请稍后重试。");
+        if (!response.ok) throw new Error("Request failed. Please try again later.");
 
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
-        if (!reader) throw new Error("无法读取响应流。");
+        if (!reader) throw new Error("Unable to read the response stream.");
 
         let assistantContent = "";
         while (true) {
@@ -106,7 +106,7 @@ export default function AgentPage() {
         }
       } catch (err) {
         const msg =
-          err instanceof Error ? err.message : "请求失败，请稍后重试。";
+          err instanceof Error ? err.message : "Request failed. Please try again later.";
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { role: "assistant", content: msg };

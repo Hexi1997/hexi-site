@@ -3,26 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { InferResponseType } from "@workspace/api-rpc/client";
 import { useSession } from "@/lib/auth-client";
+import { apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
 
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL ?? "";
 const PAGE_SIZE = 20;
 const MAX_CONTENT_LENGTH = 2000;
 
-type ApiComment = {
-  id: string;
-  postSlug: string;
-  parentId: string | null;
-  content: string;
-  createdAt: string;
-  user: {
-    id: string;
-    name: string;
-    image: string | null;
-  };
-};
-
+type GetCommentsResponse = InferResponseType<typeof apiClient.api.comments.$get, 200>;
+type ApiComment = GetCommentsResponse["comments"][number];
 type CommentNode = ApiComment & { children: CommentNode[] };
 
 function formatDate(iso: string) {
@@ -133,14 +123,14 @@ function CommentItem({ node, depth, onReply }: CommentItemProps) {
             className="mt-2 text-xs text-neutral-500 hover:text-neutral-900"
             onClick={() => onReply(node)}
           >
-            回复
+            Reply
           </button>
         </div>
       </div>
 
       {node.children.length > 0 && (
         <div className="mt-3 space-y-4">
-          {node.children.map((child) => (
+          {node.children.map((child: CommentNode) => (
             <CommentItem key={child.id} node={child} depth={depth + 1} onReply={onReply} />
           ))}
         </div>
@@ -173,28 +163,18 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
       }
       setError(null);
       try {
-        const params = new URLSearchParams({
-          postSlug,
-          limit: String(PAGE_SIZE),
-        });
-        if (nextCursor) {
-          params.set("cursor", nextCursor);
-        }
-        const response = await fetch(`${AUTH_API_URL}/api/comments?${params.toString()}`, {
-          credentials: "include",
-        });
-        const data = await response.json().catch(() => null) as {
-          comments?: ApiComment[];
-          nextCursor?: string | null;
-          hasMore?: boolean;
-          error?: string;
-        } | null;
+        const data = await apiRequest(
+          apiClient.api.comments.$get({
+            query: {
+              postSlug,
+              limit: String(PAGE_SIZE),
+              ...(nextCursor ? { cursor: nextCursor } : {}),
+            },
+          }),
+          "Failed to load comments",
+        );
 
-        if (!response.ok) {
-          throw new Error(data?.error || "评论加载失败");
-        }
-
-        const incoming = data?.comments ?? [];
+        const incoming = data.comments;
         setComments((prev) => {
           if (!isLoadMore) return incoming;
           const map = new Map(prev.map((item) => [item.id, item]));
@@ -203,10 +183,10 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
           }
           return Array.from(map.values());
         });
-        setCursor(data?.nextCursor ?? null);
-        setHasMore(Boolean(data?.hasMore));
+        setCursor(data.nextCursor);
+        setHasMore(data.hasMore);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "评论加载失败");
+        setError(err instanceof Error ? err.message : "Failed to load comments");
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -245,22 +225,16 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
     setSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(`${AUTH_API_URL}/api/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          postSlug,
-          parentId: replyTo?.id ?? null,
-          content,
+        const data = await apiRequest(
+          apiClient.api.comments.$post({
+            json: {
+              postSlug,
+            parentId: replyTo?.id ?? null,
+            content,
+          },
         }),
-      });
-      const data = await response.json().catch(() => null) as { comment?: ApiComment; error?: string } | null;
-      if (!response.ok || !data?.comment) {
-        throw new Error(data?.error || "评论发布失败");
-      }
+        "Failed to post comment",
+      );
       const createdComment = data.comment;
 
       setComments((prev) => {
@@ -273,7 +247,7 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
       setDraft("");
       setReplyTo(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "评论发布失败");
+      setError(err instanceof Error ? err.message : "Failed to post comment");
     } finally {
       setSubmitting(false);
     }
@@ -281,27 +255,27 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
 
   return (
     <section className="mt-12 border-t border-neutral-100 pt-8">
-      <h2 className="text-xl font-semibold text-neutral-900">评论 ({comments.length})</h2>
+      <h2 className="text-xl font-semibold text-neutral-900">Comments ({comments.length})</h2>
 
       <div className="mt-4 rounded-xl border border-neutral-200 bg-white p-4">
         {session?.user ? (
           <>
             {replyTo && (
               <div className="mb-3 flex items-center justify-between rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-                <span>回复 {replyTo.user.name}</span>
+                <span>Replying to {replyTo.user.name}</span>
                 <button
                   type="button"
                   className="text-neutral-500 hover:text-neutral-900"
                   onClick={() => setReplyTo(null)}
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             )}
             <textarea
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              placeholder={replyTo ? `回复 ${replyTo.user.name}...` : "写下你的评论..."}
+              placeholder={replyTo ? `Reply to ${replyTo.user.name}...` : "Write a comment..."}
               maxLength={MAX_CONTENT_LENGTH}
               rows={4}
               className="w-full resize-y rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
@@ -314,18 +288,18 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
                 className="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => void handleSubmit()}
               >
-                {submitting ? "发布中..." : "发布评论"}
+                {submitting ? "Posting..." : "Post comment"}
               </button>
             </div>
           </>
         ) : isPending ? (
-          <p className="text-sm text-neutral-500">登录状态加载中...</p>
+          <p className="text-sm text-neutral-500">Loading session...</p>
         ) : (
           <p className="text-sm text-neutral-600">
             <Link href={signInHref} className="text-neutral-900 underline underline-offset-4">
-              登录
+              Sign in
             </Link>
-            后参与评论
+            to join the discussion
           </p>
         )}
       </div>

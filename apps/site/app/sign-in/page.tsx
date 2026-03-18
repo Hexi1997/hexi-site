@@ -60,11 +60,11 @@ function SignInContent() {
         const { data, error: err } = await authClient.signUp.email({
           email,
           password,
-          name: name.trim() || email.split("@")[0] || "用户",
+          name: name.trim() || email.split("@")[0] || "User",
           callbackURL: redirectUrl,
         });
         if (err) {
-          setError(String(err.message ?? "注册失败"));
+          setError(String(err.message ?? "Sign-up failed"));
           return;
         }
         if (data) router.push(redirectUrl);
@@ -75,7 +75,7 @@ function SignInContent() {
           callbackURL: redirectUrl,
         });
         if (err) {
-          setError(String(err.message ?? "登录失败"));
+          setError(String(err.message ?? "Sign-in failed"));
           return;
         }
         if (data) router.push(redirectUrl);

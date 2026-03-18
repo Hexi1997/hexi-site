@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/api-rpc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.12.8",
+    "zod": "^4.3.6"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  }
+}
