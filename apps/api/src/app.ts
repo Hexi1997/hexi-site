@@ -5,6 +5,7 @@ import type { AppEnv } from "./types"
 import { authRouter } from "./routes/auth"
 import { profileRouter } from "./routes/profile"
 import { commentsRouter } from "./routes/comments"
+import { broadcastRouter } from "./routes/broadcast"
 
 const app = new Hono<AppEnv>()
 
@@ -35,6 +36,7 @@ const routes = app
   .route("/api/auth", authRouter)
   .route("/api/profile", profileRouter)
   .route("/api/comments", commentsRouter)
+  .route("/api/broadcast", broadcastRouter)
 
 export type AppType = typeof routes
 

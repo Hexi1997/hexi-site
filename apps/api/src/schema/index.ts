@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -61,3 +61,31 @@ export const comment = sqliteTable("comment", {
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 })
+
+export const broadcastPost = sqliteTable("broadcastPost", {
+  id: text("id").primaryKey(),
+  parentId: text("parentId"),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  content: text("content").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+})
+
+export const broadcastLike = sqliteTable(
+  "broadcastLike",
+  {
+    id: text("id").primaryKey(),
+    postId: text("postId")
+      .notNull()
+      .references(() => broadcastPost.id),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    postUserUnique: uniqueIndex("broadcastLike_post_user_unique").on(table.postId, table.userId),
+  }),
+)

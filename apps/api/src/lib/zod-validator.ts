@@ -2,7 +2,7 @@ import type { Context } from "hono"
 import { validator } from "hono/validator"
 import type { ZodSchema } from "zod"
 
-export function zodValidator<TTarget extends "json" | "query", TSchema>(
+export function zodValidator<TTarget extends "json" | "query" | "param", TSchema>(
   target: TTarget,
   schema: ZodSchema<TSchema>,
 ) {
