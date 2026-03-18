@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "@/lib/auth-client";
+import { avatarColor } from "@/lib/avatar";
 
 const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL ?? "";
 const PAGE_SIZE = 20;
@@ -23,19 +24,6 @@ type ApiComment = {
 };
 
 type CommentNode = ApiComment & { children: CommentNode[] };
-
-function avatarColor(seed: string): string {
-  const colors = [
-    "#e57373", "#f06292", "#ba68c8", "#9575cd",
-    "#7986cb", "#64b5f6", "#4dd0e1", "#4db6ac",
-    "#81c784", "#aed581", "#ffb74d", "#ff8a65",
-  ];
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return colors[Math.abs(hash) % colors.length];
-}
 
 function formatDate(iso: string) {
   const date = new Date(iso);
@@ -139,7 +127,7 @@ function CommentItem({ node, depth, onReply }: CommentItemProps) {
             <span className="text-sm font-medium text-neutral-900">{node.user.name}</span>
             <span className="text-xs text-neutral-500">{formatDate(node.createdAt)}</span>
           </div>
-          <p className="mt-1 whitespace-pre-wrap break-words text-sm text-neutral-800">{node.content}</p>
+          <p className="mt-1 whitespace-pre-wrap wrap-break-word text-sm text-neutral-800">{node.content}</p>
           <button
             type="button"
             className="mt-2 text-xs text-neutral-500 hover:text-neutral-900"
@@ -161,7 +149,7 @@ function CommentItem({ node, depth, onReply }: CommentItemProps) {
   );
 }
 
-export function GiscusComments({ postSlug }: { postSlug: string }) {
+export function BlogComments({ postSlug }: { postSlug: string }) {
   const { data: session, isPending } = useSession();
   const [comments, setComments] = useState<ApiComment[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -350,21 +338,16 @@ export function GiscusComments({ postSlug }: { postSlug: string }) {
 
       <div className="mt-6 space-y-6">
         {loading ? (
-          <div className="text-sm text-neutral-500">评论加载中...</div>
+          <div className="text-sm text-neutral-500">Loading comments...</div>
         ) : tree.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-neutral-200 px-4 py-6 text-center text-sm text-neutral-500">
-            还没有评论，来发第一条吧。
-          </div>
+          <></>
         ) : (
           tree.map((node) => (
             <CommentItem key={node.id} node={node} depth={0} onReply={setReplyTo} />
           ))
         )}
       </div>
-
-      <div ref={loadMoreRef} className="mt-6 flex min-h-8 items-center justify-center text-sm text-neutral-500">
-        {loadingMore ? "加载更多评论..." : hasMore && tree.length > 0 ? "下拉加载更多" : "没有更多评论了"}
-      </div>
+      <div ref={loadMoreRef}></div>
     </section>
   );
 }

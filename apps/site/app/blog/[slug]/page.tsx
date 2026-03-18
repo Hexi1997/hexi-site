@@ -7,7 +7,7 @@ import { BlogPhotoViewEnhancer } from "@/components/blog/photo-view-enhancer";
 import { BlogImageSkeleton } from "@/components/blog/image-skeleton";
 import { BlogCodeCopyEnhancer } from "@/components/blog/code-copy-enhancer";
 import { ShareButtons } from "@/components/blog/share-buttons";
-import { GiscusComments } from "@/components/blog/giscus-comments";
+import { BlogComments } from "@/components/blog/blog-comments";
 import { ArrowLeft } from "lucide-react";
 
 interface BlogPostPageProps {
@@ -174,7 +174,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
 
       {/* Comment section */}
-      <GiscusComments postSlug={slug} />
+      <BlogComments postSlug={slug} />
     </article>
   );
 }

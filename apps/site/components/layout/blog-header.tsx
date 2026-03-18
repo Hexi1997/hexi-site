@@ -6,20 +6,8 @@ import { Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession, authClient } from "@/lib/auth-client";
+import { avatarColor } from "@/lib/avatar";
 import { NAV_MENUS } from "@/components/layout/nav-menus";
-
-function avatarColor(seed: string): string {
-  const colors = [
-    "#e57373", "#f06292", "#ba68c8", "#9575cd",
-    "#7986cb", "#64b5f6", "#4dd0e1", "#4db6ac",
-    "#81c784", "#aed581", "#ffb74d", "#ff8a65",
-  ];
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return colors[Math.abs(hash) % colors.length];
-}
 
 function UserAvatar({ user }: { user: { name?: string | null; email: string; image?: string | null } }) {
   const initials = (user.name ?? user.email).trim()[0]?.toUpperCase() ?? "?";
@@ -80,7 +68,7 @@ export function BlogHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex h-14 w-full max-w-[766px] items-center justify-between px-4">
         <Link href="/" className="text-lg font-bold">
           <div className="flex items-center gap-1">

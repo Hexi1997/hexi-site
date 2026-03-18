@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { authClient, useSession } from "@/lib/auth-client";
+import { avatarColor } from "@/lib/avatar";
 
 const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL ?? "";
 
@@ -157,7 +158,10 @@ export default function ProfilePage() {
               className="h-20 w-20 rounded-full border object-cover"
             />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-100 text-xl font-semibold text-neutral-500">
+            <div
+              className="flex size-16 items-center justify-center rounded-full text-2xl font-semibold text-white select-none"
+              style={{ backgroundColor: avatarColor(session.user.email) }}
+            >
               {(session.user.name ?? session.user.email).trim().slice(0, 1).toUpperCase()}
             </div>
           )}
