@@ -24,7 +24,6 @@ const CommentUserSchema = UserSelectSchema.pick({
 
 const CommentSchema = CommentSelectSchema.pick({
   id: true,
-  postSlug: true,
   parentId: true,
   content: true,
 }).extend({
@@ -60,7 +59,7 @@ type CreateCommentResponse = z.infer<typeof CreateCommentResponseSchema>
 type CommentModel = InferSelectModel<typeof schema.comment>
 type UserModel = InferSelectModel<typeof schema.user>
 type CommentUserDto = Pick<UserModel, "id" | "name" | "image">
-type CommentDto = Pick<CommentModel, "id" | "postSlug" | "parentId" | "content"> & {
+type CommentDto = Pick<CommentModel, "id" | "parentId" | "content"> & {
   createdAt: string
   user: CommentUserDto
 }
@@ -117,7 +116,6 @@ function collectSubtreeIds(childrenByParent: Map<string, string[]>, rootIds: str
 function toCommentDto(item: CommentRow): CommentDto {
   return {
     id: item.id,
-    postSlug: item.postSlug,
     parentId: item.parentId,
     content: item.content,
     createdAt: item.createdAt.toISOString(),
