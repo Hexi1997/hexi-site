@@ -89,3 +89,13 @@ export const broadcastLike = sqliteTable(
     postUserUnique: uniqueIndex("broadcastLike_post_user_unique").on(table.postId, table.userId),
   }),
 )
+
+export const broadcastPostImage = sqliteTable("broadcastPostImage", {
+  id: text("id").primaryKey(),
+  postId: text("postId")
+    .notNull()
+    .references(() => broadcastPost.id),
+  imageUrl: text("imageUrl").notNull(),
+  sortOrder: integer("sortOrder").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+})

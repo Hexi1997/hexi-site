@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Heart, MessageCircle } from "lucide-react";
 import type { InferResponseType } from "@workspace/api-rpc/client";
 import { useSession } from "@/lib/auth-client";
@@ -10,6 +10,7 @@ import { apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
 
 const MAX_CONTENT_LENGTH = 4000;
+const MAX_IMAGE_COUNT = 4;
 const TRAILING_URL_PUNCTUATION = /[),.;!?]+$/;
 
 type FeedResponse = InferResponseType<typeof apiClient.api.broadcast.$get, 200>;
@@ -24,6 +25,11 @@ type LinkPreview = {
 };
 
 const linkPreviewCache = new Map<string, LinkPreview | null>();
+
+type ComposerImage = {
+  file: File;
+  previewUrl: string;
+};
 
 function formatDate(iso: string) {
   const date = new Date(iso);
@@ -173,6 +179,26 @@ function BroadcastAvatar({ user }: { user: FeedPost["user"] }) {
   );
 }
 
+function BroadcastImages({ images }: { images: string[] }) {
+  if (images.length === 0) return null;
+  const columns = images.length === 1 ? "grid-cols-1" : "grid-cols-2";
+  return (
+    <div className={`mt-2 grid gap-2 ${columns}`}>
+      {images.map((imageUrl, index) => (
+        <a
+          key={`${imageUrl}-${index}`}
+          href={imageUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block overflow-hidden rounded-lg border border-neutral-200"
+        >
+          <img src={imageUrl} alt={`broadcast-image-${index + 1}`} className="h-44 w-full object-cover" />
+        </a>
+      ))}
+    </div>
+  );
+}
+
 function LinkPreviewCard({ url }: { url: string }) {
   const [preview, setPreview] = useState<LinkPreview | null>(() => linkPreviewCache.get(url) ?? null);
   const [loading, setLoading] = useState(() => !linkPreviewCache.has(url));
@@ -283,6 +309,7 @@ function BroadcastItem({
           <p className="mt-1 whitespace-pre-wrap break-words text-sm text-neutral-800">
             {renderTextWithLinks(node.content)}
           </p>
+          <BroadcastImages images={node.images} />
           {previewUrl && <LinkPreviewCard url={previewUrl} />}
 
           <div className="mt-2 flex items-center gap-4">
@@ -334,6 +361,8 @@ export function BroadcastFeed() {
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<FeedPost | null>(null);
+  const [composerImages, setComposerImages] = useState<ComposerImage[]>([]);
+  const composerImagesRef = useRef<ComposerImage[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [likeUpdatingIds, setLikeUpdatingIds] = useState<Set<string>>(new Set());
 
@@ -356,7 +385,49 @@ export function BroadcastFeed() {
     void loadFeed();
   }, [loadFeed]);
 
+  useEffect(() => {
+    composerImagesRef.current = composerImages;
+  }, [composerImages]);
+
+  useEffect(() => {
+    return () => {
+      for (const item of composerImagesRef.current) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+    };
+  }, []);
+
   const tree = useMemo(() => buildFeedTree(posts), [posts]);
+
+  function removeComposerImage(targetPreviewUrl: string) {
+    setComposerImages((prev) => {
+      const item = prev.find((image) => image.previewUrl === targetPreviewUrl);
+      if (item) URL.revokeObjectURL(item.previewUrl);
+      return prev.filter((image) => image.previewUrl !== targetPreviewUrl);
+    });
+  }
+
+  function handleImageSelect(files: FileList | null) {
+    if (!files) return;
+    const incoming = Array.from(files);
+    if (incoming.length === 0) return;
+    setError(null);
+    setComposerImages((prev) => {
+      const remain = Math.max(0, MAX_IMAGE_COUNT - prev.length);
+      if (remain <= 0) {
+        setError(`最多只能上传 ${MAX_IMAGE_COUNT} 张图片`);
+        return prev;
+      }
+      if (incoming.length > remain) {
+        setError(`最多只能上传 ${MAX_IMAGE_COUNT} 张图片`);
+      }
+      const accepted = incoming.slice(0, remain).map((file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+      }));
+      return [...prev, ...accepted];
+    });
+  }
 
   async function handleSubmit() {
     if (!canInteract) return;
@@ -366,11 +437,27 @@ export function BroadcastFeed() {
     setSubmitting(true);
     setError(null);
     try {
+      const uploadedImages: string[] = [];
+      for (const item of composerImages) {
+        const formData = new FormData();
+        formData.append("file", item.file);
+        const upload = await apiRequest(
+          apiClient.api.broadcast.image.$post({}, {
+            init: {
+              body: formData,
+            },
+          }),
+          "Failed to upload image",
+        );
+        uploadedImages.push(upload.image);
+      }
+
       const data = await apiRequest(
         apiClient.api.broadcast.$post({
           json: {
             content,
             parentId: replyTo?.id ?? null,
+            images: uploadedImages,
           },
         }),
         "Failed to publish",
@@ -382,6 +469,12 @@ export function BroadcastFeed() {
       });
       setDraft("");
       setReplyTo(null);
+      setComposerImages((prev) => {
+        for (const item of prev) {
+          URL.revokeObjectURL(item.previewUrl);
+        }
+        return [];
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to publish");
     } finally {
@@ -467,6 +560,40 @@ export function BroadcastFeed() {
               placeholder={replyTo ? `回复 ${replyTo.user.name}...` : "分享你的想法（纯文本，支持换行）"}
               className="w-full resize-y rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
             />
+            <div className="mt-3 flex items-center justify-between">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-neutral-200 px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50">
+                添加图片
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    handleImageSelect(e.target.files);
+                    e.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              <span className="text-xs text-neutral-500">
+                {composerImages.length}/{MAX_IMAGE_COUNT} 张
+              </span>
+            </div>
+            {composerImages.length > 0 && (
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {composerImages.map((item) => (
+                  <div key={item.previewUrl} className="relative overflow-hidden rounded-lg border border-neutral-200">
+                    <img src={item.previewUrl} alt="selected-image" className="h-28 w-full object-cover" />
+                    <button
+                      type="button"
+                      className="absolute top-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-xs text-white"
+                      onClick={() => removeComposerImage(item.previewUrl)}
+                    >
+                      移除
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="mt-3 flex items-center justify-between">
               <span className="text-xs text-neutral-500">
                 {draft.trim().length}/{MAX_CONTENT_LENGTH}
