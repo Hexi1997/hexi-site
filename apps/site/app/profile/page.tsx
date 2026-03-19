@@ -130,9 +130,8 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl py-10">
-      <h1 className="mb-6 text-2xl font-semibold text-neutral-900">Profile</h1>
 
-      <section className="mb-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <section className="my-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-medium text-neutral-900">Avatar</h2>
         <div className="flex items-center gap-4">
           {avatar ? (
@@ -196,6 +195,13 @@ export default function ProfilePage() {
           >
             {savingName ? "Saving..." : "Save name"}
           </button>
+        </div>
+      </section>
+
+      <section className="mb-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-medium text-neutral-900">Email</h2>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm text-neutral-700">
+          {session.user.email}
         </div>
       </section>
 
