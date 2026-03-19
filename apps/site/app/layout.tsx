@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { Anta, Geist, Geist_Mono as GeistMono } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import Providers from "./providers";
 import { BlogHeader } from "@/components/layout/blog-header";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -75,7 +74,7 @@ export default function RootLayout({
             <Providers>{children}</Providers>
           </main>
         </div>
-        <ToastContainer position="top-right" autoClose={3000} theme="light" />
+        <Toaster />
       </body>
     </html>
   );

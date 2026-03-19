@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Heart, MessageCircle, Plus, Trash2 } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import "react-photo-view/dist/react-photo-view.css";
 import { useSession } from "@/lib/auth-client";
 import { ApiRequestError, apiClient, apiRequest } from "@/lib/api-client";

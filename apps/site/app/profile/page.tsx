@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { ApiRequestError, apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
