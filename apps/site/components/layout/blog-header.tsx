@@ -9,9 +9,9 @@ import { useSession, authClient } from "@/lib/auth-client";
 import { avatarColor } from "@/lib/avatar";
 import { NAV_MENUS } from "@/components/layout/nav-menus";
 
-function UserAvatar({ user }: { user: { name?: string | null; email: string; image?: string | null } }) {
+function UserAvatar({ user }: { user: { id?: string | null; name?: string | null; email: string; image?: string | null } }) {
   const initials = (user.name ?? user.email).trim()[0]?.toUpperCase() ?? "?";
-  const bg = avatarColor(user.email);
+  const bg = avatarColor(user.id!);
 
   if (user.image) {
     return (

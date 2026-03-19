@@ -2,7 +2,7 @@ import { Hono } from "hono"
 import type { Context } from "hono"
 import { drizzle } from "drizzle-orm/d1"
 import type { InferSelectModel } from "drizzle-orm"
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray, isNull, lt, or } from "drizzle-orm"
 import { createSelectSchema } from "drizzle-zod"
 import type { ApiError } from "@workspace/api-rpc"
 import { z } from "zod"
@@ -17,6 +17,8 @@ const MAX_CONTENT_LENGTH = 4000
 const MAX_IMAGE_COUNT = 4
 const IMAGE_MAX_SIZE = 8 * 1024 * 1024
 const IMAGE_ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"])
+const DEFAULT_PAGE_SIZE = 20
+const MAX_PAGE_SIZE = 50
 
 const UserSelectSchema = createSelectSchema(schema.user)
 const BroadcastPostSelectSchema = createSelectSchema(schema.broadcastPost)
@@ -41,6 +43,8 @@ const BroadcastPostSchema = BroadcastPostSelectSchema.pick({
 
 const GetBroadcastResponseSchema = z.object({
   posts: z.array(BroadcastPostSchema),
+  nextCursor: z.string().nullable(),
+  hasMore: z.boolean(),
 })
 
 const CreateBroadcastPostBodySchema = BroadcastPostSelectSchema.pick({
@@ -59,7 +63,20 @@ const ToggleLikeResponseSchema = z.object({
   success: z.literal(true),
 })
 
+const DeleteBroadcastPostResponseSchema = z.object({
+  success: z.literal(true),
+})
+
 const LinkPreviewQuerySchema = z.object({
+  url: z.string().trim().url(),
+})
+
+const GetBroadcastQuerySchema = z.object({
+  limit: z.string().optional(),
+  cursor: z.string().optional(),
+})
+
+const LinkPreviewImageQuerySchema = z.object({
   url: z.string().trim().url(),
 })
 
@@ -69,6 +86,7 @@ const LinkPreviewSchema = z.object({
   description: z.string().nullable(),
   image: z.string().url().nullable(),
   siteName: z.string().nullable(),
+  type: z.string().nullable(),
 })
 
 const LinkPreviewResponseSchema = z.object({
@@ -77,6 +95,7 @@ const LinkPreviewResponseSchema = z.object({
 
 type GetBroadcastResponse = z.infer<typeof GetBroadcastResponseSchema>
 type ToggleLikeResponse = z.infer<typeof ToggleLikeResponseSchema>
+type DeleteBroadcastPostResponse = z.infer<typeof DeleteBroadcastPostResponseSchema>
 type LinkPreviewResponse = z.infer<typeof LinkPreviewResponseSchema>
 type BroadcastLikeModel = InferSelectModel<typeof schema.broadcastLike>
 type BroadcastPostImageModel = InferSelectModel<typeof schema.broadcastPostImage>
@@ -92,6 +111,27 @@ const broadcast = new Hono<AppEnv>()
 
 function normalizeNull(value: string | null | undefined) {
   return value ?? null
+}
+
+function parsePageSize(input: string | undefined) {
+  if (!input) return DEFAULT_PAGE_SIZE
+  const parsed = Number(input)
+  if (!Number.isInteger(parsed) || parsed <= 0) return DEFAULT_PAGE_SIZE
+  return Math.min(parsed, MAX_PAGE_SIZE)
+}
+
+function encodeCursor(createdAt: Date, id: string) {
+  return `${createdAt.getTime()}_${id}`
+}
+
+function parseCursor(cursor: string | undefined) {
+  if (!cursor) return null
+  const splitIndex = cursor.indexOf("_")
+  if (splitIndex <= 0) return null
+  const ts = Number(cursor.slice(0, splitIndex))
+  const id = cursor.slice(splitIndex + 1)
+  if (!Number.isFinite(ts) || !id) return null
+  return { ts, id }
 }
 
 function matchMetaContent(html: string, key: string) {
@@ -128,6 +168,49 @@ function toAbsoluteUrl(value: string | null, base: string) {
   }
 }
 
+function broadcastImageKeyFromUrl(url: string) {
+  try {
+    const parsed = new URL(url)
+    const matched = parsed.pathname.match(/^\/api\/broadcast\/image\/([^/]+)\/([^/]+)$/)
+    if (!matched?.[1] || !matched?.[2]) return null
+    return `broadcast/${matched[1]}/${matched[2]}`
+  } catch {
+    return null
+  }
+}
+
+function shouldProxyPreviewImage(imageUrl: string) {
+  try {
+    const host = new URL(imageUrl).hostname.toLowerCase()
+    return host === "i0.hdslb.com" ||
+      host === "i1.hdslb.com" ||
+      host === "i2.hdslb.com" ||
+      host.endsWith(".hdslb.com")
+  } catch {
+    return false
+  }
+}
+
+function getPreviewImageProxyUrl(c: Context<AppEnv>, imageUrl: string) {
+  const currentUrl = new URL(c.req.url)
+  const proxyUrl = new URL("/api/broadcast/link-preview/image", currentUrl.origin)
+  proxyUrl.searchParams.set("url", imageUrl)
+  return proxyUrl.toString()
+}
+
+function buildPreviewImageHeaders(imageUrl: string) {
+  const headers: Record<string, string> = {
+    "user-agent": "HexiSiteBot/1.0 (+https://hexi.men)",
+    accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+  }
+
+  if (shouldProxyPreviewImage(imageUrl)) {
+    headers.referer = "https://www.bilibili.com/"
+  }
+
+  return headers
+}
+
 function toBroadcastDto(
   post: BroadcastPostRow,
   imagesByPostId: Map<string, string[]>,
@@ -153,11 +236,30 @@ async function getCurrentUserId(c: Context<AppEnv>) {
 }
 
 const broadcastRouter = broadcast
-  .get("/", async (c) => {
+  .get("/", zodValidator("query", GetBroadcastQuerySchema), async (c) => {
     const db = drizzle(c.env.hexi_site)
     const currentUserId = await getCurrentUserId(c)
+    const { limit, cursor: rawCursor } = c.req.valid("query")
+    const pageSize = parsePageSize(limit)
+    const cursor = parseCursor(rawCursor)
+    if (rawCursor && !cursor) {
+      return c.json<ApiError>({ error: "Invalid cursor" }, 400)
+    }
 
-    const postRows = await db
+    const rootWhere = cursor
+      ? and(
+          isNull(schema.broadcastPost.parentId),
+          or(
+            lt(schema.broadcastPost.createdAt, new Date(cursor.ts)),
+            and(
+              eq(schema.broadcastPost.createdAt, new Date(cursor.ts)),
+              lt(schema.broadcastPost.id, cursor.id),
+            ),
+          ),
+        )
+      : isNull(schema.broadcastPost.parentId)
+
+    const rootRows = await db
       .select({
         id: schema.broadcastPost.id,
         parentId: schema.broadcastPost.parentId,
@@ -171,9 +273,41 @@ const broadcastRouter = broadcast
       })
       .from(schema.broadcastPost)
       .innerJoin(schema.user, eq(schema.broadcastPost.userId, schema.user.id))
+      .where(rootWhere)
       .orderBy(desc(schema.broadcastPost.createdAt), desc(schema.broadcastPost.id))
+      .limit(pageSize + 1)
 
-    const posts = postRows as BroadcastPostRow[]
+    const rootPage = rootRows as BroadcastPostRow[]
+
+    const hasMore = rootPage.length > pageSize
+    const currentRoots = hasMore ? rootPage.slice(0, pageSize) : rootPage
+
+    const posts: BroadcastPostRow[] = [...currentRoots]
+    let frontier = currentRoots.map((item) => item.id)
+    while (frontier.length > 0) {
+      const childRows = await db
+        .select({
+          id: schema.broadcastPost.id,
+          parentId: schema.broadcastPost.parentId,
+          content: schema.broadcastPost.content,
+          createdAt: schema.broadcastPost.createdAt,
+          user: {
+            id: schema.user.id,
+            name: schema.user.name,
+            image: schema.user.image,
+          },
+        })
+        .from(schema.broadcastPost)
+        .innerJoin(schema.user, eq(schema.broadcastPost.userId, schema.user.id))
+        .where(inArray(schema.broadcastPost.parentId, frontier))
+        .orderBy(desc(schema.broadcastPost.createdAt), desc(schema.broadcastPost.id))
+
+      const children = childRows as BroadcastPostRow[]
+      if (children.length === 0) break
+      posts.push(...children)
+      frontier = children.map((item) => item.id)
+    }
+
     const postIds = posts.map((item) => item.id)
     const imageRows =
       postIds.length > 0
@@ -220,8 +354,18 @@ const broadcastRouter = broadcast
       }
     }
 
+    const nextCursor =
+      hasMore && currentRoots.length > 0
+        ? encodeCursor(
+            currentRoots[currentRoots.length - 1].createdAt,
+            currentRoots[currentRoots.length - 1].id,
+          )
+        : null
+
     const response = GetBroadcastResponseSchema.parse({
       posts: posts.map((item) => toBroadcastDto(item, imagesByPostId, likeCountMap, likedByMeSet)),
+      nextCursor,
+      hasMore,
     })
     return c.json<GetBroadcastResponse>(response, 200)
   })
@@ -412,6 +556,59 @@ const broadcastRouter = broadcast
     return c.json<ToggleLikeResponse>(response, 200)
   })
 
+  .delete("/:id", sessionAuth, zodValidator("param", BroadcastPostParamsSchema), async (c) => {
+    const { id } = c.req.valid("param")
+    const db = drizzle(c.env.hexi_site)
+    const user = c.get("user")
+
+    const post = await db
+      .select({
+        id: schema.broadcastPost.id,
+        userId: schema.broadcastPost.userId,
+      })
+      .from(schema.broadcastPost)
+      .where(eq(schema.broadcastPost.id, id))
+      .get()
+
+    if (!post) {
+      return c.json<ApiError>({ error: "Post not found" }, 404)
+    }
+    if (post.userId !== user.id) {
+      return c.json<ApiError>({ error: "You can only delete your own posts" }, 403)
+    }
+
+    const child = await db
+      .select({ id: schema.broadcastPost.id })
+      .from(schema.broadcastPost)
+      .where(eq(schema.broadcastPost.parentId, id))
+      .get()
+
+    if (child) {
+      return c.json<ApiError>({ error: "Posts with replies cannot be deleted" }, 400)
+    }
+
+    const imageRows = await db
+      .select({ imageUrl: schema.broadcastPostImage.imageUrl })
+      .from(schema.broadcastPostImage)
+      .where(eq(schema.broadcastPostImage.postId, id))
+
+    await db.delete(schema.broadcastLike).where(eq(schema.broadcastLike.postId, id))
+    await db.delete(schema.broadcastPostImage).where(eq(schema.broadcastPostImage.postId, id))
+    await db.delete(schema.broadcastPost).where(eq(schema.broadcastPost.id, id))
+
+    if (c.env.AVATAR_BUCKET) {
+      await Promise.all(
+        imageRows
+          .map((row) => broadcastImageKeyFromUrl(row.imageUrl))
+          .filter((key): key is string => Boolean(key))
+          .map((key) => c.env.AVATAR_BUCKET.delete(key)),
+      )
+    }
+
+    const response = DeleteBroadcastPostResponseSchema.parse({ success: true })
+    return c.json<DeleteBroadcastPostResponse>(response, 200)
+  })
+
   .delete(
     "/:id/like",
     sessionAuth,
@@ -466,6 +663,16 @@ const broadcastRouter = broadcast
 
     const html = await res.text()
     const finalUrl = res.url || parsed.toString()
+    let previewUrl = finalUrl
+    if (parsed.hash) {
+      try {
+        const withHash = new URL(finalUrl)
+        withHash.hash = parsed.hash
+        previewUrl = withHash.toString()
+      } catch {
+        previewUrl = parsed.toString()
+      }
+    }
 
     const title =
       matchMetaContent(html, "og:title") ??
@@ -475,22 +682,62 @@ const broadcastRouter = broadcast
       matchMetaContent(html, "og:description") ??
       matchMetaContent(html, "twitter:description") ??
       matchMetaContent(html, "description")
-    const image = toAbsoluteUrl(
+    const rawImage = toAbsoluteUrl(
       matchMetaContent(html, "og:image") ?? matchMetaContent(html, "twitter:image"),
       finalUrl,
     )
+    const image = rawImage && shouldProxyPreviewImage(rawImage)
+      ? getPreviewImageProxyUrl(c, rawImage)
+      : rawImage
     const siteName = matchMetaContent(html, "og:site_name")
+    const type = matchMetaContent(html, "og:type")
 
     const response = LinkPreviewResponseSchema.parse({
       preview: {
-        url: finalUrl,
+        url: previewUrl,
         title,
         description,
         image,
         siteName,
+        type,
       },
     })
     return c.json<LinkPreviewResponse>(response, 200)
+  })
+
+  .get("/link-preview/image", zodValidator("query", LinkPreviewImageQuerySchema), async (c) => {
+    const { url } = c.req.valid("query")
+    const parsed = new URL(url)
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return c.json<ApiError>({ error: "Only http/https URLs are supported" }, 400)
+    }
+
+    const res = await fetch(parsed.toString(), {
+      redirect: "follow",
+      headers: buildPreviewImageHeaders(parsed.toString()),
+    }).catch(() => null)
+
+    if (!res || !res.ok || !res.body) {
+      return c.json<ApiError>({ error: "Failed to fetch preview image" }, 404)
+    }
+
+    const contentType = res.headers.get("content-type") ?? ""
+    if (!contentType.startsWith("image/")) {
+      return c.json<ApiError>({ error: "Preview image is not an image" }, 400)
+    }
+
+    const headers = new Headers()
+    headers.set("content-type", contentType)
+    headers.set("cache-control", "public, max-age=86400")
+    const contentLength = res.headers.get("content-length")
+    if (contentLength) {
+      headers.set("content-length", contentLength)
+    }
+
+    return new Response(res.body, {
+      status: 200,
+      headers,
+    })
   })
 
 export { broadcastRouter }

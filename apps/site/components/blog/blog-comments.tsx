@@ -90,7 +90,7 @@ function CommentAvatar({ user }: { user: ApiComment["user"] }) {
   }
 
   const initials = user.name.trim().slice(0, 1).toUpperCase() || "?";
-  const bg = avatarColor(user.id);
+  const bg = avatarColor(user.id!);
   return (
     <span
       className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white select-none"

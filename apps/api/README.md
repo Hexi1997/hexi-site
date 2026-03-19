@@ -1,7 +1,16 @@
 ```txt
 pnpm install
+cp .dev.vars.example .dev.vars
 pnpm run dev
 ```
+
+For local development, `wrangler dev` now uses the local D1 database by default. Apply migrations locally before first run:
+
+```txt
+wrangler d1 migrations apply hexi-site --local
+```
+
+If you also run the site app locally, create `apps/site/.env.local` from `apps/site/.env.local.example` so the browser talks to the local API at `http://localhost:8787`.
 
 ## Deploy
 

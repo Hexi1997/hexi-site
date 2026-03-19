@@ -146,7 +146,7 @@ export default function ProfilePage() {
           ) : (
             <div
               className="flex size-16 items-center justify-center rounded-full text-2xl font-semibold text-white select-none"
-              style={{ backgroundColor: avatarColor(session.user.email) }}
+              style={{ backgroundColor: avatarColor(session.user.id!) }}
             >
               {(session.user.name ?? session.user.email).trim().slice(0, 1).toUpperCase()}
             </div>

@@ -1,8 +1,9 @@
 import { ApiErrorSchema } from "@workspace/api-rpc"
 import { hc } from "@workspace/api-rpc/client"
 import type { ApiError, AppType } from "@workspace/api-rpc"
+import { getAuthApiUrl } from "@/lib/auth-api-url";
 
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL ?? ""
+const AUTH_API_URL = getAuthApiUrl()
 
 export const apiClient = hc<AppType>(AUTH_API_URL, {
   init: {
