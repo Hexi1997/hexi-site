@@ -11,6 +11,20 @@ export const apiClient = hc<AppType>(AUTH_API_URL, {
   },
 })
 
+export class ApiRequestError extends Error {
+  status: number
+  code?: string
+  retryAfter?: number
+
+  constructor(message: string, options: { status: number; code?: string; retryAfter?: number }) {
+    super(message)
+    this.name = "ApiRequestError"
+    this.status = options.status
+    this.code = options.code
+    this.retryAfter = options.retryAfter
+  }
+}
+
 function redirectToSignIn() {
   if (typeof window === "undefined") return
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`
@@ -23,16 +37,23 @@ function redirectToSignIn() {
 export async function getApiError(response: Response, fallback: string) {
   const payload = await response.json().catch(() => null)
   const parsed = ApiErrorSchema.safeParse(payload)
-  return parsed.success ? parsed.data.error : fallback
+  if (parsed.success) return parsed.data
+  return { error: fallback } satisfies ApiError
 }
 
 export async function assertApiOk(response: Response, fallback: string) {
   if (response.ok) return
-  const error = await getApiError(response, fallback)
+  const { error, code } = await getApiError(response, fallback)
   if (response.status === 401) {
     redirectToSignIn()
   }
-  throw new Error(error)
+  const retryAfterHeader = response.headers.get("Retry-After")
+  const retryAfter = retryAfterHeader ? Number(retryAfterHeader) : undefined
+  throw new ApiRequestError(error, {
+    status: response.status,
+    code,
+    retryAfter: Number.isFinite(retryAfter) ? retryAfter : undefined,
+  })
 }
 
 type JsonResponsePromise = Promise<{

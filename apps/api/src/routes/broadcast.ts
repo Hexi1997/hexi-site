@@ -2,7 +2,7 @@ import { Hono } from "hono"
 import type { Context } from "hono"
 import { drizzle } from "drizzle-orm/d1"
 import type { InferSelectModel } from "drizzle-orm"
-import { and, desc, eq, inArray, isNull, lt, or } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, isNull, lt, or, sql } from "drizzle-orm"
 import { createSelectSchema } from "drizzle-zod"
 import type { ApiError } from "@workspace/api-rpc"
 import { z } from "zod"
@@ -16,6 +16,10 @@ import { extFromType } from "../lib/utils"
 const MAX_CONTENT_LENGTH = 4000
 const MAX_IMAGE_COUNT = 4
 const IMAGE_MAX_SIZE = 8 * 1024 * 1024
+const IMAGE_UPLOAD_LIMIT_PER_MINUTE = 8
+const IMAGE_UPLOAD_LIMIT_PER_DAY = 40
+const IMAGE_UPLOAD_MINUTE_WINDOW_MS = 60 * 1000
+const IMAGE_UPLOAD_DAY_WINDOW_MS = 24 * 60 * 60 * 1000
 const IMAGE_ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"])
 const DEFAULT_PAGE_SIZE = 20
 const MAX_PAGE_SIZE = 50
@@ -233,6 +237,25 @@ async function getCurrentUserId(c: Context<AppEnv>) {
   const auth = createAuth(c.env as any)
   const session = await auth.api.getSession({ headers: c.req.raw.headers }).catch(() => null)
   return session?.user.id ?? null
+}
+
+async function getBroadcastImageUploadCount(
+  db: ReturnType<typeof drizzle>,
+  userId: string,
+  since: Date,
+) {
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.broadcastImageUpload)
+    .where(
+      and(
+        eq(schema.broadcastImageUpload.userId, userId),
+        gte(schema.broadcastImageUpload.createdAt, since),
+      ),
+    )
+    .get()
+
+  return Number(result?.count ?? 0)
 }
 
 const broadcastRouter = broadcast
@@ -464,6 +487,44 @@ const broadcastRouter = broadcast
       return c.json<ApiError>({ error: "AVATAR_BUCKET is not configured" }, 500)
     }
 
+    const db = drizzle(c.env.hexi_site)
+    const user = c.get("user")
+    const now = new Date()
+    const [uploadsLastMinute, uploadsLastDay] = await Promise.all([
+      getBroadcastImageUploadCount(
+        db,
+        user.id,
+        new Date(now.getTime() - IMAGE_UPLOAD_MINUTE_WINDOW_MS),
+      ),
+      getBroadcastImageUploadCount(
+        db,
+        user.id,
+        new Date(now.getTime() - IMAGE_UPLOAD_DAY_WINDOW_MS),
+      ),
+    ])
+
+    if (uploadsLastMinute >= IMAGE_UPLOAD_LIMIT_PER_MINUTE) {
+      c.header("Retry-After", "60")
+      return c.json<ApiError>(
+        {
+          error: `At most ${IMAGE_UPLOAD_LIMIT_PER_MINUTE} images can be uploaded per minute`,
+          code: "BROADCAST_IMAGE_UPLOAD_MINUTE_LIMIT",
+        },
+        429,
+      )
+    }
+
+    if (uploadsLastDay >= IMAGE_UPLOAD_LIMIT_PER_DAY) {
+      c.header("Retry-After", String(24 * 60 * 60))
+      return c.json<ApiError>(
+        {
+          error: `At most ${IMAGE_UPLOAD_LIMIT_PER_DAY} images can be uploaded per 24 hours`,
+          code: "BROADCAST_IMAGE_UPLOAD_DAY_LIMIT",
+        },
+        429,
+      )
+    }
+
     const form = await c.req.formData()
     const fileCandidate = form.get("file")
 
@@ -480,7 +541,6 @@ const broadcastRouter = broadcast
       return c.json<ApiError>({ error: "Image must be <= 8MB" }, 400)
     }
 
-    const user = c.get("user")
     const filename = `${Date.now()}-${crypto.randomUUID()}.${extFromType(contentType)}`
     const imagePath = `${user.id}/${filename}`
     const key = `broadcast/${imagePath}`
@@ -490,6 +550,13 @@ const broadcastRouter = broadcast
         contentType,
         cacheControl: "public, max-age=31536000, immutable",
       },
+    })
+
+    await db.insert(schema.broadcastImageUpload).values({
+      id: crypto.randomUUID(),
+      userId: user.id,
+      objectKey: key,
+      createdAt: now,
     })
 
     return c.json(

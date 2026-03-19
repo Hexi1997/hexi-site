@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core"
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -6,6 +6,7 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
+  avatarUploadedAt: integer("avatarUploadedAt", { mode: "timestamp" }),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 })
@@ -99,3 +100,21 @@ export const broadcastPostImage = sqliteTable("broadcastPostImage", {
   sortOrder: integer("sortOrder").notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
 })
+
+export const broadcastImageUpload = sqliteTable(
+  "broadcastImageUpload",
+  {
+    id: text("id").primaryKey(),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id),
+    objectKey: text("objectKey").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    userCreatedAtIdx: index("broadcastImageUpload_user_createdAt_idx").on(
+      table.userId,
+      table.createdAt,
+    ),
+  }),
+)

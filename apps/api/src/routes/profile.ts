@@ -18,6 +18,7 @@ import {
 import { zodValidator } from "../lib/zod-validator"
 
 const AVATAR_MAX_SIZE = 2 * 1024 * 1024
+const AVATAR_UPLOAD_COOLDOWN_MS = 60 * 60 * 1000
 const AVATAR_ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"])
 
 const profile = new Hono<AppEnv>()
@@ -137,6 +138,39 @@ const profileRouter = profile
     return c.json<ApiError>({ error: "AVATAR_BUCKET is not configured" }, 500)
   }
 
+  const db = drizzle(c.env.hexi_site)
+  const user = c.get("user")
+  const currentUser = await db
+    .select({
+      image: schema.user.image,
+      avatarUploadedAt: schema.user.avatarUploadedAt,
+    })
+    .from(schema.user)
+    .where(eq(schema.user.id, user.id))
+    .get()
+
+  if (!currentUser) {
+    return c.json<ApiError>({ error: "User not found" }, 404)
+  }
+
+  const now = new Date()
+  const avatarUploadedAt = currentUser.avatarUploadedAt
+  if (avatarUploadedAt) {
+    const retryAfterSeconds = Math.ceil(
+      (avatarUploadedAt.getTime() + AVATAR_UPLOAD_COOLDOWN_MS - now.getTime()) / 1000,
+    )
+    if (retryAfterSeconds > 0) {
+      c.header("Retry-After", String(retryAfterSeconds))
+      return c.json<ApiError>(
+        {
+          error: "Avatar can only be updated once per hour",
+          code: "AVATAR_UPLOAD_RATE_LIMITED",
+        },
+        429,
+      )
+    }
+  }
+
   const form = await c.req.formData()
   const fileCandidate = form.get("file")
 
@@ -154,8 +188,6 @@ const profileRouter = profile
   if (file.size > AVATAR_MAX_SIZE) {
     return c.json<ApiError>({ error: "Avatar must be <= 2MB" }, 400)
   }
-
-  const user = c.get("user")
   const filename = `${Date.now()}-${crypto.randomUUID()}.${extFromType(contentType)}`
   const avatarPath = `${user.id}/${filename}`
   const key = `avatars/${avatarPath}`
@@ -169,16 +201,16 @@ const profileRouter = profile
 
   const imageURL = `${new URL(c.req.url).origin}/api/profile/avatar/${avatarPath}`
 
-  const db = drizzle(c.env.hexi_site)
   await db
     .update(schema.user)
     .set({
       image: imageURL,
-      updatedAt: new Date(),
+      avatarUploadedAt: now,
+      updatedAt: now,
     })
     .where(eq(schema.user.id, user.id))
 
-  const previous = avatarPathFromURL(user.image)
+  const previous = avatarPathFromURL(currentUser.image)
   if (previous && previous !== avatarPath) {
     await c.env.AVATAR_BUCKET.delete(`avatars/${previous}`)
   }

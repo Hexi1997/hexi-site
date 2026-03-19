@@ -5,8 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { authClient, useSession } from "@/lib/auth-client";
-import { apiClient, apiRequest } from "@/lib/api-client";
+import { ApiRequestError, apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
+
+function getAvatarUploadErrorMessage(error: unknown) {
+  if (error instanceof ApiRequestError && error.code === "AVATAR_UPLOAD_RATE_LIMITED") {
+    if (typeof error.retryAfter === "number" && error.retryAfter > 0) {
+      const minutes = Math.ceil(error.retryAfter / 60);
+      return `You can update your avatar once per hour. Try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+    }
+    return "You can update your avatar once per hour. Please try again later.";
+  }
+  if (error instanceof Error) return error.message;
+  return "Failed to upload avatar";
+}
 
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();
@@ -79,7 +91,7 @@ export default function ProfilePage() {
       await refreshSessionAndPage();
       toast.success("Avatar updated.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to upload avatar");
+      toast.error(getAvatarUploadErrorMessage(err));
     } finally {
       setUploadingAvatar(false);
     }
@@ -172,7 +184,9 @@ export default function ProfilePage() {
             >
               {uploadingAvatar ? "Uploading..." : avatar ? "Change avatar" : "Upload avatar"}
             </button>
-            <p className="text-xs text-neutral-500">Supports jpg/png/webp/gif up to 2MB.</p>
+            <p className="text-xs text-neutral-500">
+              Supports jpg/png/webp/gif up to 2MB. Avatar can be updated once per hour.
+            </p>
           </div>
         </div>
       </section>

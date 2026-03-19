@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { drizzle } from "drizzle-orm/d1"
 import type { InferSelectModel } from "drizzle-orm"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, inArray, isNull, lt, or } from "drizzle-orm"
 import { createSelectSchema } from "drizzle-zod"
 import type { ApiError } from "@workspace/api-rpc"
 import { z } from "zod"
@@ -90,29 +90,6 @@ function parseCursor(cursor: string | undefined) {
   return { ts, id }
 }
 
-function rootSorter(a: CommentRow, b: CommentRow) {
-  const diff = b.createdAt.getTime() - a.createdAt.getTime()
-  if (diff !== 0) return diff
-  return b.id.localeCompare(a.id)
-}
-
-function collectSubtreeIds(childrenByParent: Map<string, string[]>, rootIds: string[]) {
-  const included = new Set(rootIds)
-  const stack = [...rootIds]
-  while (stack.length > 0) {
-    const current = stack.pop()
-    if (!current) continue
-    const children = childrenByParent.get(current) ?? []
-    for (const childId of children) {
-      if (!included.has(childId)) {
-        included.add(childId)
-        stack.push(childId)
-      }
-    }
-  }
-  return included
-}
-
 function toCommentDto(item: CommentRow): CommentDto {
   return {
     id: item.id,
@@ -120,6 +97,21 @@ function toCommentDto(item: CommentRow): CommentDto {
     content: item.content,
     createdAt: item.createdAt.toISOString(),
     user: item.user,
+  }
+}
+
+function commentRowSelection() {
+  return {
+    id: schema.comment.id,
+    postSlug: schema.comment.postSlug,
+    parentId: schema.comment.parentId,
+    content: schema.comment.content,
+    createdAt: schema.comment.createdAt,
+    user: {
+      id: schema.user.id,
+      name: schema.user.name,
+      image: schema.user.image,
+    },
   }
 }
 
@@ -133,56 +125,53 @@ const commentsRouter = comments
   }
 
   const db = drizzle(c.env.hexi_site)
-  const rows = await db
-    .select({
-      id: schema.comment.id,
-      postSlug: schema.comment.postSlug,
-      parentId: schema.comment.parentId,
-      content: schema.comment.content,
-      createdAt: schema.comment.createdAt,
-      user: {
-        id: schema.user.id,
-        name: schema.user.name,
-        image: schema.user.image,
-      },
-    })
+  const rootWhere = cursor
+    ? and(
+        eq(schema.comment.postSlug, postSlug),
+        isNull(schema.comment.parentId),
+        or(
+          lt(schema.comment.createdAt, new Date(cursor.ts)),
+          and(eq(schema.comment.createdAt, new Date(cursor.ts)), lt(schema.comment.id, cursor.id)),
+        ),
+      )
+    : and(eq(schema.comment.postSlug, postSlug), isNull(schema.comment.parentId))
+
+  const rootRows = await db
+    .select(commentRowSelection())
     .from(schema.comment)
     .innerJoin(schema.user, eq(schema.comment.userId, schema.user.id))
-    .where(eq(schema.comment.postSlug, postSlug))
+    .where(rootWhere)
     .orderBy(desc(schema.comment.createdAt), desc(schema.comment.id))
+    .limit(pageSize + 1)
 
-  const all = rows as CommentRow[]
-  const allRootComments = all.filter((item) => item.parentId === null).sort(rootSorter)
-
-  const rootPage = allRootComments
-    .filter((item) => {
-      if (!cursor) return true
-      const time = item.createdAt.getTime()
-      return time < cursor.ts || (time === cursor.ts && item.id < cursor.id)
-    })
-    .slice(0, pageSize + 1)
-
+  const rootPage = rootRows as CommentRow[]
   const hasMore = rootPage.length > pageSize
   const currentRoots = hasMore ? rootPage.slice(0, pageSize) : rootPage
 
-  const childrenByParent = new Map<string, string[]>()
-  for (const item of all) {
-    if (!item.parentId) continue
-    const existing = childrenByParent.get(item.parentId)
-    if (existing) {
-      existing.push(item.id)
-    } else {
-      childrenByParent.set(item.parentId, [item.id])
-    }
+  const commentsForPage: CommentRow[] = [...currentRoots]
+  let frontier = currentRoots.map((item) => item.id)
+
+  while (frontier.length > 0) {
+    const childRows = await db
+      .select(commentRowSelection())
+      .from(schema.comment)
+      .innerJoin(schema.user, eq(schema.comment.userId, schema.user.id))
+      .where(
+        and(
+          eq(schema.comment.postSlug, postSlug),
+          inArray(schema.comment.parentId, frontier),
+        ),
+      )
+      .orderBy(desc(schema.comment.createdAt), desc(schema.comment.id))
+
+    const children = childRows as CommentRow[]
+    if (children.length === 0) break
+
+    commentsForPage.push(...children)
+    frontier = children.map((item) => item.id)
   }
 
-  const includedIds = collectSubtreeIds(
-    childrenByParent,
-    currentRoots.map((item) => item.id),
-  )
-
-  const commentsForPage = all
-    .filter((item) => includedIds.has(item.id))
+  const responseComments = commentsForPage
     .sort((a, b) => {
       const diff = a.createdAt.getTime() - b.createdAt.getTime()
       if (diff !== 0) return diff
@@ -199,7 +188,7 @@ const commentsRouter = comments
       : null
 
   const response = GetCommentsResponseSchema.parse({
-    comments: commentsForPage,
+    comments: responseComments,
     nextCursor,
     hasMore,
   })

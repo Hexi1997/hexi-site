@@ -57,6 +57,20 @@
       "when": 1773888762300,
       "tag": "0007_peaceful_iceman",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1773910800000,
+      "tag": "0008_candid_grey_gargoyle",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1773911400000,
+      "tag": "0009_deep_jigsaw",
+      "breakpoints": true
     }
   ]
 }

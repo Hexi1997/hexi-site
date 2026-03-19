@@ -5,9 +5,10 @@ import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Heart, MessageCircle, Plus, Trash2 } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { toast } from "react-toastify";
 import "react-photo-view/dist/react-photo-view.css";
 import { useSession } from "@/lib/auth-client";
-import { apiClient, apiRequest } from "@/lib/api-client";
+import { ApiRequestError, apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
 
 const MAX_CONTENT_LENGTH = 4000;
@@ -48,6 +49,26 @@ type ComposerImage = {
   file: File;
   previewUrl: string;
 };
+
+function getBroadcastImageUploadErrorMessage(error: unknown) {
+  if (
+    error instanceof ApiRequestError &&
+    error.code === "BROADCAST_IMAGE_UPLOAD_MINUTE_LIMIT"
+  ) {
+    if (typeof error.retryAfter === "number" && error.retryAfter > 0) {
+      return `You're uploading images too quickly. Try again in about ${error.retryAfter} seconds.`;
+    }
+    return "You're uploading images too quickly. Please try again in a minute.";
+  }
+  if (
+    error instanceof ApiRequestError &&
+    error.code === "BROADCAST_IMAGE_UPLOAD_DAY_LIMIT"
+  ) {
+    return "You've reached the image upload limit for the last 24 hours.";
+  }
+  if (error instanceof Error) return error.message;
+  return "Failed to upload image";
+}
 
 function formatDate(iso: string) {
   const date = new Date(iso);
@@ -489,7 +510,6 @@ export function BroadcastFeed() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<FeedPost | null>(null);
@@ -511,7 +531,6 @@ export function BroadcastFeed() {
     } else {
       setLoading(true);
     }
-    setError(null);
     try {
       const data = await apiRequest(
         apiClient.api.broadcast.$get({
@@ -533,7 +552,7 @@ export function BroadcastFeed() {
       setCursor(data.nextCursor);
       setHasMore(data.hasMore);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load broadcast feed");
+      toast.error(err instanceof Error ? err.message : "Failed to load broadcast feed");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -625,15 +644,14 @@ export function BroadcastFeed() {
     if (!files) return;
     const incoming = Array.from(files);
     if (incoming.length === 0) return;
-    setError(null);
     setComposerImages((prev) => {
       const remain = Math.max(0, MAX_IMAGE_COUNT - prev.length);
       if (remain <= 0) {
-        setError(`You can upload up to ${MAX_IMAGE_COUNT} images.`);
+        toast.error(`You can upload up to ${MAX_IMAGE_COUNT} images per post.`);
         return prev;
       }
       if (incoming.length > remain) {
-        setError(`You can upload up to ${MAX_IMAGE_COUNT} images.`);
+        toast.error(`You can upload up to ${MAX_IMAGE_COUNT} images per post.`);
       }
       const accepted = incoming.slice(0, remain).map((file) => ({
         file,
@@ -649,20 +667,24 @@ export function BroadcastFeed() {
     if (!content || content.length > MAX_CONTENT_LENGTH) return;
 
     setSubmitting(true);
-    setError(null);
     try {
       const uploadedImages: string[] = [];
       for (const item of composerImages) {
         const formData = new FormData();
         formData.append("file", item.file);
-        const upload = await apiRequest(
-          apiClient.api.broadcast.image.$post({}, {
-            init: {
-              body: formData,
-            },
-          }),
-          "Failed to upload image",
-        );
+        let upload;
+        try {
+          upload = await apiRequest(
+            apiClient.api.broadcast.image.$post({}, {
+              init: {
+                body: formData,
+              },
+            }),
+            "Failed to upload image",
+          );
+        } catch (err) {
+          throw new Error(getBroadcastImageUploadErrorMessage(err));
+        }
         uploadedImages.push(upload.image);
       }
 
@@ -691,7 +713,7 @@ export function BroadcastFeed() {
         return [];
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to publish");
+      toast.error(err instanceof Error ? err.message : "Failed to publish");
     } finally {
       setSubmitting(false);
     }
@@ -736,7 +758,7 @@ export function BroadcastFeed() {
         );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update like");
+      toast.error(err instanceof Error ? err.message : "Failed to update like");
       await loadFeed(null, false);
     } finally {
       setLikeUpdatingIds((prev) => {
@@ -755,7 +777,6 @@ export function BroadcastFeed() {
       next.add(post.id);
       return next;
     });
-    setError(null);
 
     try {
       await apiRequest(
@@ -770,7 +791,7 @@ export function BroadcastFeed() {
         setReplyTo(null);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete post");
+      toast.error(err instanceof Error ? err.message : "Failed to delete post");
       await loadFeed(null, false);
     } finally {
       setDeletingIds((prev) => {
@@ -807,10 +828,6 @@ export function BroadcastFeed() {
           <span>Add</span>
         </button>
       </div>
-
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>
-      )}
 
       <div className="mt-8 space-y-6">
         {loading ? (
@@ -905,6 +922,10 @@ export function BroadcastFeed() {
                 {composerImages.length}/{MAX_IMAGE_COUNT}
               </span>
             </div>
+            <p className="mt-2 text-xs text-neutral-500">
+              Up to {MAX_IMAGE_COUNT} images per post, 8 uploads per minute, and 40 uploads per 24
+              hours.
+            </p>
             {composerImages.length > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {composerImages.map((item) => (
