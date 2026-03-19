@@ -42,7 +42,7 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
         const wrapper = document.createElement('div');
         wrapper.className = 'relative';
         wrapper.style.width = '100%';
-        wrapper.style.minHeight = '370px';
+        wrapper.style.minHeight = '321px';
         wrapper.style.marginBottom = '32px';
 
         // Create skeleton layer (animate-pulse + translucent background)

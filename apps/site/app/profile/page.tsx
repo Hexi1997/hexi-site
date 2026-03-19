@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { authClient, useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { ApiRequestError, apiClient, apiRequest } from "@/lib/api-client";
 import { avatarColor } from "@/lib/avatar";
 
@@ -21,7 +21,7 @@ function getAvatarUploadErrorMessage(error: unknown) {
 }
 
 export default function ProfilePage() {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, refetch: refetchSession } = useSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +46,7 @@ export default function ProfilePage() {
   }, [isPending, router, session]);
 
   async function refreshSessionAndPage() {
-    await authClient.getSession();
+    await refetchSession();
   }
 
   async function handleNameUpdate() {

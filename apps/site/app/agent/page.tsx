@@ -128,7 +128,7 @@ export default function AgentPage() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex flex-col gap-6 pb-0 pt-8">
+    <div className="flex max-w-[640px] mx-auto flex-col gap-6 pb-0 pt-8">
       {/* Messages */}
       <div
         className={cn(
