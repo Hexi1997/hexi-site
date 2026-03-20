@@ -297,7 +297,7 @@ export function BlogComments({ postSlug }: { postSlug: string }) {
         ) : (
           <p className="text-sm text-neutral-600">
             <Link href={signInHref} className="text-neutral-900 underline underline-offset-4">
-              Sign in
+              Sign in{' '}
             </Link>
             to join the discussion
           </p>
