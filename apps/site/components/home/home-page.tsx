@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
@@ -115,18 +116,90 @@ export function HomePage() {
         ease: "power2.out",
       });
 
+      gsap.from("[data-hero-avatar]", {
+        opacity: 0,
+        x: 24,
+        duration: 1,
+        delay: 0.1,
+        ease: "power3.out",
+      });
+
+      const pageScroll = {
+        trigger: page,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.35,
+      } as const;
+
+      gsap.fromTo(
+        "[data-hero-foreground]",
+        { y: 0 },
+        {
+          y: -88,
+          ease: "none",
+          scrollTrigger: pageScroll,
+        },
+      );
+
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((node, index) => {
         gsap.from(node, {
           opacity: 0,
-          y: 24,
-          duration: 0.8,
+          y: 28,
+          scale: 0.985,
+          duration: 0.85,
           delay: index * 0.04,
-          ease: "power2.out",
+          ease: "power3.out",
           scrollTrigger: {
             trigger: node,
-            start: "top 82%",
+            start: "top 84%",
+            toggleActions: "play none none none",
           },
         });
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-scroll-accent]").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { scaleX: 0, transformOrigin: "left center" },
+          {
+            scaleX: 1,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      ScrollTrigger.batch("[data-timeline-card]", {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => {
+          gsap.from(batch, {
+            opacity: 0,
+            y: 32,
+            duration: 0.75,
+            stagger: 0.1,
+            ease: "power3.out",
+          });
+        },
+      });
+
+      ScrollTrigger.batch("[data-project-card]", {
+        start: "top 90%",
+        once: true,
+        onEnter: (batch) => {
+          gsap.from(batch, {
+            opacity: 0,
+            x: -18,
+            duration: 0.7,
+            stagger: 0.12,
+            ease: "power3.out",
+          });
+        },
       });
     }, page);
 
@@ -135,37 +208,54 @@ export function HomePage() {
 
   return (
     <>
-      <div ref={pageRef} className="mx-auto min-h-[calc(100vh-3.5rem)] max-w-[734px] px-0">
-
+      <div
+        ref={pageRef}
+        className="relative mx-auto min-h-[calc(100vh-3.5rem)] max-w-[734px] px-0"
+      >
+        <div className="relative z-10 min-h-[calc(100vh-3.5rem)] bg-white">
       <section className="relative overflow-hidden border-x border-dashed border-neutral-200/80 px-6 pb-14 pt-24 sm:px-8 sm:pb-20 sm:pt-30">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/92 to-transparent" />
 
-        <div className="relative z-10 space-y-8">
+        <div data-hero-foreground className="relative z-10 space-y-8 will-change-transform">
           <div className="space-y-4">
             <p
               data-hero-kicker
               className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-500"
             >
-              Hexi / Personal Homepage
+              Hexi / Personal Site
             </p>
-            <div className="space-y-4">
+            <div className="flex items-center gap-4 sm:gap-10">
               <h1
                 data-hero-title
-                className="max-w-[10ch] text-5xl font-medium tracking-[-0.06em] text-neutral-950 sm:text-7xl"
+                className="flex-1 text-[44px] leading-[1.1] font-medium tracking-[-0.06em] text-neutral-950 sm:text-7xl"
               >
                 Frontend engineer, builder, writer.
               </h1>
-              <p
-                data-hero-copy
-                className="max-w-[35rem] text-[15px] leading-7 text-neutral-600 sm:text-base"
+              <div
+                data-hero-avatar
+                className="w-36 shrink-0 will-change-transform sm:w-48"
               >
-                This page should read like a compact personal index: who you are, what you work on,
-                what you have built, and where people can continue reading. I only filled in the
-                parts already supported by the repository and left explicit placeholders where your
-                private background is still missing.
-              </p>
+                <Image
+                  src="/author.png"
+                  alt="Hexi avatar"
+                  width={160}
+                  height={213}
+                  className="w-full object-cover"
+                  priority
+                />
+              </div>
             </div>
           </div>
+
+          <p
+            data-hero-copy
+            className="text-[15px] leading-7 text-neutral-600 sm:text-base"
+          >
+            This page should read like a compact personal index: who you are, what you work on,
+            what you have built, and where people can continue reading. I only filled in the
+            parts already supported by the repository and left explicit placeholders where your
+            private background is still missing.
+          </p>
 
           <div data-hero-actions className="flex flex-wrap items-center gap-3">
             <Link
@@ -199,9 +289,14 @@ export function HomePage() {
       </section>
 
       <section className="relative z-10 space-y-10 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
+        <div
+          data-scroll-accent
+          className="h-px w-full max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+          aria-hidden
+        />
         {timelineSections.map((section) => (
-          <div key={section.label} data-reveal className="grid gap-5 sm:grid-cols-[140px_1fr]">
-            <div className="space-y-2">
+          <div key={section.label} className="grid gap-5 sm:grid-cols-[140px_1fr]">
+            <div data-reveal className="space-y-2">
               <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
                 {section.label}
               </p>
@@ -210,7 +305,11 @@ export function HomePage() {
 
             <div className="space-y-4">
               {section.items.map((item) => (
-                <div key={`${section.label}-${item.title}`} className="border border-neutral-200 p-4">
+                <div
+                  key={`${section.label}-${item.title}`}
+                  data-timeline-card
+                  className="border border-neutral-200 p-4"
+                >
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                     <h2 className="text-base font-medium text-neutral-950">{item.title}</h2>
                     <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
@@ -226,13 +325,20 @@ export function HomePage() {
       </section>
 
       <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
-        <div data-reveal className="space-y-2">
-          <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
-            Open Source
-          </p>
-          <h2 className="text-2xl font-medium tracking-[-0.04em] text-neutral-950">
-            Projects and public work already visible in this repo.
-          </h2>
+        <div className="space-y-3">
+          <div
+            data-scroll-accent
+            className="h-px w-full max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+            aria-hidden
+          />
+          <div data-reveal className="space-y-2">
+            <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
+              Open Source
+            </p>
+            <h2 className="text-2xl font-medium tracking-[-0.04em] text-neutral-950">
+              Projects and public work already visible in this repo.
+            </h2>
+          </div>
         </div>
 
         <div className="grid gap-3">
@@ -240,7 +346,7 @@ export function HomePage() {
             <Link
               key={project.title}
               href={project.href}
-              data-reveal
+              data-project-card
               className="group border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
@@ -281,6 +387,7 @@ export function HomePage() {
           </div>
         </div>
       </section>
+        </div>
     </div>
     </>
   );

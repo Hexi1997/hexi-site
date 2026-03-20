@@ -4,6 +4,7 @@ import "./globals.css";
 import "katex/dist/katex.min.css";
 import Providers from "./providers";
 import { BlogHeader } from "@/components/layout/blog-header";
+import { GridBackground } from "@/components/layout/grid-background";
 import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({
@@ -69,6 +70,7 @@ export default function RootLayout({
         className={`${geist.variable} ${anta.variable} ${geistMono.variable} antialiased`}
       >
         <div className="bg-background">
+          <GridBackground />
           <BlogHeader />
           <main className="mx-auto w-full max-w-[766px] px-4">
             <Providers>{children}</Providers>

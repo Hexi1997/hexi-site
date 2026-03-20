@@ -88,14 +88,14 @@ export function BlogHeader() {
             <Link
               key={menu.href}
               href={menu.href}
-              className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
+              className="text-sm uppercase font-geist-mono tracking-[0.1em] font-medium text-neutral-700 transition-colors hover:text-neutral-900"
             >
               {menu.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-2 w-[104px] flex items-center justify-end">
           {isPending ? (
             <span className="h-8 w-8 rounded-full bg-neutral-100 animate-pulse" />
           ) : session?.user ? (
@@ -140,7 +140,7 @@ export function BlogHeader() {
           ) : (
             <Link
               href={signInHref}
-              className="inline-flex items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 md:px-4"
+              className="inline-flex uppercase items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 md:px-4"
             >
               Login
             </Link>
@@ -165,7 +165,7 @@ export function BlogHeader() {
                     key={menu.href}
                     href={menu.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                    className="block uppercase px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
                   >
                     {menu.label}
                   </Link>

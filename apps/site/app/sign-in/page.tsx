@@ -86,7 +86,8 @@ function SignInContent() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)] items-center justify-center px-4 py-12">
+    <div className="mx-auto max-w-[734px]">
+      <div className="relative z-10 flex min-h-[calc(100vh-3.5rem)] items-center justify-center border-x border-dashed border-neutral-200/80 bg-white px-6 py-12 sm:px-8">
       <div className="w-full max-w-md">
         {/* Card Container */}
         <div className="rounded-xl border border-neutral-200 bg-white p-8 shadow-sm">
@@ -210,6 +211,7 @@ function SignInContent() {
             </button>
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

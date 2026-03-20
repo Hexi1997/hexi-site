@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { RotateCcw } from "lucide-react";
 import { Streamdown, defaultRehypePlugins } from "streamdown";
 import { code } from "@streamdown/code";
@@ -51,9 +52,18 @@ export default function AgentPage() {
     } catch {}
   }, [messages, isHydrated]);
 
+  const scrollToBottom = useCallback((smooth = true) => {
+    // Double RAF ensures browser has finished layout before scrolling
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bottomRef.current?.scrollIntoView({ behavior: smooth ? "smooth" : "instant" });
+      });
+    });
+  }, []);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   const autoResize = () => {
     const el = textareaRef.current;
@@ -72,6 +82,7 @@ export default function AgentPage() {
       setInput("");
       if (textareaRef.current) textareaRef.current.style.height = "auto";
       setIsLoading(true);
+      scrollToBottom(false);
 
       try {
         const response = await fetch(AGENT_API_URL, {
@@ -116,7 +127,7 @@ export default function AgentPage() {
         setIsLoading(false);
       }
     },
-    [messages, isLoading],
+    [messages, isLoading, scrollToBottom],
   );
 
   const reset = () => {
@@ -128,134 +139,127 @@ export default function AgentPage() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex max-w-[640px] mx-auto flex-col gap-6 pb-0 pt-8">
-      {/* Messages */}
-      <div
-        className={cn(
-          "flex flex-col gap-4",
-          isEmpty ? "min-h-[120px]" : "min-h-[300px]",
-        )}
-      >
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex gap-3 items-start",
-              msg.role === "user" ? "flex-row-reverse" : "flex-row",
-            )}
-          >
-            {/* <div
-                className={cn(
-                  "shrink-0 w-7 h-7 mt-0.5 rounded-full flex items-center justify-center",
-                  msg.role === "user"
-                    ? "bg-muted"
-                    : "bg-muted border border-border"
-                )}
-              >
-                {msg.role === "user" ? (
-                  <User size={13} />
-                ) : (
-                  <Bot size={13} className="text-foreground" />
-                )}
-              </div> */}
-            <div
-              className={cn(
-                "max-w-full px-4 py-2.5 text-sm leading-relaxed",
-                msg.role === "user"
-                  ? "bg-muted rounded-2xl whitespace-pre-wrap"
-                  : "px-0",
-              )}
-            >
-              {msg.role === "user" ? (
-                msg.content
-              ) : msg.content ? (
-                <Streamdown
-                  animated
-                  key={`${i}-${isLoading && i === messages.length - 1}`}
-                  plugins={{ code }}
-                  isAnimating={isLoading && i === messages.length - 1}
-                  linkSafety={{ enabled: false }}
-                  rehypePlugins={[
-                    defaultRehypePlugins.raw,
-                    defaultRehypePlugins.sanitize,
-                  ]}
-                  className="streamdown-container [&_pre_code]:text-xs"
-                >
-                  {msg.content}
-                </Streamdown>
-              ) : isLoading && i === messages.length - 1 ? (
-                <span className="flex gap-1 items-center h-5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:0ms]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:150ms]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
-                </span>
-              ) : null}
+    <div className="mx-auto max-w-[734px] px-6 sm:px-8 relative z-10 border-x border-dashed border-neutral-200/80 bg-white">
+      <div className="max-w-[640px] mx-auto flex flex-col min-h-[calc(100vh-3.5rem)]">
+        {/* Content area — grows with page scroll */}
+        <div className="flex-1">
+          {isEmpty ? (
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] gap-4 pb-4">
+              <Image
+                src="/agent.png"
+                alt="HEXI AI"
+                width={180}
+                height={246}
+                className="select-none opacity-20"
+                draggable={false}
+                priority
+              />
+              <h2 className="text-xl font-medium uppercase sm:text-2xl font-geist-mono tracking-[0.1em] text-center opacity-20">
+                Chat with HEXI@AI
+              </h2>
+              <p className="text-sm text-center text-muted-foreground/50 max-w-[320px] leading-relaxed">
+                Grounded in HEXI&apos;s personal profile — ask anything about his work, projects, or background.
+              </p>
             </div>
-          </div>
-        ))}
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Input area */}
-      <div className="flex flex-col gap-2 sticky bottom-0 pb-4 bg-background pt-2">
-        {messages.length === 0 && (
-          <h2 className="text-xl uppercase sm:text-2xl font-geist-mono mb-4 text-center">
-            Attention Is All You Need.
-          </h2>
-        )}
-        <div className="relative">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              autoResize();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(input);
-              }
-            }}
-            placeholder="Enter your question..."
-            rows={4}
-            disabled={isLoading}
-            className="w-full resize-none rounded-xl border border-border bg-card pl-4 pr-24 py-2.5 pb-11 text-sm focus:outline-none focus:ring-0 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
-            style={{ minHeight: "42px" }}
-          />
-          <div className="absolute right-2 bottom-4 flex gap-1.5">
-            {messages.length > 0 && (
-              <button
-                onClick={reset}
-                disabled={isLoading}
-                title="Reset conversation"
-                className="w-9 h-9 rounded-lg border border-border bg-card text-muted-foreground flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
-              >
-                <RotateCcw size={14} />
-              </button>
-            )}
-            {/* <button
-              onClick={() => sendMessage(input)}
-              disabled={isLoading || !input.trim()}
-              className="w-9 h-9 rounded-lg bg-secondary text-background flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
-            >
-              <Send size={14} />
-            </button> */}
-          </div>
+          ) : (
+            <div className="flex flex-col gap-4 py-8">
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex gap-3 items-start",
+                    msg.role === "user" ? "flex-row-reverse" : "flex-row",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-full px-4 py-2.5 text-sm leading-relaxed",
+                      msg.role === "user"
+                        ? "bg-muted rounded-2xl whitespace-pre-wrap"
+                        : "px-0",
+                    )}
+                  >
+                    {msg.role === "user" ? (
+                      msg.content
+                    ) : msg.content ? (
+                      <Streamdown
+                        animated
+                        key={`${i}-${isLoading && i === messages.length - 1}`}
+                        plugins={{ code }}
+                        isAnimating={isLoading && i === messages.length - 1}
+                        linkSafety={{ enabled: false }}
+                        rehypePlugins={[
+                          defaultRehypePlugins.raw,
+                          defaultRehypePlugins.sanitize,
+                        ]}
+                        className="streamdown-container [&_pre_code]:text-xs"
+                      >
+                        {msg.content}
+                      </Streamdown>
+                    ) : isLoading && i === messages.length - 1 ? (
+                      <span className="flex gap-1 items-center h-5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:0ms]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:150ms]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div ref={bottomRef} />
         </div>
 
-        {/* FAQ chips */}
-        <div className="flex flex-no-wrap gap-1.5 scrollbar-none overflow-x-auto">
-          {FAQ_QUESTIONS.map((q) => (
-            <button
-              key={q}
-              onClick={() => sendMessage(q)}
+        {/* Input area — sticky to viewport bottom */}
+        <div className="flex flex-col gap-2 pb-4 bg-white pt-2 sticky bottom-0">
+          <div className="relative">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                autoResize();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage(input);
+                }
+              }}
+              placeholder="Enter your question..."
+              rows={4}
               disabled={isLoading}
-              className="text-xs px-3 shrink-0 py-1.5 rounded-full border border-border bg-card hover:bg-accent hover:border-foreground/20 transition-all duration-150 disabled:opacity-50 text-muted-foreground hover:text-foreground"
-            >
-              {q}
-            </button>
-          ))}
+              className="w-full resize-none rounded-xl border border-border bg-card pl-4 pr-24 py-2.5 pb-11 text-sm focus:outline-none focus:ring-0 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
+              style={{ minHeight: "42px" }}
+            />
+            <div className="absolute right-2 bottom-4 flex gap-1.5">
+              {messages.length > 0 && (
+                <button
+                  onClick={reset}
+                  disabled={isLoading}
+                  title="Reset conversation"
+                  className="w-9 h-9 rounded-lg border border-border bg-card text-muted-foreground flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
+                >
+                  <RotateCcw size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* FAQ chips */}
+          <div className="flex flex-no-wrap gap-1.5 scrollbar-none overflow-x-auto">
+            {FAQ_QUESTIONS.map((q) => (
+              <button
+                key={q}
+                onClick={() => sendMessage(q)}
+                disabled={isLoading}
+                className="text-xs px-3 shrink-0 py-1.5 rounded-full border border-border bg-card hover:bg-accent hover:border-foreground/20 transition-all duration-150 disabled:opacity-50 text-foreground hover:text-foreground"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

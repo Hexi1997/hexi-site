@@ -137,11 +137,18 @@ export default function ProfilePage() {
   }
 
   if (isPending || !session?.user) {
-    return <div className="py-16 text-center text-sm text-neutral-500">Loading...</div>;
+    return (
+      <div className="mx-auto max-w-[734px]">
+        <div className="relative z-10 flex min-h-[calc(100vh-3.5rem)] items-center justify-center border-x border-dashed border-neutral-200/80 bg-white">
+          {/* <p className="text-sm text-neutral-500">Loading...</p> */}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl py-10">
+    <div className="mx-auto max-w-[734px]">
+      <div className="relative z-10 min-h-[calc(100vh-3.5rem)] border-x border-dashed border-neutral-200/80 bg-white px-6 pt-10 pb-12 sm:px-8">
 
       <section className="my-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-medium text-neutral-900">Avatar</h2>
@@ -156,7 +163,7 @@ export default function ProfilePage() {
             />
           ) : (
             <div
-              className="flex size-16 items-center justify-center rounded-full text-2xl font-semibold text-white select-none"
+              className="flex size-16 shrink-0 items-center justify-center rounded-full text-2xl font-semibold text-white select-none"
               style={{ backgroundColor: avatarColor(session.user.id!) }}
             >
               {(session.user.name ?? session.user.email).trim().slice(0, 1).toUpperCase()}
@@ -253,6 +260,7 @@ export default function ProfilePage() {
           </button>
         </div>
       </section>
+      </div>
     </div>
   );
 }

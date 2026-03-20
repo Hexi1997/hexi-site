@@ -814,8 +814,9 @@ export function BroadcastFeed() {
   }
 
   return (
-    <section className="mx-auto mt-10 max-w-[520px] pb-16">
-      <div className="flex items-center justify-between gap-4">
+    <div className="mx-auto max-w-[734px] px-4 bg-white relative z-10 border-x border-dashed border-neutral-200/80">
+    <section className="mx-auto max-w-[520px] pb-16">
+      <div className="flex pt-[72px] items-center justify-between gap-4">
         {/* Reserved space for the page title if it is restored later. */}
         <div></div>
         <button
@@ -1001,8 +1002,9 @@ export function BroadcastFeed() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-    </section>
+          </div>
+        )}
+      </section>
+    </div>
   );
 }

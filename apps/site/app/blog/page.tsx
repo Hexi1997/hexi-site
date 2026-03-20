@@ -36,14 +36,10 @@ export default function BlogListPage() {
   const posts = getAllBlogPosts();
 
   return (
-    <div className="mx-auto max-w-[640px] py-8">
-      {/* <section className="mb-8">
-        <TypewriterSlogan text="A Git-powered, local-first blogging system" />
-        <p className="mt-2 text-sm text-neutral-500">
-          Content as code, writing as commit, publishing as push, cloneable and forkable, with no platform lock-in, SEO optimized by default with SSG, and a visual Markdown block editor.
-        </p>
-      </section> */}
-      <BlogList posts={posts} />
+    <div className="mx-auto max-w-[734px] relative z-10 border-x border-dashed border-neutral-200/80 bg-white/70 backdrop-blur-md px-6 sm:px-8">
+      <div className="max-w-[640px] mx-auto min-h-[calc(100vh-3.5rem)] py-8">
+        <BlogList posts={posts} />
+      </div>
     </div>
   );
 }

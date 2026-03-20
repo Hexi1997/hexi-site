@@ -97,7 +97,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const postUrl = `${baseUrl}/blog/${slug}`;
 
   return (
-    <article className="mx-auto mt-10 max-w-[640px] px-4 pt-8 pb-12">
+    <div className="mx-auto max-w-[734px] relative z-10 border-x border-dashed border-neutral-200/80 bg-white px-6 sm:px-8">
+    <article className="max-w-[640px] mx-auto min-h-[calc(100vh-3.5rem)] pb-8 pt-[72px]">
       <div className="flex justify-between items-center mb-3">
         <Link href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
           <ArrowLeft className="mr-0 size-[18px]" />
@@ -176,5 +177,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Comment section */}
       <BlogComments postSlug={slug} />
     </article>
+    </div>
   );
 }
