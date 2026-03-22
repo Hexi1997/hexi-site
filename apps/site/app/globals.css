@@ -7,6 +7,25 @@
 @plugin "@tailwindcss/typography";
 
 @theme inline {
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-anta: var(--font-anta);
@@ -79,6 +98,7 @@ html {
 @utility font-anta {
   font-family: var(--font-anta), system-ui, sans-serif;
 }
+
 
 @keyframes typewriter-caret-blink {
   0%,

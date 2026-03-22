@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Marquee } from "@/components/ui/marquee";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -237,6 +238,39 @@ const openSourceProjects = [
     action: "Read posts",
   },
 ];
+
+type TechItem = {
+  name: string;
+  path: string;
+};
+
+const techStack: TechItem[] = [
+  { name: "React", path: "/tech-stacks/react.svg"},
+  { name: "Node.js", path: "/tech-stacks/nodedotjs.svg"},
+  { name: "TypeScript", path: "/tech-stacks/typescript.svg"},
+  { name: "Next.js", path: "/tech-stacks/nextdotjs.svg"},
+  { name: "TailwindCSS", path: "/tech-stacks/tailwindcss.svg"},
+  { name: "Vite", path: "/tech-stacks/vite.svg"},
+  { name: "React Query", path: "/tech-stacks/reactquery.svg"},
+  { name: "Axios", path: "/tech-stacks/axios.svg"},
+  { name: "Zustand", path: "/tech-stacks/zustand.png"},
+  { name: "Cloudflare", path: "/tech-stacks/cloudflare.svg"},
+  { name: "Shadcn/UI", path: "/tech-stacks/shadcnui.svg"},
+  { name: "GSAP", path: "/tech-stacks/gsap.svg"},
+  { name: "Motion", path: "/tech-stacks/motion.svg"},
+  {name: 'Pnpm', path: '/tech-stacks/pnpm.svg'},
+];
+
+function TechChip({ tech }: { tech: TechItem }) {
+  return (
+    <div className="group flex shrink-0 items-center gap-2 border border-neutral-200 px-3.5 py-2 transition-colors hover:border-neutral-400">
+      <img src={tech.path} alt={tech.name} className="opacity-50 h-4 w-auto group-hover:opacity-100 transition-opacity"/>
+      <span className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500 whitespace-nowrap transition-colors group-hover:text-neutral-700">
+        {tech.name}
+      </span>
+    </div>
+  );
+}
 
 export function HomePage() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -504,6 +538,34 @@ export function HomePage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="relative z-10 border-x border-dashed border-neutral-200/80 pb-10 pt-0 overflow-hidden">
+            {/* <div className="px-6 sm:px-8 mb-5" data-reveal>
+              <div className="w-fit space-y-3">
+                <div
+                  data-scroll-accent
+                  className="h-px w-full mb-3 max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+                  aria-hidden
+                />
+                <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
+                  Tech Stack
+                </p>
+              </div>
+            </div> */}
+            <div className="relative px-6 sm:px-8">
+              <div className="pointer-events-none absolute inset-y-0 left-6 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:left-8 sm:w-16" />
+              <div className="pointer-events-none absolute inset-y-0 right-6 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:right-8 sm:w-16" />
+              <Marquee
+                pauseOnHover
+                repeat={2}
+                className="cursor-default select-none [--duration:24s]"
+              >
+                {techStack.map((tech) => (
+                  <TechChip key={tech.name} tech={tech} />
+                ))}
+              </Marquee>
             </div>
           </section>
 
