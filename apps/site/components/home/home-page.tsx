@@ -2,17 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Marquee } from "@/components/ui/marquee";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const profileStats = [
   ["Birth", "1996-04"],
@@ -274,153 +271,14 @@ function TechChip({ tech }: { tech: TechItem }) {
 
 export function HomePage() {
   const pageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const page = pageRef.current;
-    if (!page) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from("[data-hero-kicker]", {
-        opacity: 0,
-        y: 16,
-        duration: 0.7,
-        ease: "power2.out",
-      });
-
-      gsap.from("[data-hero-title]", {
-        opacity: 0,
-        y: 28,
-        duration: 0.9,
-        delay: 0.08,
-        ease: "power3.out",
-      });
-
-      gsap.from("[data-hero-copy]", {
-        opacity: 0,
-        y: 18,
-        duration: 0.8,
-        delay: 0.16,
-        ease: "power2.out",
-      });
-
-      gsap.from("[data-hero-actions]", {
-        opacity: 0,
-        y: 18,
-        duration: 0.8,
-        delay: 0.24,
-        ease: "power2.out",
-      });
-
-      gsap.from("[data-hero-avatar]", {
-        opacity: 0,
-        x: 24,
-        duration: 1,
-        delay: 0.1,
-        ease: "power3.out",
-      });
-
-      const pageScroll = {
-        trigger: page,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.35,
-      } as const;
-
-      gsap.fromTo(
-        "[data-hero-foreground]",
-        { y: 0 },
-        {
-          y: -88,
-          ease: "none",
-          scrollTrigger: pageScroll,
-        },
-      );
-
-      gsap.utils
-        .toArray<HTMLElement>("[data-reveal]")
-        .forEach((node, index) => {
-          gsap.from(node, {
-            opacity: 0,
-            y: 28,
-            scale: 0.985,
-            duration: 0.85,
-            delay: index * 0.04,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: node,
-              start: "top 84%",
-              toggleActions: "play none none none",
-            },
-          });
-        });
-
-      gsap.utils.toArray<HTMLElement>("[data-scroll-accent]").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { scaleX: 0, transformOrigin: "left center" },
-          {
-            scaleX: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      });
-
-      ScrollTrigger.batch("[data-timeline-card]", {
-        start: "top 88%",
-        once: true,
-        onEnter: (batch) => {
-          gsap.from(batch, {
-            opacity: 0,
-            y: 32,
-            duration: 0.75,
-            stagger: 0.1,
-            ease: "power3.out",
-          });
-        },
-      });
-
-      ScrollTrigger.batch("[data-work-card]", {
-        start: "top 90%",
-        once: true,
-        onEnter: (batch) => {
-          gsap.from(batch, {
-            opacity: 0,
-            x: -18,
-            duration: 0.7,
-            stagger: 0.12,
-            ease: "power3.out",
-          });
-        },
-      });
-
-      ScrollTrigger.batch("[data-project-card]", {
-        start: "top 90%",
-        once: true,
-        onEnter: (batch) => {
-          gsap.from(batch, {
-            opacity: 0,
-            x: -18,
-            duration: 0.7,
-            stagger: 0.12,
-            ease: "power3.out",
-          });
-        },
-      });
-    }, page);
-
-    return () => ctx.revert();
-  }, []);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: pageRef,
+    offset: ["start start", "end end"],
+  });
+  const heroForegroundY = useTransform(scrollYProgress, [0, 1], [0, -88]);
+  const inView = { once: true, amount: 0.2 } as const;
+  const ease = [0.16, 1, 0.3, 1] as const;
 
   return (
     <>
@@ -432,27 +290,33 @@ export function HomePage() {
           <section className="relative overflow-hidden border-x border-dashed border-neutral-200/80 px-6 pb-14 pt-24 sm:px-8 sm:pb-20 sm:pt-30">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/92 to-transparent" />
 
-            <div
-              data-hero-foreground
+            <motion.div
               className="relative z-10 space-y-8 will-change-transform"
+              style={shouldReduceMotion ? undefined : { y: heroForegroundY }}
             >
               <div className="space-y-4">
-                <p
-                  data-hero-kicker
+                <motion.p
                   className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-500"
+                  initial={shouldReduceMotion ? undefined : { opacity: 0, y: 16 }}
+                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, ease }}
                 >
                   Hexi / Personal Site
-                </p>
+                </motion.p>
                 <div className="flex items-center gap-4 sm:gap-10">
-                  <h1
-                    data-hero-title
+                  <motion.h1
                     className="flex-1 text-[44px] leading-[1.1] font-medium tracking-[-0.06em] text-neutral-950 sm:text-7xl"
+                    initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28 }}
+                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    transition={{ duration: 0.9, delay: 0.08, ease }}
                   >
                     Nodejs engineer, builder, writer.
-                  </h1>
-                  <div
-                    data-hero-avatar
+                  </motion.h1>
+                  <motion.div
                     className="w-36 shrink-0 will-change-transform sm:w-48"
+                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: 24 }}
+                    animate={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    transition={{ duration: 1, delay: 0.1, ease }}
                   >
                     <Image
                       src="/author.png"
@@ -462,13 +326,15 @@ export function HomePage() {
                       className="w-full object-cover"
                       priority
                     />
-                  </div>
+                  </motion.div>
                 </div>
               </div>
 
-              <p
-                data-hero-copy
+              <motion.p
                 className="text-[15px] leading-7 text-neutral-600 sm:text-base"
+                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 18 }}
+                animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.16, ease }}
               >
                 你好，我是 <strong>HEXI</strong>， 一名拥有 5 年经验的 Node.js
                 Full-Stack Engineer (Frontend-focused)，熟悉前端工程化、SEO
@@ -501,11 +367,13 @@ export function HomePage() {
                 <strong>
                   我在寻求新的工作，如果你有合适的机会，欢迎联系我。
                 </strong>
-              </p>
+              </motion.p>
 
-              <div
-                data-hero-actions
+              <motion.div
                 className="flex flex-wrap items-center gap-3"
+                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 18 }}
+                animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.24, ease }}
               >
                 <Link
                   href="/agent"
@@ -521,11 +389,14 @@ export function HomePage() {
                 >
                   GitHub
                 </Link>
-              </div>
+              </motion.div>
 
-              <div
-                data-reveal
+              <motion.div
                 className="grid gap-3 border border-neutral-200 bg-neutral-50/80 p-4 backdrop-blur-sm sm:grid-cols-3"
+                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                viewport={inView}
+                transition={{ duration: 0.85, ease }}
               >
                 {profileStats.map(([label, value]) => (
                   <div key={label} className="space-y-2">
@@ -537,8 +408,8 @@ export function HomePage() {
                     </p>
                   </div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </section>
 
           <section className="relative z-10 border-x border-dashed border-neutral-200/80 pb-10 pt-0 overflow-hidden">
@@ -580,12 +451,22 @@ export function HomePage() {
                 key={section.label}
                 className="grid gap-5 sm:grid-cols-[140px_1fr]"
               >
-                <div data-reveal className="space-y-2">
+                <motion.div
+                  className="space-y-2"
+                  initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                  viewport={inView}
+                  transition={{ duration: 0.85, ease }}
+                >
                   <div className="w-fit space-y-3">
-                    <div
-                      data-scroll-accent
+                    <motion.div
                       className="h-px w-full mb-3 max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
                       aria-hidden
+                      style={{ transformOrigin: "left center" }}
+                      initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
+                      whileInView={shouldReduceMotion ? undefined : { scaleX: 1 }}
+                      viewport={inView}
+                      transition={{ duration: 1, ease }}
                     />
                     <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
                       {section.label}
@@ -594,13 +475,20 @@ export function HomePage() {
                   <p className="text-xs leading-5 text-neutral-400">
                     {section.hint}
                   </p>
-                </div>
+                </motion.div>
                 <div className="space-y-4">
-                  {section.items.map((item) => (
-                    <div
+                  {section.items.map((item, index) => (
+                    <motion.div
                       key={`${section.label}-${item.title}`}
-                      data-timeline-card
                       className="border border-neutral-200 p-4"
+                      initial={shouldReduceMotion ? undefined : { opacity: 0, y: 32 }}
+                      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                      viewport={inView}
+                      transition={{
+                        duration: 0.75,
+                        delay: shouldReduceMotion ? 0 : index * 0.1,
+                        ease,
+                      }}
                     >
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                         <h2 className="text-base font-medium text-neutral-950">
@@ -616,7 +504,7 @@ export function HomePage() {
                           __html: item.description || "",
                         }}
                       ></p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -625,20 +513,30 @@ export function HomePage() {
 
           <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
             <div className="space-y-3">
-              <div
-                data-scroll-accent
+              <motion.div
                 className="h-px w-full max-w-[240px] bg-gradient-to-r from-neutral-300 to-transparent"
                 aria-hidden
+                style={{ transformOrigin: "left center" }}
+                initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
+                whileInView={shouldReduceMotion ? undefined : { scaleX: 1 }}
+                viewport={inView}
+                transition={{ duration: 1, ease }}
               />
-              <div data-reveal className="space-y-2">
+              <motion.div
+                className="space-y-2"
+                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                viewport={inView}
+                transition={{ duration: 0.85, ease }}
+              >
                 <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
                   Products built at work
                 </p>
-              </div>
+              </motion.div>
             </div>
 
             <div className="grid gap-3">
-              {workProjects.map((project) => {
+              {workProjects.map((project, index) => {
                 const isExternal = project.href.startsWith("http");
                 const isPlaceholder = project.href === "#";
                 const CardContent = (
@@ -660,25 +558,42 @@ export function HomePage() {
                   </>
                 );
                 return isPlaceholder ? (
-                  <div
+                  <motion.div
                     key={project.title}
-                    data-work-card
                     className="group border border-neutral-200 p-4"
+                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
+                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    viewport={inView}
+                    transition={{
+                      duration: 0.7,
+                      delay: shouldReduceMotion ? 0 : index * 0.12,
+                      ease,
+                    }}
                   >
                     {CardContent}
-                  </div>
+                  </motion.div>
                 ) : (
-                  <Link
+                  <motion.div
                     key={project.title}
-                    href={project.href}
-                    data-work-card
-                    {...(isExternal
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="group border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
+                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
+                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    viewport={inView}
+                    transition={{
+                      duration: 0.7,
+                      delay: shouldReduceMotion ? 0 : index * 0.12,
+                      ease,
+                    }}
                   >
-                    {CardContent}
-                  </Link>
+                    <Link
+                      href={project.href}
+                      {...(isExternal
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className="group block border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
+                    >
+                      {CardContent}
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
@@ -686,52 +601,75 @@ export function HomePage() {
 
           <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
             <div className="space-y-3">
-              <div
-                data-scroll-accent
+              <motion.div
                 className="h-px w-full max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
                 aria-hidden
+                style={{ transformOrigin: "left center" }}
+                initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
+                whileInView={shouldReduceMotion ? undefined : { scaleX: 1 }}
+                viewport={inView}
+                transition={{ duration: 1, ease }}
               />
-              <div data-reveal className="space-y-2">
+              <motion.div
+                className="space-y-2"
+                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                viewport={inView}
+                transition={{ duration: 0.85, ease }}
+              >
                 <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
                   Open Source
                 </p>
                 <h2 className="text-2xl font-medium tracking-[-0.04em] text-neutral-950">
                   Projects and public work already visible in this repo.
                 </h2>
-              </div>
+              </motion.div>
             </div>
 
             <div className="grid gap-3">
-              {openSourceProjects.map((project) => (
-                <Link
+              {openSourceProjects.map((project, index) => (
+                <motion.div
                   key={project.title}
-                  href={project.href}
-                  data-project-card
-                  className="group border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
+                  initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                  viewport={inView}
+                  transition={{
+                    duration: 0.7,
+                    delay: shouldReduceMotion ? 0 : index * 0.12,
+                    ease,
+                  }}
                 >
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                    <h3 className="text-base font-medium text-neutral-950">
-                      {project.title}
-                    </h3>
-                    <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
-                      {project.meta}
+                  <Link
+                    href={project.href}
+                    className="group block border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                      <h3 className="text-base font-medium text-neutral-950">
+                        {project.title}
+                      </h3>
+                      <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
+                        {project.meta}
+                      </p>
+                    </div>
+                    <p className="mt-3 text-sm leading-7 text-neutral-600">
+                      {project.description}
                     </p>
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-neutral-600">
-                    {project.description}
-                  </p>
-                  <p className="mt-4 font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400 transition-colors group-hover:text-neutral-950">
-                    {project.action}
-                  </p>
-                </Link>
+                    <p className="mt-4 font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400 transition-colors group-hover:text-neutral-950">
+                      {project.action}
+                    </p>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </section>
 
           <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
-            <div
-              data-reveal
+            <motion.div
               className="grid gap-6 border border-neutral-200 bg-white p-5 shadow-[0_8px_30px_-24px_rgba(0,0,0,0.24)] sm:grid-cols-[1fr_220px]"
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+              viewport={inView}
+              transition={{ duration: 0.85, ease }}
             >
               <div className="space-y-3">
                 <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
@@ -747,10 +685,10 @@ export function HomePage() {
               <div className="space-y-1 font-geist-mono text-[12px] text-neutral-500">
                 <p>layout: 734px</p>
                 <p>theme: light only</p>
-                <p>motion: gsap</p>
+                <p>motion: motion + gsap(bg)</p>
                 <p>content: personal index</p>
               </div>
-            </div>
+            </motion.div>
           </section>
         </div>
       </div>
