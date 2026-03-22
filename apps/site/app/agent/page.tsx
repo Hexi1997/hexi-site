@@ -230,7 +230,7 @@ export default function AgentPage() {
               placeholder="Enter your question..."
               rows={4}
               disabled={isLoading}
-              className="w-full resize-none rounded-xl border border-border bg-card pl-4 pr-24 py-2.5 pb-11 text-sm focus:outline-none focus:ring-0 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
+              className="w-full resize-none rounded-xl border border-border bg-card pl-3 pr-24 py-2.5 pb-11 text-sm focus:outline-none focus:ring-0 focus:ring-ring/50 placeholder:text-muted-foreground disabled:opacity-50 transition-all"
               style={{ minHeight: "42px" }}
             />
             <div className="absolute right-2 bottom-4 flex gap-1.5">
