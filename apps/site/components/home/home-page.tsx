@@ -197,7 +197,7 @@ const workProjects = [
                   <span className="underline">{page.title}</span>
                 </a>
               </TooltipTrigger>
-              <TooltipContent className="max-w-[200px] text-wrap text-start bg-background text-foreground border border-border shadow-sm">
+              <TooltipContent side="bottom" sideOffset={6} className="max-w-[200px] text-wrap text-start bg-background text-foreground border border-border shadow-sm">
                 {page.desc}
               </TooltipContent>
               {index !== staticPages.length - 1 ? "、" : ""}
@@ -684,7 +684,56 @@ export function HomePage() {
             </div>
           </section>
 
-          <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
+          <section className="relative z-10 space-y-10 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18 sm:pt-12">
+            {timelineSections.map((section) => (
+              <div
+                key={section.label}
+                className="flex gap-5 flex-col-reverse sm:flex-row"
+              >
+                <div className="space-y-4 flex-1">
+                  {section.items.map((item) => (
+                    <div
+                      key={`${section.label}-${item.title}`}
+                      data-timeline-card
+                      className="border border-neutral-200 p-4"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                        <h2 className="text-base font-medium text-neutral-950">
+                          {item.title}
+                        </h2>
+                        <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
+                          {item.period}
+                        </p>
+                      </div>
+                      <p
+                        className="mt-3 text-sm leading-7 text-neutral-600"
+                        dangerouslySetInnerHTML={{
+                          __html: item.description || "",
+                        }}
+                      ></p>
+                    </div>
+                  ))}
+                </div>
+                <div data-reveal className="space-y-2 w-full sm:w-[140px]">
+                  <div className="w-fit space-y-3">
+                    <div
+                      data-scroll-accent
+                      className="h-px w-full mb-3 max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+                      aria-hidden
+                    />
+                    <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
+                      {section.label}
+                    </p>
+                  </div>
+                  <p className="text-xs w-full leading-5 text-neutral-400">
+                    {section.hint}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </section>
+
+          {/* <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
             <div className="space-y-3">
               <div
                 data-scroll-accent
@@ -726,7 +775,7 @@ export function HomePage() {
                 </Link>
               ))}
             </div>
-          </section>
+          </section> */}
 
           <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
             <div
