@@ -3,7 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import {
   Tooltip,
   TooltipContent,
@@ -141,7 +146,7 @@ const workProjects = [
           <a
             href="https://edu.chainide.com/"
             target="_blank"
-            className="underline"
+            className="underline text-neutral-700 font-medium"
           >
             ChainIDE Education
           </a>
@@ -153,7 +158,7 @@ const workProjects = [
           <a
             href="https://x.com/0xMatrixMarket/status/1552926959390273537"
             target="_blank"
-            className="underline"
+            className="underline text-neutral-700 font-medium"
           >
             Matrix Market
           </a>
@@ -161,14 +166,18 @@ const workProjects = [
           市场。作为项目负责人，主导产品前端从 0 到 1 的搭建。
         </li>
         <li>
-          <a href="https://playdice.ink" target="_blank" className="underline">
+          <a
+            href="https://playdice.ink"
+            target="_blank"
+            className="underline text-neutral-700 font-medium"
+          >
             Dice Inscription
           </a>
           ： 铭文游戏平台，负责官网动效优化、
           <a
             href="https://inscription-combination-preview.pages.dev/"
             target="_blank"
-            className="underline"
+            className="underline text-neutral-700 font-medium"
           >
             棋盘预览页面
           </a>
@@ -178,7 +187,7 @@ const workProjects = [
           <a
             href="https://volunteer-service-platform-prod.whitematrix.workers.dev/"
             target="_blank"
-            className="underline"
+            className="underline text-neutral-700 font-medium"
           >
             绿发会志愿者管理平台
           </a>
@@ -194,7 +203,11 @@ const workProjects = [
                   <span className="underline">{page.title}</span>
                 </a>
               </TooltipTrigger>
-              <TooltipContent className="max-w-[200px] text-wrap text-start bg-background text-foreground border border-border shadow-sm">
+              <TooltipContent
+                side="bottom"
+                sideOffset={6}
+                className="max-w-[200px] text-wrap text-start bg-background text-foreground border border-border shadow-sm"
+              >
                 {page.desc}
               </TooltipContent>
               {index !== staticPages.length - 1 ? "、" : ""}
@@ -209,59 +222,280 @@ const workProjects = [
   },
 ];
 
-const openSourceProjects = [
-  {
-    title: "Hexi Space",
-    meta: "Personal site / writing platform",
-    description:
-      "A minimal, light-mode personal site with blog, agent, profile, auth, and broadcast features built around a narrow and readable interface.",
-    href: "/blog",
-    action: "Explore site",
-  },
-  {
-    title: "lark-quote-converter",
-    meta: "Open source utility",
-    description:
-      "A converter for Lark/Feishu quote content. Mentioned in the blog as one of the projects already published under your GitHub account.",
-    href: "https://github.com/Hexi1997/lark-quote-converter",
-    action: "View repo",
-  },
-  {
-    title: "Frontend writing",
-    meta: "Technical articles",
-    description:
-      "Posts covering Better Auth on Cloudflare Workers, countdown design, Zustand internals, skeleton rendering, and UI customization.",
-    href: "/blog",
-    action: "Read posts",
-  },
-];
-
 type TechItem = {
   name: string;
   path: string;
 };
 
 const techStack: TechItem[] = [
-  { name: "React", path: "/tech-stacks/react.svg"},
-  { name: "Node.js", path: "/tech-stacks/nodedotjs.svg"},
-  { name: "TypeScript", path: "/tech-stacks/typescript.svg"},
-  { name: "Next.js", path: "/tech-stacks/nextdotjs.svg"},
-  { name: "TailwindCSS", path: "/tech-stacks/tailwindcss.svg"},
-  { name: "Vite", path: "/tech-stacks/vite.svg"},
-  { name: "React Query", path: "/tech-stacks/reactquery.svg"},
-  { name: "Axios", path: "/tech-stacks/axios.svg"},
-  { name: "Zustand", path: "/tech-stacks/zustand.png"},
-  { name: "Cloudflare", path: "/tech-stacks/cloudflare.svg"},
-  { name: "Shadcn/UI", path: "/tech-stacks/shadcnui.svg"},
-  { name: "GSAP", path: "/tech-stacks/gsap.svg"},
-  { name: "Motion", path: "/tech-stacks/motion.svg"},
-  {name: 'Pnpm', path: '/tech-stacks/pnpm.svg'},
+  { name: "React", path: "/tech-stacks/react.svg" },
+  { name: "Node.js", path: "/tech-stacks/nodedotjs.svg" },
+  { name: "TypeScript", path: "/tech-stacks/typescript.svg" },
+  { name: "Next.js", path: "/tech-stacks/nextdotjs.svg" },
+  { name: "TailwindCSS", path: "/tech-stacks/tailwindcss.svg" },
+  { name: "Vite", path: "/tech-stacks/vite.svg" },
+  { name: "React Query", path: "/tech-stacks/reactquery.svg" },
+  { name: "Axios", path: "/tech-stacks/axios.svg" },
+  { name: "Zustand", path: "/tech-stacks/zustand.png" },
+  { name: "Cloudflare", path: "/tech-stacks/cloudflare.svg" },
+  { name: "Shadcn/UI", path: "/tech-stacks/shadcnui.svg" },
+  { name: "GSAP", path: "/tech-stacks/gsap.svg" },
+  { name: "Motion", path: "/tech-stacks/motion.svg" },
+  { name: "Pnpm", path: "/tech-stacks/pnpm.svg" },
+];
+
+const openSourceCommitItems = [
+  {
+    name: "MagicUI",
+    repoUrl: "https://github.com/magicuidesign/magicui",
+    changes: [
+      {
+        text: "新增圆弧时间线组件",
+        prUrl: "https://github.com/magicuidesign/magicui/pull/739",
+        prNumber: "#739",
+      },
+      {
+        text: "修复按钮内容溢出问题",
+        prUrl: "https://github.com/magicuidesign/magicui/pull/746",
+        prNumber: "#746",
+      },
+      {
+        text: "修复深色模式下按钮文本可见性问题",
+        prUrl: "https://github.com/magicuidesign/magicui/pull/772",
+        prNumber: "#772",
+      },
+    ],
+  },
+  {
+    name: "CC-Switch",
+    repoUrl: "https://github.com/farion1231/cc-switch",
+    changes: [
+      {
+        text: "修复快速点击按钮导致重复添加 Provider 问题",
+        prUrl: "https://github.com/farion1231/cc-switch/pull/1352",
+        prNumber: "#1352",
+      },
+    ],
+  },
+  {
+    name: "Ant Design",
+    repoUrl: "https://github.com/ant-design",
+    changes: [
+      {
+        text: "支持切换代码拉取源",
+        prUrl: "https://github.com/ant-design/ant-design-pro-cli/pull/114",
+        prNumber: "#114",
+      },
+      {
+        text: "修复 @types/react 版本不匹配问题",
+        prUrl: "https://github.com/ant-design/ant-design-pro/pull/10478",
+        prNumber: "#10478",
+      },
+      {
+        text: "更新约定式路由参数描述",
+        prUrl: "https://github.com/ant-design/ant-design-pro/pull/10404",
+        prNumber: "#10404",
+      },
+      {
+        text: "移除 query-filter 中不必要的字段定义",
+        prUrl: "https://github.com/ant-design/pro-components/pull/6517",
+        prNumber: "#6517",
+      },
+    ],
+  },
+  {
+    name: "next-export-i18n",
+    repoUrl: "https://github.com/martinkr/next-export-i18n",
+    changes: [
+      {
+        text: "新增 LinkWithLocale 组件",
+        prUrl: "https://github.com/martinkr/next-export-i18n/pull/52",
+        prNumber: "#52",
+      },
+    ],
+  },
+  {
+    name: "swagger-axios-codegen",
+    repoUrl: "https://github.com/Manweill/swagger-axios-codegen",
+    changes: [
+      {
+        text: "支持 URL 模糊匹配",
+        prUrl: "https://github.com/Manweill/swagger-axios-codegen/pull/195",
+        prNumber: "#195",
+      },
+    ],
+  },
+];
+
+const openSourceSections = [
+  {
+    label: "Projects",
+    hint: "Open source products",
+    items: [
+      {
+        period: "",
+        title: "Blogit",
+        action: "Visit site",
+        href: "https://github.com/Hexi1997/Blogit",
+        description: (
+          <ul className="list-disc list-inside">
+            <li>
+              Git 驱动的本地优先博客系统，文章即 Markdown 文件，发布即 Git
+              Push，<strong>百分百拥有数据自主权</strong>。
+            </li>
+            <li>基于 SSG 静态生成，默认内置 SEO。</li>
+            <li>
+              图片资源随仓库一起托管，无第三方图床依赖，整套系统可
+              Fork、可迁移、可复现。
+            </li>
+          </ul>
+        ),
+      },
+      {
+        period: "",
+        title: "Twinflare",
+        action: "Visit site",
+        href: "https://github.com/Hexi1997/twinflare",
+        description: (
+          <ul className="list-disc list-inside">
+            <li>
+              Cloudflare-native 个人 AI 数字分身平台，将 Markdown 知识文档放入
+              GitHub 仓库，push 后自动向量化并部署。
+            </li>
+            <li>
+              采用 RAG 架构：向量检索（bge-m3）+ Rerank
+              精排（bge-reranker-base）+ LLM 生成回答。
+            </li>
+            <li>
+              以 API 形式对外提供服务，支持聊天、语义检索、Persona
+              查询等接口，可无缝接入{" "}
+              <a
+                href="https://github.com/vercel/ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-neutral-700 font-medium"
+              >
+                Vercel AI SDK
+              </a>
+              。
+            </li>
+          </ul>
+        ),
+      },
+      {
+        period: "",
+        title: "HEXI SPACE",
+        action: "Visit site",
+        href: "https://github.com/Hexi1997/hexi-site",
+        description: (
+          <ul className="list-disc list-inside">
+            <p className="mb-1">
+              一个 Node.js 全栈个人网站，包含用户系统、Agent 聊天、Space
+              动态广场、博客等模块，主要特点如下：
+            </p>
+            <li>
+              基于{" "}
+              <a
+                href="https://better-auth.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-neutral-700 font-medium"
+              >
+                Better Auth
+              </a>{" "}
+              实现 GitHub + Google + 邮箱登录。
+            </li>
+            <li>
+              基于{" "}
+              <a
+                href="https://sdk.vercel.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-neutral-700 font-medium"
+              >
+                Vercel AI SDK
+              </a>{" "}
+              接入流式响应（SSE），结合{" "}
+              <a
+                href="https://github.com/vercel/streamdown"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-neutral-700 font-medium"
+              >
+                Streamdown
+              </a>{" "}
+              实现 Agent 聊天的打字机效果。
+            </li>
+            <li>
+              Space 模块仿 Twitter Timeline 交互设计，帖子中的 URL 自动抓取 OG
+              元数据并渲染为预览卡片。发帖时图片上传至 Cloudflare
+              R2，图片上传接口做了<strong>滑动窗口限流</strong>处理。
+            </li>
+            <li>
+              以 Drizzle Schema 为<strong>唯一数据模型来源</strong>：drizzle-zod
+              从表定义自动派生 Zod Schema 用于请求校验与响应序列化；API 层将
+              Hono app 的路由类型导出为 <code>AppType</code>，通过{" "}
+              <code>@workspace/api-rpc</code> workspace 包共享给前端，前端用{" "}
+              <code>hc&lt;AppType&gt;</code> 实例化类型安全的 RPC
+              客户端，请求参数与响应结构均由编译器推断，杜绝接口字段不一致问题。
+            </li>
+          </ul>
+        ),
+      },
+    ],
+  },
+  {
+    label: "Contributions",
+    hint: "Open source commits",
+    items: [
+      {
+        period: "",
+        title: "Commits",
+        description: (
+          <ul className="list-disc list-inside">
+            {openSourceCommitItems.map((item) => (
+              <li key={item.name}>
+                <a
+                  href={item.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-neutral-700 font-medium"
+                >
+                  {item.name}
+                </a>
+                :{" "}
+                {item.changes.map((change, index) => (
+                  <span key={change.prUrl}>
+                    {index > 0 ? "、" : ""}
+                    {change.text}{" "}
+                    <a
+                      href={change.prUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      {change.prNumber}
+                    </a>
+                  </span>
+                ))}
+                。
+              </li>
+            ))}
+          </ul>
+        ),
+      },
+    ],
+  },
 ];
 
 function TechChip({ tech }: { tech: TechItem }) {
   return (
     <div className="group flex shrink-0 items-center gap-2 border border-neutral-200 px-3.5 py-2 transition-colors hover:border-neutral-400">
-      <img src={tech.path} alt={tech.name} className="opacity-50 h-4 w-auto group-hover:opacity-100 transition-opacity"/>
+      <img
+        src={tech.path}
+        alt={tech.name}
+        className="opacity-50 h-4 w-auto group-hover:opacity-100 transition-opacity"
+      />
       <span className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500 whitespace-nowrap transition-colors group-hover:text-neutral-700">
         {tech.name}
       </span>
@@ -297,8 +531,12 @@ export function HomePage() {
               <div className="space-y-4">
                 <motion.p
                   className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-500"
-                  initial={shouldReduceMotion ? undefined : { opacity: 0, y: 16 }}
-                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  initial={
+                    shouldReduceMotion ? undefined : { opacity: 0, y: 16 }
+                  }
+                  animate={
+                    shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                  }
                   transition={{ duration: 0.7, ease }}
                 >
                   Hexi / Personal Site
@@ -306,16 +544,24 @@ export function HomePage() {
                 <div className="flex items-center gap-4 sm:gap-10">
                   <motion.h1
                     className="flex-1 text-[44px] leading-[1.1] font-medium tracking-[-0.06em] text-neutral-950 sm:text-7xl"
-                    initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28 }}
-                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    initial={
+                      shouldReduceMotion ? undefined : { opacity: 0, y: 28 }
+                    }
+                    animate={
+                      shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                    }
                     transition={{ duration: 0.9, delay: 0.08, ease }}
                   >
                     Nodejs engineer, builder, writer.
                   </motion.h1>
                   <motion.div
                     className="w-36 shrink-0 will-change-transform sm:w-48"
-                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: 24 }}
-                    animate={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    initial={
+                      shouldReduceMotion ? undefined : { opacity: 0, x: 24 }
+                    }
+                    animate={
+                      shouldReduceMotion ? undefined : { opacity: 1, x: 0 }
+                    }
                     transition={{ duration: 1, delay: 0.1, ease }}
                   >
                     <Image
@@ -393,8 +639,16 @@ export function HomePage() {
 
               <motion.div
                 className="grid gap-3 border border-neutral-200 bg-neutral-50/80 p-4 backdrop-blur-sm sm:grid-cols-3"
-                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                initial={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 0, y: 28, scale: 0.985 }
+                }
+                whileInView={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 1, y: 0, scale: 1 }
+                }
                 viewport={inView}
                 transition={{ duration: 0.85, ease }}
               >
@@ -413,18 +667,6 @@ export function HomePage() {
           </section>
 
           <section className="relative z-10 border-x border-dashed border-neutral-200/80 pb-10 pt-0 overflow-hidden">
-            {/* <div className="px-6 sm:px-8 mb-5" data-reveal>
-              <div className="w-fit space-y-3">
-                <div
-                  data-scroll-accent
-                  className="h-px w-full mb-3 max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
-                  aria-hidden
-                />
-                <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
-                  Tech Stack
-                </p>
-              </div>
-            </div> */}
             <div className="relative px-6 sm:px-8">
               <div className="pointer-events-none absolute inset-y-0 left-6 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:left-8 sm:w-16" />
               <div className="pointer-events-none absolute inset-y-0 right-6 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:right-8 sm:w-16" />
@@ -441,11 +683,6 @@ export function HomePage() {
           </section>
 
           <section className="relative z-10 space-y-10 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18 sm:pt-12">
-            {/* <div
-          data-scroll-accent
-          className="h-px w-full max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
-          aria-hidden
-        /> */}
             {timelineSections.map((section) => (
               <div
                 key={section.label}
@@ -453,8 +690,16 @@ export function HomePage() {
               >
                 <motion.div
                   className="space-y-2"
-                  initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                  initial={
+                    shouldReduceMotion
+                      ? undefined
+                      : { opacity: 0, y: 28, scale: 0.985 }
+                  }
+                  whileInView={
+                    shouldReduceMotion
+                      ? undefined
+                      : { opacity: 1, y: 0, scale: 1 }
+                  }
                   viewport={inView}
                   transition={{ duration: 0.85, ease }}
                 >
@@ -464,7 +709,9 @@ export function HomePage() {
                       aria-hidden
                       style={{ transformOrigin: "left center" }}
                       initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
-                      whileInView={shouldReduceMotion ? undefined : { scaleX: 1 }}
+                      whileInView={
+                        shouldReduceMotion ? undefined : { scaleX: 1 }
+                      }
                       viewport={inView}
                       transition={{ duration: 1, ease }}
                     />
@@ -481,8 +728,12 @@ export function HomePage() {
                     <motion.div
                       key={`${section.label}-${item.title}`}
                       className="border border-neutral-200 p-4"
-                      initial={shouldReduceMotion ? undefined : { opacity: 0, y: 32 }}
-                      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                      initial={
+                        shouldReduceMotion ? undefined : { opacity: 0, y: 32 }
+                      }
+                      whileInView={
+                        shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                      }
                       viewport={inView}
                       transition={{
                         duration: 0.75,
@@ -524,8 +775,16 @@ export function HomePage() {
               />
               <motion.div
                 className="space-y-2"
-                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                initial={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 0, y: 28, scale: 0.985 }
+                }
+                whileInView={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 1, y: 0, scale: 1 }
+                }
                 viewport={inView}
                 transition={{ duration: 0.85, ease }}
               >
@@ -561,8 +820,12 @@ export function HomePage() {
                   <motion.div
                     key={project.title}
                     className="group border border-neutral-200 p-4"
-                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
-                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    initial={
+                      shouldReduceMotion ? undefined : { opacity: 0, x: -18 }
+                    }
+                    whileInView={
+                      shouldReduceMotion ? undefined : { opacity: 1, x: 0 }
+                    }
                     viewport={inView}
                     transition={{
                       duration: 0.7,
@@ -575,8 +838,12 @@ export function HomePage() {
                 ) : (
                   <motion.div
                     key={project.title}
-                    initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
-                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                    initial={
+                      shouldReduceMotion ? undefined : { opacity: 0, x: -18 }
+                    }
+                    whileInView={
+                      shouldReduceMotion ? undefined : { opacity: 1, x: 0 }
+                    }
                     viewport={inView}
                     transition={{
                       duration: 0.7,
@@ -598,11 +865,10 @@ export function HomePage() {
               })}
             </div>
           </section>
-
-          <section className="relative z-10 space-y-8 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18">
-            <div className="space-y-3">
+          <section className="relative z-10 space-y-3 border-x border-dashed border-neutral-200/80 px-6 py-14 sm:px-8 sm:py-18 sm:pt-12">
+            <div className="space-y-3 mb-8">
               <motion.div
-                className="h-px w-full max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+                className="h-px w-full max-w-[240px] bg-gradient-to-r from-neutral-300 to-transparent"
                 aria-hidden
                 style={{ transformOrigin: "left center" }}
                 initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
@@ -612,62 +878,136 @@ export function HomePage() {
               />
               <motion.div
                 className="space-y-2"
-                initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                initial={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 0, y: 28, scale: 0.985 }
+                }
+                whileInView={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 1, y: 0, scale: 1 }
+                }
                 viewport={inView}
                 transition={{ duration: 0.85, ease }}
               >
                 <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
-                  Open Source
+                  Open Source Contributions
                 </p>
-                <h2 className="text-2xl font-medium tracking-[-0.04em] text-neutral-950">
-                  Projects and public work already visible in this repo.
-                </h2>
               </motion.div>
             </div>
-
-            <div className="grid gap-3">
-              {openSourceProjects.map((project, index) => (
-                <motion.div
-                  key={project.title}
-                  initial={shouldReduceMotion ? undefined : { opacity: 0, x: -18 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+            {openSourceSections.map((section) => (
+              <div
+                key={section.label}
+                className="flex flex-col-reverse sm:flex-row gap-5"
+              >
+                <div className="space-y-4 flex-1">
+                  {section.items.map((item, index) => {
+                    const hasHref = "href" in item && item.href;
+                    const cardContent = (
+                      <>
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                          <h2 className="text-base font-medium text-neutral-950">
+                            {item.title}
+                          </h2>
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
+                            {item.period}
+                          </p>
+                        </div>
+                        <p className="mt-3 text-sm leading-7 text-neutral-600">
+                          {item.description || ""}
+                        </p>
+                        {"action" in item && item.action ? (
+                          <p className="mt-4 font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400 transition-colors group-hover:text-neutral-950">
+                            {item.action as string}
+                          </p>
+                        ) : null}
+                      </>
+                    );
+                    return (
+                      <motion.div
+                        key={`${section.label}-${item.title}`}
+                        initial={
+                          shouldReduceMotion ? undefined : { opacity: 0, y: 32 }
+                        }
+                        whileInView={
+                          shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                        }
+                        viewport={inView}
+                        transition={{
+                          duration: 0.75,
+                          delay: shouldReduceMotion ? 0 : index * 0.1,
+                          ease,
+                        }}
+                      >
+                        {hasHref ? (
+                          <a
+                            href={item.href as string}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group block border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
+                          >
+                            {cardContent}
+                          </a>
+                        ) : (
+                          <div className="border border-neutral-200 p-4">
+                            {cardContent}
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                {/* <motion.div
+                  className="space-y-2 w-full sm:w-[140px]"
+                  initial={
+                    shouldReduceMotion
+                      ? undefined
+                      : { opacity: 0, y: 28, scale: 0.985 }
+                  }
+                  whileInView={
+                    shouldReduceMotion
+                      ? undefined
+                      : { opacity: 1, y: 0, scale: 1 }
+                  }
                   viewport={inView}
-                  transition={{
-                    duration: 0.7,
-                    delay: shouldReduceMotion ? 0 : index * 0.12,
-                    ease,
-                  }}
+                  transition={{ duration: 0.85, ease }}
                 >
-                  <Link
-                    href={project.href}
-                    className="group block border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
-                  >
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                      <h3 className="text-base font-medium text-neutral-950">
-                        {project.title}
-                      </h3>
-                      <p className="font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400">
-                        {project.meta}
-                      </p>
-                    </div>
-                    <p className="mt-3 text-sm leading-7 text-neutral-600">
-                      {project.description}
+                  <div className="w-fit space-y-3">
+                    <motion.div
+                      className="h-px w-full mb-3 max-w-[120px] bg-gradient-to-r from-neutral-300 to-transparent"
+                      aria-hidden
+                      style={{ transformOrigin: "left center" }}
+                      initial={shouldReduceMotion ? undefined : { scaleX: 0 }}
+                      whileInView={
+                        shouldReduceMotion ? undefined : { scaleX: 1 }
+                      }
+                      viewport={inView}
+                      transition={{ duration: 1, ease }}
+                    />
+                    <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
+                      {section.label}
                     </p>
-                    <p className="mt-4 font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400 transition-colors group-hover:text-neutral-950">
-                      {project.action}
-                    </p>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                  </div>
+                  <p className="text-xs leading-5 text-neutral-400">
+                    {section.hint}
+                  </p>
+                </motion.div> */}
+              </div>
+            ))}
           </section>
 
-          <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
+          {/* <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
             <motion.div
               className="grid gap-6 border border-neutral-200 bg-white p-5 shadow-[0_8px_30px_-24px_rgba(0,0,0,0.24)] sm:grid-cols-[1fr_220px]"
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 28, scale: 0.985 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+              initial={
+                shouldReduceMotion
+                  ? undefined
+                  : { opacity: 0, y: 28, scale: 0.985 }
+              }
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
+              }
               viewport={inView}
               transition={{ duration: 0.85, ease }}
             >
@@ -689,7 +1029,7 @@ export function HomePage() {
                 <p>content: personal index</p>
               </div>
             </motion.div>
-          </section>
+          </section> */}
         </div>
       </div>
     </>
