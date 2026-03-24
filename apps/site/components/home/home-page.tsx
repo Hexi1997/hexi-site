@@ -488,6 +488,29 @@ const openSourceSections = [
   },
 ];
 
+const contactLinks = [
+  {
+    label: "Twitter",
+    value: "@Hexi1997",
+    href: "https://x.com/Hexi1997",
+  },
+  {
+    label: "GitHub",
+    value: "github.com/Hexi1997",
+    href: "https://github.com/Hexi1997",
+  },
+  {
+    label: "Email",
+    value: "niudieyi1996@gmail.com",
+    href: "mailto:niudieyi1996@gmail.com",
+  },
+  {
+    label: "小红书",
+    value: "@Hexi1997",
+    href: "https://www.xiaohongshu.com/",
+  },
+];
+
 function TechChip({ tech }: { tech: TechItem }) {
   return (
     <div className="group flex shrink-0 items-center gap-2 border border-neutral-200 px-3.5 py-2 transition-colors hover:border-neutral-400">
@@ -997,9 +1020,9 @@ export function HomePage() {
             ))}
           </section>
 
-          {/* <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
+          <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-12 pt-10 sm:px-8 sm:pb-16">
             <motion.div
-              className="grid gap-6 border border-neutral-200 bg-white p-5 shadow-[0_8px_30px_-24px_rgba(0,0,0,0.24)] sm:grid-cols-[1fr_220px]"
+              className="space-y-6 border border-neutral-200 bg-neutral-50/70 p-5"
               initial={
                 shouldReduceMotion
                   ? undefined
@@ -1011,25 +1034,39 @@ export function HomePage() {
               viewport={inView}
               transition={{ duration: 0.85, ease }}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
-                  Notes
+                  Contact
                 </p>
                 <p className="text-sm leading-7 text-neutral-600">
-                  Education and employer history still need your real content.
-                  The structure is ready, but those details should come from you
-                  directly rather than from guessed text.
+                  欢迎联系我，合作或工作机会都可以直接沟通。
                 </p>
               </div>
 
-              <div className="space-y-1 font-geist-mono text-[12px] text-neutral-500">
-                <p>layout: 734px</p>
-                <p>theme: light only</p>
-                <p>motion: motion + gsap(bg)</p>
-                <p>content: personal index</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {contactLinks.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target={item.href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={
+                      item.href.startsWith("mailto:")
+                        ? undefined
+                        : "noopener noreferrer"
+                    }
+                    className="group block border border-neutral-200 bg-white px-4 py-3 transition-colors hover:border-neutral-950"
+                  >
+                    <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      {item.label}
+                    </p>
+                    <p className="mt-1 text-sm text-neutral-700 transition-colors group-hover:text-neutral-950">
+                      {item.value}
+                    </p>
+                  </a>
+                ))}
               </div>
             </motion.div>
-          </section> */}
+          </section>
         </div>
       </div>
     </>
