@@ -1024,9 +1024,9 @@ export function HomePage() {
             ))}
           </section>
 
-          <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-12 pt-10 sm:px-8 sm:pb-16">
+          <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-10 pt-8 sm:px-8 sm:pb-12">
             <motion.div
-              className="space-y-5 border border-neutral-200 bg-neutral-50/70 p-5"
+              className="flex items-center justify-center gap-6 sm:gap-8"
               initial={
                 shouldReduceMotion
                   ? undefined
@@ -1038,31 +1038,23 @@ export function HomePage() {
               viewport={inView}
               transition={{ duration: 0.85, ease }}
             >
-              <div className="space-y-1 text-center">
-                <p className="font-geist-mono text-[10px] uppercase tracking-[0.28em] text-neutral-400">
-                  Contact
-                </p>
-              </div>
-
-              <div className="flex items-center justify-center gap-6 sm:gap-8">
-                {contactLinks.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target={item.href.startsWith("mailto:") ? undefined : "_blank"}
-                    rel={
-                      item.href.startsWith("mailto:")
-                        ? undefined
-                        : "noopener noreferrer"
-                    }
-                    aria-label={item.label}
-                    title={item.label}
-                    className="group inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 transition-colors hover:border-neutral-950 hover:text-neutral-950"
-                  >
-                    <item.icon className="h-4 w-4" />
-                  </a>
-                ))}
-              </div>
+              {contactLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={
+                    item.href.startsWith("mailto:")
+                      ? undefined
+                      : "noopener noreferrer"
+                  }
+                  aria-label={item.label}
+                  title={item.label}
+                  className="inline-flex text-neutral-500 transition-colors hover:text-neutral-950"
+                >
+                  <item.icon className="h-4 w-4" />
+                </a>
+              ))}
             </motion.div>
           </section>
         </div>
