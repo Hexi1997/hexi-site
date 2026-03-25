@@ -9,6 +9,10 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
+import type { IconType } from "react-icons";
+import { FaGithub, FaXTwitter } from "react-icons/fa6";
+import { MdOutlineEmail } from "react-icons/md";
+import { SiXiaohongshu } from "react-icons/si";
 import {
   Tooltip,
   TooltipContent,
@@ -491,25 +495,25 @@ const openSourceSections = [
 const contactLinks = [
   {
     label: "Twitter",
-    value: "@Hexi1997",
     href: "https://x.com/Hexi1997",
+    icon: FaXTwitter,
   },
   {
     label: "GitHub",
-    value: "github.com/Hexi1997",
     href: "https://github.com/Hexi1997",
+    icon: FaGithub,
   },
   {
     label: "Email",
-    value: "niudieyi1996@gmail.com",
     href: "mailto:niudieyi1996@gmail.com",
+    icon: MdOutlineEmail,
   },
   {
     label: "小红书",
-    value: "@Hexi1997",
     href: "https://www.xiaohongshu.com/",
+    icon: SiXiaohongshu,
   },
-];
+] satisfies { label: string; href: string; icon: IconType }[];
 
 function TechChip({ tech }: { tech: TechItem }) {
   return (
@@ -1022,7 +1026,7 @@ export function HomePage() {
 
           <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-12 pt-10 sm:px-8 sm:pb-16">
             <motion.div
-              className="space-y-6 border border-neutral-200 bg-neutral-50/70 p-5"
+              className="space-y-5 border border-neutral-200 bg-neutral-50/70 p-5"
               initial={
                 shouldReduceMotion
                   ? undefined
@@ -1034,16 +1038,13 @@ export function HomePage() {
               viewport={inView}
               transition={{ duration: 0.85, ease }}
             >
-              <div className="space-y-2">
-                <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
+              <div className="space-y-1 text-center">
+                <p className="font-geist-mono text-[10px] uppercase tracking-[0.28em] text-neutral-400">
                   Contact
-                </p>
-                <p className="text-sm leading-7 text-neutral-600">
-                  欢迎联系我，合作或工作机会都可以直接沟通。
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex items-center justify-center gap-6 sm:gap-8">
                 {contactLinks.map((item) => (
                   <a
                     key={item.label}
@@ -1054,14 +1055,11 @@ export function HomePage() {
                         ? undefined
                         : "noopener noreferrer"
                     }
-                    className="group block border border-neutral-200 bg-white px-4 py-3 transition-colors hover:border-neutral-950"
+                    aria-label={item.label}
+                    title={item.label}
+                    className="group inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 transition-colors hover:border-neutral-950 hover:text-neutral-950"
                   >
-                    <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
-                      {item.label}
-                    </p>
-                    <p className="mt-1 text-sm text-neutral-700 transition-colors group-hover:text-neutral-950">
-                      {item.value}
-                    </p>
+                    <item.icon className="h-4 w-4" />
                   </a>
                 ))}
               </div>
