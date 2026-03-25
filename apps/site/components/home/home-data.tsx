@@ -1,9 +1,8 @@
 "use client";
 
 import type { IconType } from "react-icons";
-import { FaGithub, FaXTwitter } from "react-icons/fa6";
+import { FaGithub, FaXTwitter,FaYoutube } from "react-icons/fa6";
 import { MdOutlineEmail } from "react-icons/md";
-import { SiXiaohongshu } from "react-icons/si";
 import {
   Tooltip,
   TooltipContent,
@@ -499,8 +498,8 @@ export const contactLinks = [
     icon: MdOutlineEmail,
   },
   {
-    label: "小红书",
-    href: "https://www.xiaohongshu.com/",
-    icon: SiXiaohongshu,
+    label: "Youtube",
+    href: "https://www.youtube.com/@陈荷西",
+    icon: FaYoutube,
   },
 ] satisfies { label: string; href: string; icon: IconType }[];
