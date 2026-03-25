@@ -9,6 +9,10 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
+import type { IconType } from "react-icons";
+import { FaGithub, FaXTwitter } from "react-icons/fa6";
+import { MdOutlineEmail } from "react-icons/md";
+import { SiXiaohongshu } from "react-icons/si";
 import {
   Tooltip,
   TooltipContent,
@@ -487,6 +491,29 @@ const openSourceSections = [
     ],
   },
 ];
+
+const contactLinks = [
+  {
+    label: "Twitter",
+    href: "https://x.com/Hexi1997",
+    icon: FaXTwitter,
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/Hexi1997",
+    icon: FaGithub,
+  },
+  {
+    label: "Email",
+    href: "mailto:niudieyi1996@gmail.com",
+    icon: MdOutlineEmail,
+  },
+  {
+    label: "小红书",
+    href: "https://www.xiaohongshu.com/",
+    icon: SiXiaohongshu,
+  },
+] satisfies { label: string; href: string; icon: IconType }[];
 
 function TechChip({ tech }: { tech: TechItem }) {
   return (
@@ -997,9 +1024,9 @@ export function HomePage() {
             ))}
           </section>
 
-          {/* <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-20 pt-10 sm:px-8 sm:pb-28">
+          <section className="relative z-10 border-x border-b border-dashed border-neutral-200/80 px-6 pb-10 pt-8 sm:px-8 sm:pb-12">
             <motion.div
-              className="grid gap-6 border border-neutral-200 bg-white p-5 shadow-[0_8px_30px_-24px_rgba(0,0,0,0.24)] sm:grid-cols-[1fr_220px]"
+              className="flex items-center justify-center gap-6 sm:gap-8"
               initial={
                 shouldReduceMotion
                   ? undefined
@@ -1011,25 +1038,25 @@ export function HomePage() {
               viewport={inView}
               transition={{ duration: 0.85, ease }}
             >
-              <div className="space-y-3">
-                <p className="font-geist-mono text-[11px] uppercase tracking-[0.28em] text-neutral-400">
-                  Notes
-                </p>
-                <p className="text-sm leading-7 text-neutral-600">
-                  Education and employer history still need your real content.
-                  The structure is ready, but those details should come from you
-                  directly rather than from guessed text.
-                </p>
-              </div>
-
-              <div className="space-y-1 font-geist-mono text-[12px] text-neutral-500">
-                <p>layout: 734px</p>
-                <p>theme: light only</p>
-                <p>motion: motion + gsap(bg)</p>
-                <p>content: personal index</p>
-              </div>
+              {contactLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={
+                    item.href.startsWith("mailto:")
+                      ? undefined
+                      : "noopener noreferrer"
+                  }
+                  aria-label={item.label}
+                  title={item.label}
+                  className="inline-flex text-neutral-500 transition-colors hover:text-neutral-950"
+                >
+                  <item.icon className="h-4 w-4" />
+                </a>
+              ))}
             </motion.div>
-          </section> */}
+          </section>
         </div>
       </div>
     </>
