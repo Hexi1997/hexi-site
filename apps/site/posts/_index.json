@@ -1,5 +1,5 @@
 {
-  "count": 11,
+  "count": 12,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -88,6 +88,16 @@
       "date": "2025-03-13",
       "pinned": false,
       "tags": []
+    },
+    {
+      "slug": "programmatically-disconnect-metamask-wagmi-shimdisconnect-shi-xian",
+      "title": "Programmatically disconnect MetaMask / Wagmi shimDisconnect 实现",
+      "date": "2024-08-03",
+      "pinned": false,
+      "tags": [
+        "Web3",
+        "Frontend"
+      ]
     }
   ]
 }
