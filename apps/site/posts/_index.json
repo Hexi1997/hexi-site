@@ -1,5 +1,5 @@
 {
-  "count": 12,
+  "count": 13,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -97,6 +97,16 @@
       "tags": [
         "Web3",
         "Frontend"
+      ]
+    },
+    {
+      "slug": "you-jian-kai-fa-er-san-shi",
+      "title": "邮件开发二三事",
+      "date": "2023-10-29",
+      "pinned": false,
+      "tags": [
+        "Frontend",
+        "Email"
       ]
     }
   ]
