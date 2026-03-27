@@ -172,13 +172,15 @@ function buildFeedTree(posts: FeedPost[]) {
   }
 
   const byCreatedAsc = (a: FeedNode, b: FeedNode) => {
-    const diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    const diff =
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     if (diff !== 0) return diff;
     return a.id.localeCompare(b.id);
   };
 
   const byCreatedDesc = (a: FeedNode, b: FeedNode) => {
-    const diff = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    const diff =
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     if (diff !== 0) return diff;
     return b.id.localeCompare(a.id);
   };
@@ -211,7 +213,13 @@ function countDescendants(node: FeedNode): number {
 
 function BroadcastAvatar({ user }: { user: FeedPost["user"] }) {
   if (user.image) {
-    return <img src={user.image} alt={user.name} className="size-8 rounded-full border border-neutral-200 object-cover" />;
+    return (
+      <img
+        src={user.image}
+        alt={user.name}
+        className="size-8 rounded-full border border-neutral-200 object-cover"
+      />
+    );
   }
 
   const initials = user.name.trim().slice(0, 1).toUpperCase() || "?";
@@ -243,7 +251,11 @@ function BroadcastImages({ images }: { images: string[] }) {
               <img
                 src={imageUrl}
                 alt={`broadcast-image-${index + 1}`}
-                className={isSingleImage ? "h-auto w-full object-contain" : "h-full w-full object-cover"}
+                className={
+                  isSingleImage
+                    ? "h-auto w-full object-contain"
+                    : "h-full w-full object-cover"
+                }
               />
             </button>
           </PhotoView>
@@ -254,7 +266,9 @@ function BroadcastImages({ images }: { images: string[] }) {
 }
 
 function LinkPreviewCard({ url }: { url: string }) {
-  const [preview, setPreview] = useState<LinkPreview | null>(() => linkPreviewCache.get(url) ?? null);
+  const [preview, setPreview] = useState<LinkPreview | null>(
+    () => linkPreviewCache.get(url) ?? null,
+  );
   const [loading, setLoading] = useState(() => !linkPreviewCache.has(url));
   const isCompactLoading = (() => {
     try {
@@ -354,9 +368,15 @@ function LinkPreviewCard({ url }: { url: string }) {
         )}
         <div className="min-w-0 flex-1">
           {(preview.siteName || preview.url) && (
-            <p className="text-xs text-neutral-500">{preview.siteName ?? hostname}</p>
+            <p className="text-xs text-neutral-500">
+              {preview.siteName ?? hostname}
+            </p>
           )}
-          {preview.title && <p className="mt-1 line-clamp-2 text-sm font-medium text-neutral-900">{preview.title}</p>}
+          {preview.title && (
+            <p className="mt-1 line-clamp-2 text-sm font-medium text-neutral-900">
+              {preview.title}
+            </p>
+          )}
         </div>
       </a>
     );
@@ -417,24 +437,33 @@ function BroadcastItem({
   const previewUrl = findFirstUrl(node.content);
   const likeUpdating = likeUpdatingIds.has(node.id);
   const deleting = deletingIds.has(node.id);
-  const canDelete = currentUserId === node.user.id && node.children.length === 0;
+  const canDelete =
+    currentUserId === node.user.id && node.children.length === 0;
   const [repliesExpanded, setRepliesExpanded] = useState(false);
   const replyCount = countDescendants(node);
 
   return (
-    <article className={depth > 0 ? "ml-5 border-l border-neutral-200 pl-4" : ""}>
+    <article
+      className={depth > 0 ? "ml-5 border-l border-neutral-200 pl-4" : ""}
+    >
       <div className="flex items-start gap-3">
         <BroadcastAvatar user={node.user} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-sm font-medium text-neutral-900">{node.user.name}</span>
-            <span className="text-xs text-neutral-500">{formatDate(node.createdAt)}</span>
+            <span className="text-sm font-medium text-neutral-900">
+              {node.user.name}
+            </span>
+            <span className="text-xs text-neutral-500">
+              {formatDate(node.createdAt)}
+            </span>
           </div>
           <p className="mt-1 whitespace-pre-wrap break-words text-sm text-neutral-800">
             {renderTextWithLinks(node.content)}
           </p>
           <BroadcastImages images={node.images} />
-          {node.images.length === 0 && previewUrl && <LinkPreviewCard url={previewUrl} />}
+          {node.images.length === 0 && previewUrl && (
+            <LinkPreviewCard url={previewUrl} />
+          )}
 
           <div className="mt-2 flex items-center gap-4">
             <button
@@ -443,7 +472,9 @@ function BroadcastItem({
               onClick={() => onToggleLike(node)}
               className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Heart className={`h-3.5 w-3.5 ${node.likedByMe ? "fill-current text-red-500" : ""}`} />
+              <Heart
+                className={`h-3.5 w-3.5 ${node.likedByMe ? "fill-current text-red-500" : ""}`}
+              />
               <span className="tabular-nums">{node.likeCount}</span>
             </button>
             <button
@@ -474,7 +505,8 @@ function BroadcastItem({
               onClick={() => setRepliesExpanded((value) => !value)}
               className="mt-3 text-xs text-neutral-500 hover:text-neutral-900"
             >
-              {repliesExpanded ? "Hide" : "Show"} {replyCount} {replyCount === 1 ? "reply" : "replies"}
+              {repliesExpanded ? "Hide" : "Show"} {replyCount}{" "}
+              {replyCount === 1 ? "reply" : "replies"}
             </button>
           ) : null}
         </div>
@@ -516,7 +548,9 @@ export function BroadcastFeed() {
   const [composerImages, setComposerImages] = useState<ComposerImage[]>([]);
   const composerImagesRef = useRef<ComposerImage[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [likeUpdatingIds, setLikeUpdatingIds] = useState<Set<string>>(new Set());
+  const [likeUpdatingIds, setLikeUpdatingIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<FeedPost | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -525,39 +559,44 @@ export function BroadcastFeed() {
   const currentUserId = session?.user.id ?? null;
   const signInHref = `/sign-in?redirect=${encodeURIComponent("/broadcast")}`;
 
-  const loadFeed = useCallback(async (nextCursor: string | null, isLoadMore: boolean) => {
-    if (isLoadMore) {
-      setLoadingMore(true);
-    } else {
-      setLoading(true);
-    }
-    try {
-      const data = await apiRequest(
-        apiClient.api.broadcast.$get({
-          query: {
-            limit: String(PAGE_SIZE),
-            ...(nextCursor ? { cursor: nextCursor } : {}),
-          },
-        }),
-        "Failed to load broadcast feed",
-      );
-      setPosts((prev) => {
-        if (!isLoadMore) return data.posts;
-        const map = new Map(prev.map((item) => [item.id, item]));
-        for (const item of data.posts) {
-          map.set(item.id, item);
-        }
-        return Array.from(map.values());
-      });
-      setCursor(data.nextCursor);
-      setHasMore(data.hasMore);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load broadcast feed");
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, []);
+  const loadFeed = useCallback(
+    async (nextCursor: string | null, isLoadMore: boolean) => {
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+      try {
+        const data = await apiRequest(
+          apiClient.api.broadcast.$get({
+            query: {
+              limit: String(PAGE_SIZE),
+              ...(nextCursor ? { cursor: nextCursor } : {}),
+            },
+          }),
+          "Failed to load broadcast feed",
+        );
+        setPosts((prev) => {
+          if (!isLoadMore) return data.posts;
+          const map = new Map(prev.map((item) => [item.id, item]));
+          for (const item of data.posts) {
+            map.set(item.id, item);
+          }
+          return Array.from(map.values());
+        });
+        setCursor(data.nextCursor);
+        setHasMore(data.hasMore);
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to load broadcast feed",
+        );
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     void loadFeed(null, false);
@@ -567,13 +606,23 @@ export function BroadcastFeed() {
     const target = loadMoreRef.current;
     if (!target || loading || loadingMore || !hasMore) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      const first = entries[0];
-      if (!first?.isIntersecting || loading || loadingMore || !hasMore || !cursor) return;
-      void loadFeed(cursor, true);
-    }, {
-      rootMargin: "120px",
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (
+          !first?.isIntersecting ||
+          loading ||
+          loadingMore ||
+          !hasMore ||
+          !cursor
+        )
+          return;
+        void loadFeed(cursor, true);
+      },
+      {
+        rootMargin: "120px",
+      },
+    );
 
     observer.observe(target);
     return () => observer.disconnect();
@@ -620,11 +669,14 @@ export function BroadcastFeed() {
     setComposerOpen(true);
   }, [canInteract, isPending, router, signInHref]);
 
-  const openComposer = useCallback((post?: FeedPost | null) => {
-    if (!canInteract) return;
-    setReplyTo(post ?? null);
-    setComposerOpen(true);
-  }, [canInteract]);
+  const openComposer = useCallback(
+    (post?: FeedPost | null) => {
+      if (!canInteract) return;
+      setReplyTo(post ?? null);
+      setComposerOpen(true);
+    },
+    [canInteract],
+  );
 
   const closeComposer = useCallback(() => {
     if (submitting) return;
@@ -675,11 +727,14 @@ export function BroadcastFeed() {
         let upload;
         try {
           upload = await apiRequest(
-            apiClient.api.broadcast.image.$post({}, {
-              init: {
-                body: formData,
+            apiClient.api.broadcast.image.$post(
+              {},
+              {
+                init: {
+                  body: formData,
+                },
               },
-            }),
+            ),
             "Failed to upload image",
           );
         } catch (err) {
@@ -786,7 +841,9 @@ export function BroadcastFeed() {
         "Failed to delete post",
       );
       setPosts((prev) => prev.filter((item) => item.id !== post.id));
-      setDeleteTarget((current: FeedPost | null) => (current?.id === post.id ? null : current));
+      setDeleteTarget((current: FeedPost | null) =>
+        current?.id === post.id ? null : current,
+      );
       if (replyTo?.id === post.id) {
         setReplyTo(null);
       }
@@ -814,31 +871,24 @@ export function BroadcastFeed() {
   }
 
   return (
-    <div className="mx-auto max-w-[734px] px-4 bg-white relative z-10 border-x border-dashed border-neutral-200/80">
-    <section className="mx-auto max-w-[520px] pb-16">
-      <div className="flex pt-[72px] items-center justify-between gap-4">
-        {/* Reserved space for the page title if it is restored later. */}
-        <div></div>
-        <button
-          type="button"
-          onClick={handleComposerEntry}
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
-          aria-label="Add post"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add</span>
-        </button>
-      </div>
+    <div className="mx-auto max-w-[734px] min-h-screen px-4 bg-white relative z-10 border-x border-dashed border-neutral-200/80">
+      <section className="mx-auto max-w-[520px] pb-16">
+        <div className="flex pt-[72px] items-center justify-between gap-4">
+          {/* Reserved space for the page title if it is restored later. */}
+          <div></div>
+          <button
+            type="button"
+            onClick={handleComposerEntry}
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
+            aria-label="Add post"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add</span>
+          </button>
+        </div>
 
-      <div className="mt-8 space-y-6">
-        {loading ? (
-          <div className="text-sm text-neutral-500">Loading...</div>
-        ) : tree.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-neutral-200 px-4 py-8 text-center text-sm text-neutral-500">
-            No posts yet. Be the first to share something.
-          </div>
-        ) : (
-          tree.map((item) => (
+        <div className="mt-8 space-y-6">
+          {tree.map((item) => (
             <BroadcastItem
               key={item.id}
               node={item}
@@ -851,157 +901,169 @@ export function BroadcastFeed() {
               onToggleLike={(post) => void handleToggleLike(post)}
               onDelete={requestDelete}
             />
-          ))
-        )}
-      </div>
-      <div ref={loadMoreRef} className="h-6" />
-      {loadingMore ? (
-        <div className="mt-2 text-sm text-neutral-500">Loading more...</div>
-      ) : null}
+          ))}
+        </div>
+        <div ref={loadMoreRef} className="h-6" />
+        {loadingMore ? (
+          <div className="mt-2 text-sm text-neutral-500">Loading more...</div>
+        ) : null}
 
-      {composerOpen && canInteract && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 px-4 py-6 sm:items-center"
-          onClick={closeComposer}
-        >
+        {composerOpen && canInteract && (
           <div
-            className="w-full max-w-xl rounded-2xl bg-white p-5 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 px-4 py-6 sm:items-center"
+            onClick={closeComposer}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900">
-                  {replyTo ? `Reply to ${replyTo.user.name}` : "Create post"}
-                </h2>
-              </div>
-              <button
-                type="button"
-                className="text-sm text-neutral-500 hover:text-neutral-900"
-                onClick={closeComposer}
-                disabled={submitting}
-              >
-                Close
-              </button>
-            </div>
-
-            {replyTo && (
-              <div className="mt-4 flex items-center justify-between rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-                <span>Replying to @{replyTo.user.name}</span>
+            <div
+              className="w-full max-w-xl rounded-2xl bg-white p-5 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-neutral-900">
+                    {replyTo ? `Reply to ${replyTo.user.name}` : "Create post"}
+                  </h2>
+                </div>
                 <button
                   type="button"
-                  className="text-neutral-500 hover:text-neutral-900"
-                  onClick={() => setReplyTo(null)}
-                >
-                  Switch to new post
-                </button>
-              </div>
-            )}
-
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              rows={7}
-              maxLength={MAX_CONTENT_LENGTH}
-              placeholder={replyTo ? `Reply to ${replyTo.user.name}...` : "Share what is on your mind"}
-              className="mt-4 w-full resize-y rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
-            />
-            <div className="mt-3 flex items-center justify-between">
-              <label className="inline-flex cursor-pointer items-center rounded-md border border-neutral-200 px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50">
-                Upload images
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => {
-                    handleImageSelect(e.target.files);
-                    e.currentTarget.value = "";
-                  }}
-                />
-              </label>
-              <span className="text-xs text-neutral-500">
-                {composerImages.length}/{MAX_IMAGE_COUNT}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-neutral-500">
-              Up to {MAX_IMAGE_COUNT} images per post, 8 uploads per minute, and 40 uploads per 24
-              hours.
-            </p>
-            {composerImages.length > 0 && (
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {composerImages.map((item) => (
-                  <div key={item.previewUrl} className="relative overflow-hidden rounded-lg border border-neutral-200">
-                    <img src={item.previewUrl} alt="selected-image" className="h-28 w-full object-cover" />
-                    <button
-                      type="button"
-                      className="absolute top-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-xs text-white"
-                      onClick={() => removeComposerImage(item.previewUrl)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-xs text-neutral-500">
-                {draft.trim().length}/{MAX_CONTENT_LENGTH}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
+                  className="text-sm text-neutral-500 hover:text-neutral-900"
                   onClick={closeComposer}
                   disabled={submitting}
+                >
+                  Close
+                </button>
+              </div>
+
+              {replyTo && (
+                <div className="mt-4 flex items-center justify-between rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+                  <span>Replying to @{replyTo.user.name}</span>
+                  <button
+                    type="button"
+                    className="text-neutral-500 hover:text-neutral-900"
+                    onClick={() => setReplyTo(null)}
+                  >
+                    Switch to new post
+                  </button>
+                </div>
+              )}
+
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={7}
+                maxLength={MAX_CONTENT_LENGTH}
+                placeholder={
+                  replyTo
+                    ? `Reply to ${replyTo.user.name}...`
+                    : "Share what is on your mind"
+                }
+                className="mt-4 w-full resize-y rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-100"
+              />
+              <div className="mt-3 flex items-center justify-between">
+                <label className="inline-flex cursor-pointer items-center rounded-md border border-neutral-200 px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50">
+                  Upload images
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      handleImageSelect(e.target.files);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                </label>
+                <span className="text-xs text-neutral-500">
+                  {composerImages.length}/{MAX_IMAGE_COUNT}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-neutral-500">
+                Up to {MAX_IMAGE_COUNT} images per post, 8 uploads per minute,
+                and 40 uploads per 24 hours.
+              </p>
+              {composerImages.length > 0 && (
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {composerImages.map((item) => (
+                    <div
+                      key={item.previewUrl}
+                      className="relative overflow-hidden rounded-lg border border-neutral-200"
+                    >
+                      <img
+                        src={item.previewUrl}
+                        alt="selected-image"
+                        className="h-28 w-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-xs text-white"
+                        onClick={() => removeComposerImage(item.previewUrl)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-neutral-500">
+                  {draft.trim().length}/{MAX_CONTENT_LENGTH}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={closeComposer}
+                    disabled={submitting}
+                    className="inline-flex h-9 items-center justify-center rounded-lg border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={submitting || !draft.trim()}
+                    onClick={() => void handleSubmit()}
+                    className="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {submitting ? "Publishing..." : "Publish"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deleteTarget && (
+          <div
+            className="fixed inset-0 z-[60] flex items-end justify-center bg-black/45 px-4 py-6 sm:items-center"
+            onClick={closeDeleteDialog}
+          >
+            <div
+              className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <h2 className="text-base font-semibold text-neutral-900">
+                Delete post?
+              </h2>
+              <p className="mt-2 text-sm text-neutral-600">
+                This action cannot be undone.
+              </p>
+              <div className="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={closeDeleteDialog}
+                  disabled={deletingIds.has(deleteTarget.id)}
                   className="inline-flex h-9 items-center justify-center rounded-lg border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  disabled={submitting || !draft.trim()}
-                  onClick={() => void handleSubmit()}
-                  className="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => void handleDelete(deleteTarget)}
+                  disabled={deletingIds.has(deleteTarget.id)}
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {submitting ? "Publishing..." : "Publish"}
+                  {deletingIds.has(deleteTarget.id) ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {deleteTarget && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/45 px-4 py-6 sm:items-center"
-          onClick={closeDeleteDialog}
-        >
-          <div
-            className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h2 className="text-base font-semibold text-neutral-900">Delete post?</h2>
-            <p className="mt-2 text-sm text-neutral-600">
-              This action cannot be undone.
-            </p>
-            <div className="mt-5 flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={closeDeleteDialog}
-                disabled={deletingIds.has(deleteTarget.id)}
-                className="inline-flex h-9 items-center justify-center rounded-lg border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleDelete(deleteTarget)}
-                disabled={deletingIds.has(deleteTarget.id)}
-                className="inline-flex h-9 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {deletingIds.has(deleteTarget.id) ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
           </div>
         )}
       </section>
