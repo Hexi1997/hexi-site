@@ -46,8 +46,9 @@ export function HomeOpenSourceSection() {
         >
           <div className="space-y-4 flex-1">
             {section.items.map((item, index) => {
-              const hasHref = "href" in item && item.href;
-              const cardContent = (
+              const href =
+                "href" in item && item.href ? (item.href as string) : undefined;
+              const cardInner = (
                 <>
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                     <h2 className="text-base font-medium text-neutral-950">
@@ -57,7 +58,13 @@ export function HomeOpenSourceSection() {
                       {item.period}
                     </p>
                   </div>
-                  <div className="mt-3 text-sm leading-7 text-neutral-600">
+                  <div
+                    className={
+                      href
+                        ? "mt-3 text-sm leading-7 text-neutral-600 [&_a]:pointer-events-auto"
+                        : "mt-3 text-sm leading-7 text-neutral-600"
+                    }
+                  >
                     {item.description || ""}
                   </div>
                   {"action" in item && item.action ? (
@@ -83,18 +90,22 @@ export function HomeOpenSourceSection() {
                     ease,
                   }}
                 >
-                  {hasHref ? (
-                    <a
-                      href={item.href as string}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block border border-neutral-200 p-4 transition-colors hover:border-neutral-950"
-                    >
-                      {cardContent}
-                    </a>
+                  {href ? (
+                    <div className="relative group block cursor-pointer border border-neutral-200 p-4 transition-colors hover:border-neutral-950">
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute inset-0 z-0"
+                        aria-label={`${"action" in item && item.action ? item.action : "Visit site"}: ${item.title}`}
+                      />
+                      <div className="relative z-10 pointer-events-none">
+                        {cardInner}
+                      </div>
+                    </div>
                   ) : (
                     <div className="border border-neutral-200 p-4">
-                      {cardContent}
+                      {cardInner}
                     </div>
                   )}
                 </motion.div>

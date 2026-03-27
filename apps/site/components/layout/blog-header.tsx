@@ -39,6 +39,7 @@ export function BlogHeader() {
   const { data: session, isPending } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,10 @@ export function BlogHeader() {
   const signInHref = pathname && pathname !== "/sign-in"
     ? `/sign-in?redirect=${encodeURIComponent(pathname)}`
     : "/sign-in";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -96,7 +101,7 @@ export function BlogHeader() {
         </nav>
 
         <div className="flex items-center justify-end gap-2 w-[104px] flex items-center justify-end">
-          {isPending ? (
+          {!mounted || isPending ? (
             <span className="h-8 w-8 rounded-full bg-neutral-100 animate-pulse" />
           ) : session?.user ? (
             <div className="relative" ref={profileDropdownRef}>
