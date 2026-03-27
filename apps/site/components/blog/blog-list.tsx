@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/pagination";
 import Link from "next/link";
 import { BLOG_LIST_RETURN_HREF_STORAGE_KEY } from "@/lib/blog-navigation";
+import { Pin } from "lucide-react";
 
 const PAGE_SIZE = 5;
 
@@ -25,40 +26,52 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
     parseAsString.withDefault("all").withOptions({
       history: "replace",
       scroll: false,
-    })
+    }),
   );
   const [page, setPage] = useQueryState(
     "page",
     parseAsInteger.withDefault(1).withOptions({
       history: "replace",
       scroll: false,
-    })
+    }),
   );
 
   const allTags = useMemo(() => {
-    return Array.from(new Set(posts.flatMap((post) => post.tags || []))).sort((a, b) =>
-      a.localeCompare(b)
+    return Array.from(new Set(posts.flatMap((post) => post.tags || []))).sort(
+      (a, b) => a.localeCompare(b),
     );
   }, [posts]);
 
-  const filtered = useMemo(() => {
+  // 分离 pinned 和普通文章
+  const { pinnedPosts, regularPosts } = useMemo(() => {
     const q = query.toLowerCase();
-    return posts.filter((p) => {
+    const filtered = posts.filter((p) => {
       const matchesQuery =
         !q.trim() ||
         p.title.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
         (p.tags || []).some((tag) => tag.toLowerCase().includes(q));
-      const matchesTag = selectedTag === "all" || (p.tags || []).includes(selectedTag);
+      const matchesTag =
+        selectedTag === "all" || (p.tags || []).includes(selectedTag);
       return matchesQuery && matchesTag;
     });
+
+    const pinned = filtered.filter((p) => p.pinned);
+    const regular = filtered.filter((p) => !p.pinned);
+    return { pinnedPosts: pinned, regularPosts: regular };
   }, [posts, query, selectedTag]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil((pinnedPosts.length + regularPosts.length) / PAGE_SIZE),
+  );
   const currentPage = Math.min(Math.max(page, 1), totalPages);
-  const paginated = filtered.slice(
+
+  // 合并 pinned 和普通文章，pinned 始终在前面
+  const allPosts = [...pinnedPosts, ...regularPosts];
+  const paginated = allPosts.slice(
     (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+    currentPage * PAGE_SIZE,
   );
 
   useEffect(() => {
@@ -80,12 +93,13 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
   const rememberListHref = () => {
     sessionStorage.setItem(
       BLOG_LIST_RETURN_HREF_STORAGE_KEY,
-      `${window.location.pathname}${window.location.search}`
+      `${window.location.pathname}${window.location.search}`,
     );
   };
 
   const pageNumbers = useMemo(() => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (totalPages <= 7)
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     const pages: (number | "...")[] = [];
     pages.push(1);
     if (currentPage > 3) pages.push("...");
@@ -113,7 +127,13 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
             viewBox="0 0 16 16"
             fill="none"
           >
-            <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5" />
+            <circle
+              cx="6.5"
+              cy="6.5"
+              r="4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
             <path
               d="M10.5 10.5L13.5 13.5"
               stroke="currentColor"
@@ -163,11 +183,17 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
       {/* List */}
       <div className="divide-y divide-gray-200">
         {paginated.length === 0 ? (
-          <p className="py-16 text-center text-gray-500 text-sm">No posts found.</p>
+          <p className="py-16 text-center text-gray-500 text-sm">
+            No posts found.
+          </p>
         ) : (
           paginated.map((post) => {
             const linkProps = post.source
-              ? { href: post.source, target: "_blank", rel: "noopener noreferrer" }
+              ? {
+                  href: post.source,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                }
               : { href: `/blog/${post.slug}` };
 
             return (
@@ -177,10 +203,15 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
                 onClick={!post.source ? rememberListHref : undefined}
                 className="block py-5 -mx-3 px-3 rounded-lg group hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <h2 className="font-display font-semibold text-[17px] leading-snug text-gray-900 group-hover:text-gray-700 transition-colors line-clamp-2">
-                    {post.title}
-                  </h2>
+                <div className="flex flex-col sm:flex-row items-start justify-between sm:gap-8">
+                  <div className="flex items-start gap-1 flex-1 min-w-0">
+                    <h2 className="font-display font-semibold text-[17px] leading-snug text-gray-900 group-hover:text-gray-700 transition-colors line-clamp-3">
+                      {post.title}{" "}
+                      {post.pinned && (
+                        <Pin width={16} className="shrink-0 -translate-y-[1px] inline-block rotate-[30deg]"/>
+                      )}
+                    </h2>
+                  </div>
                   <time
                     dateTime={post.date}
                     className="text-xs text-gray-400 shrink-0 mt-1 tabular-nums whitespace-nowrap"
@@ -238,7 +269,9 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
 
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => void setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() =>
+                    void setPage((p) => Math.min(totalPages, p + 1))
+                  }
                   disabled={currentPage === totalPages}
                 />
               </PaginationItem>
