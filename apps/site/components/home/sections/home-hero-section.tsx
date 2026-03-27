@@ -48,7 +48,7 @@ export function HomeHeroSection({
               transition={{ duration: 1, delay: 0.1, ease }}
             >
               <Image
-                src="/author.png"
+                src="/author.webp"
                 alt="Hexi avatar"
                 width={160}
                 height={213}
