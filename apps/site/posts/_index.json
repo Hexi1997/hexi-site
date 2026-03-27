@@ -1,5 +1,5 @@
 {
-  "count": 15,
+  "count": 16,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -87,14 +87,18 @@
       "title": "Tailwind CSS 动态拼接类名居然有效？记一次 Code Review 引发的思考",
       "date": "2025-03-13",
       "pinned": false,
-      "tags": []
+      "tags": [
+        "Tailwind CSS"
+      ]
     },
     {
       "slug": "tailwind-css-intellisens-de-yi-xie-pei-zhi",
       "title": "Tailwind CSS Intellisens 插件自动补全优化",
       "date": "2024-09-06",
       "pinned": false,
-      "tags": []
+      "tags": [
+        "Tailwind CSS"
+      ]
     },
     {
       "slug": "programmatically-disconnect-metamask-wagmi-shimdisconnect-shi-xian",
@@ -113,6 +117,15 @@
       "pinned": false,
       "tags": [
         "Web3"
+      ]
+    },
+    {
+      "slug": "wei-shen-me-vscode-zong-shi-yong-cuo",
+      "title": "为什么 VSCode 总是用错 TypeScript 版本？一篇讲清楚",
+      "date": "2024-06-02",
+      "pinned": false,
+      "tags": [
+        "Frontend"
       ]
     },
     {
