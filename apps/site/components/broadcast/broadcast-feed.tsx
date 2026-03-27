@@ -929,7 +929,7 @@ export function BroadcastFeed() {
         </div>
         <div ref={loadMoreRef} className="h-6" />
         {loadingMore ? (
-          <div className="mt-2 text-sm text-neutral-500">Loading more...</div>
+          <div className="mt-2 text-center text-sm text-neutral-500">Loading more...</div>
         ) : null}
 
         {composerOpen && canInteract && (
