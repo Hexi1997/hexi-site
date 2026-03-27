@@ -15,6 +15,13 @@ const MAX_CONTENT_LENGTH = 4000;
 const MAX_IMAGE_COUNT = 4;
 const PAGE_SIZE = 20;
 const TRAILING_URL_PUNCTUATION = /[),.;!?]+$/;
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+const IMAGE_ACCEPT = Array.from(ALLOWED_IMAGE_TYPES).join(",");
 
 type FeedUser = {
   id: string;
@@ -692,10 +699,12 @@ export function BroadcastFeed() {
     });
   }
 
-  function handleImageSelect(files: FileList | null) {
-    if (!files) return;
-    const incoming = Array.from(files);
+  function appendComposerImages(files: File[]) {
+    const incoming = files.filter((file) => ALLOWED_IMAGE_TYPES.has(file.type));
     if (incoming.length === 0) return;
+    if (incoming.length !== files.length) {
+      toast.error("Only JPEG, PNG, WebP, and GIF images are supported.");
+    }
     setComposerImages((prev) => {
       const remain = Math.max(0, MAX_IMAGE_COUNT - prev.length);
       if (remain <= 0) {
@@ -711,6 +720,23 @@ export function BroadcastFeed() {
       }));
       return [...prev, ...accepted];
     });
+  }
+
+  function handleImageSelect(files: FileList | null) {
+    if (!files) return;
+    appendComposerImages(Array.from(files));
+  }
+
+  function handleComposerPaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const clipboardFiles = Array.from(event.clipboardData.items)
+      .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => file !== null);
+
+    if (clipboardFiles.length === 0) return;
+
+    event.preventDefault();
+    appendComposerImages(clipboardFiles);
   }
 
   async function handleSubmit() {
@@ -949,6 +975,7 @@ export function BroadcastFeed() {
               <textarea
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onPaste={handleComposerPaste}
                 rows={7}
                 maxLength={MAX_CONTENT_LENGTH}
                 placeholder={
@@ -963,7 +990,7 @@ export function BroadcastFeed() {
                   Upload images
                   <input
                     type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    accept={IMAGE_ACCEPT}
                     multiple
                     className="hidden"
                     onChange={(e) => {
@@ -977,8 +1004,9 @@ export function BroadcastFeed() {
                 </span>
               </div>
               <p className="mt-2 text-xs text-neutral-500">
-                Up to {MAX_IMAGE_COUNT} images per post, 8 uploads per minute,
-                and 40 uploads per 24 hours.
+                Up to {MAX_IMAGE_COUNT} images per post. You can upload or paste
+                JPEG, PNG, WebP, and GIF images. Limited to 8 uploads per
+                minute and 40 uploads per 24 hours.
               </p>
               {composerImages.length > 0 && (
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
