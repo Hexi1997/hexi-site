@@ -55,9 +55,9 @@ export function HomeWorkSection() {
                   {"meta" in project ? project.meta : undefined}
                 </p>
               </div>
-              <p className="mt-3 text-sm leading-7 text-neutral-600">
+              <div className="mt-3 text-sm leading-7 text-neutral-600">
                 {project.description}
-              </p>
+              </div>
               <p className="mt-4 font-geist-mono text-[11px] uppercase tracking-[0.24em] text-neutral-400 transition-colors group-hover:text-neutral-950">
                 {project.action}
               </p>
