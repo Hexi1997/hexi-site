@@ -8,7 +8,7 @@ import { BlogImageSkeleton } from "@/components/blog/image-skeleton";
 import { BlogCodeCopyEnhancer } from "@/components/blog/code-copy-enhancer";
 import { ShareButtons } from "@/components/blog/share-buttons";
 import { BlogComments } from "@/components/blog/blog-comments";
-import { ArrowLeft } from "lucide-react";
+import { BlogBackLink } from "@/components/blog/blog-back-link";
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -84,7 +84,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function BlogPostPage({
+  params,
+}: BlogPostPageProps) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
 
@@ -98,45 +100,42 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="mx-auto max-w-[734px] relative z-10 border-x border-dashed border-neutral-200/80 bg-white px-6 sm:px-8">
-    <article className="max-w-[640px] mx-auto min-h-[calc(100vh-3.5rem)] pb-8 pt-[72px]">
-      <div className="flex justify-between items-center mb-3">
-        <Link href="/blog" className="text-sm text-neutral-400 flex items-center hover:text-neutral-900">
-          <ArrowLeft className="mr-0 size-[18px]" />
-          Back
-        </Link>
-      </div>
-      {/* Title */}
-      <h1 className="text-neutral-900 mb-3 text-[26px] font-bold">
-        {post.title}
-      </h1>
-
-      <div className="flex gap-4 flex-wrap items-center justify-between">
-        <div className="flex items-center gap-2 flex-wrap">
-          <time dateTime={post.date} className="text-sm text-neutral-400">
-            {format(new Date(post.date), "yyyy-MM-dd")}
-          </time>
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              {post.tags.map((tag) => (
-                <Link
-                  key={`${post.slug}-${tag}`}
-                  href={`/blog?tag=${encodeURIComponent(tag)}`}
-                  className="text-xs text-neutral-500"
-                >
-                  #{tag}
-                </Link>
-              ))}
-            </div>
-          )}
+      <article className="max-w-[640px] mx-auto min-h-[calc(100vh-3.5rem)] pb-8 pt-[72px]">
+        <div className="flex justify-between items-center mb-3">
+          <BlogBackLink />
         </div>
-        <ShareButtons url={postUrl} title={post.title} />
+        {/* Title */}
+        <h1 className="text-neutral-900 mb-3 text-[26px] font-bold">
+          {post.title}
+        </h1>
 
-      </div>
+        <div className="flex gap-4 flex-wrap items-center justify-between">
+          <div className="flex items-center gap-2 flex-wrap">
+            <time dateTime={post.date} className="text-sm text-neutral-400">
+              {format(new Date(post.date), "yyyy-MM-dd")}
+            </time>
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                {post.tags.map((tag) => (
+                  <Link
+                    key={`${post.slug}-${tag}`}
+                    href={`/blog?tag=${encodeURIComponent(tag)}`}
+                    className="text-xs text-neutral-500"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+          <ShareButtons url={postUrl} title={post.title} />
 
-      {/* Blog Content */}
-      <div
-        id={`blog-content-${post.slug}`}
-        className="prose mt-6 max-w-none prose-headings:font-semibold
+        </div>
+
+        {/* Blog Content */}
+        <div
+          id={`blog-content-${post.slug}`}
+          className="prose mt-6 max-w-none prose-headings:font-semibold
             prose-img:rounded-2xl prose-img:shadow-lg prose-img:w-full
             prose-figcaption:text-center
             prose-figcaption:mt-[-24px]
@@ -151,32 +150,32 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             [&_table:not(:has(thead))>tbody>tr:first-child>td]:bg-gray-100 dark:[&_table:not(:has(thead))>tbody>tr:first-child>td]:bg-gray-800
             [&_:not(pre)>code]:before:content-[''] [&_:not(pre)>code]:after:content-['']
             [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-[4px] prose-code:text-[#24292E]"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
-      {post.source && (
-        <div className="mt-10 text-sm text-neutral-400">
-          Source:{" "}
-          <a
-            href={post.source}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
-          >
-            {post.source}
-          </a>
-        </div>
-      )}
-      {/* Client-only: add image preview interactions after hydration */}
-      <BlogPhotoViewEnhancer containerId={`blog-content-${post.slug}`} />
-      {/* Client-only: add skeleton loading for images */}
-      <BlogImageSkeleton containerId={`blog-content-${post.slug}`} />
-      {/* Client-only: add copy buttons for code blocks */}
-      <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
+        {post.source && (
+          <div className="mt-10 text-sm text-neutral-400">
+            Source:{" "}
+            <a
+              href={post.source}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
+              {post.source}
+            </a>
+          </div>
+        )}
+        {/* Client-only: add image preview interactions after hydration */}
+        <BlogPhotoViewEnhancer containerId={`blog-content-${post.slug}`} />
+        {/* Client-only: add skeleton loading for images */}
+        <BlogImageSkeleton containerId={`blog-content-${post.slug}`} />
+        {/* Client-only: add copy buttons for code blocks */}
+        <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
 
-      {/* Comment section */}
-      <BlogComments postSlug={slug} />
-    </article>
+        {/* Comment section */}
+        <BlogComments postSlug={slug} />
+      </article>
     </div>
   );
 }

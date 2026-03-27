@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { BlogMetadata } from "@/types/blog";
 import {
   Pagination,
@@ -14,18 +14,26 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import Link from "next/link";
+import { BLOG_LIST_RETURN_HREF_STORAGE_KEY } from "@/lib/blog-navigation";
 
 const PAGE_SIZE = 5;
 
 export function BlogList({ posts }: { posts: BlogMetadata[] }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string>(() => {
-    return searchParams.get("tag")?.trim() || "all";
-  });
-  const [page, setPage] = useState(1);
+  const [selectedTag, setSelectedTag] = useQueryState(
+    "tag",
+    parseAsString.withDefault("all").withOptions({
+      history: "replace",
+      scroll: false,
+    })
+  );
+  const [page, setPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1).withOptions({
+      history: "replace",
+      scroll: false,
+    })
+  );
 
   const allTags = useMemo(() => {
     return Array.from(new Set(posts.flatMap((post) => post.tags || []))).sort((a, b) =>
@@ -47,30 +55,33 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
   }, [posts, query, selectedTag]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
   const paginated = filtered.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
 
+  useEffect(() => {
+    if (page !== currentPage) {
+      void setPage(currentPage);
+    }
+  }, [currentPage, page, setPage]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
-    setPage(1);
+    void setPage(1);
   };
 
   const handleTagChange = (tag: string) => {
-    setSelectedTag(tag);
-    setPage(1);
-    const nextParams = new URLSearchParams(searchParams.toString());
-    if (tag === "all") {
-      nextParams.delete("tag");
-    } else {
-      nextParams.set("tag", tag);
-    }
-    const nextQuery = nextParams.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
-      scroll: false,
-    });
+    void setPage(1);
+    void setSelectedTag(tag);
+  };
+
+  const rememberListHref = () => {
+    sessionStorage.setItem(
+      BLOG_LIST_RETURN_HREF_STORAGE_KEY,
+      `${window.location.pathname}${window.location.search}`
+    );
   };
 
   const pageNumbers = useMemo(() => {
@@ -163,6 +174,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
               <Link
                 key={post.slug}
                 {...linkProps}
+                onClick={!post.source ? rememberListHref : undefined}
                 className="block py-5 -mx-3 px-3 rounded-lg group hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-start justify-between gap-4">
@@ -199,18 +211,12 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
 
       {/* Footer */}
       <div className="mt-8 flex flex-col items-center gap-3">
-        {(query.trim() || selectedTag !== "all") && filtered.length > 0 && (
-          <p className="text-sm text-gray-500">
-            {filtered.length} post{filtered.length !== 1 ? "s" : ""} found
-          </p>
-        )}
-
         {totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => void setPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 />
               </PaginationItem>
@@ -222,7 +228,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
                   ) : (
                     <PaginationLink
                       isActive={p === currentPage}
-                      onClick={() => setPage(p)}
+                      onClick={() => void setPage(p)}
                     >
                       {p}
                     </PaginationLink>
@@ -232,7 +238,7 @@ export function BlogList({ posts }: { posts: BlogMetadata[] }) {
 
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => void setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 />
               </PaginationItem>
