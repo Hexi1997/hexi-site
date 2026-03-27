@@ -1,5 +1,5 @@
 ---
-title: '# Next.js 16.2 官方适配器发布：与 Cloudflare vinext 的时间巧合与生态博弈  ##'
+title: 'Next.js 16.2 官方适配器发布：与 Cloudflare vinext 的时间巧合与生态博弈'
 date: '2026-03-27'
 tags:
   - 'Frontend'
@@ -30,7 +30,9 @@ tags:
 Cloudflare 发布 **vinext**
 
 * 一个基于 Workers + Vite 的 Next.js API 重实现
+
 * 部分代码由 AI 生成
+
 * 主打 Edge-first、去 Node 化
 
 👉 vinext 在 2 月底迅速引爆讨论
@@ -42,7 +44,9 @@ Cloudflare 发布 **vinext**
 社区扩散
 
 * Twitter / X 开始大量讨论
+
 * “AI 重写 Next.js”成为热点
+
 * Cloudflare vs Vercel 的叙事被放大
 
 ***
@@ -52,6 +56,7 @@ Cloudflare 发布 **vinext**
 Next.js 16.2 发布
 
 * Adapter API **正式 stable**
+
 * 官方强调“跨平台能力”
 
 ***
@@ -77,7 +82,9 @@ Next.js → Adapter → Cloudflare / AWS / Node
 特点：
 
 * 保留完整 Next.js 能力（RSC / App Router / ISR）
+
 * 官方维护，兼容性强
+
 * 但仍然带有 Node/runtime 历史设计
 
 ***
@@ -92,7 +99,9 @@ vinext ≈ Next API → 直接运行在 Workers
 特点：
 
 * Edge-first（原生 Workers）
+
 * 更轻量、更快冷启动
+
 * 但不是 Next.js，兼容性有限
 
 ***
@@ -118,7 +127,9 @@ Next.js 官方明确表示：
 从技术演进来看，这个说法是成立的：
 
 * Adapter 设计从 **2024 年就已开始**
+
 * 2025 年进入 RFC / alpha 阶段
+
 * 并不是临时决定
 
 ***
@@ -132,11 +143,13 @@ Next.js 官方明确表示：
 vinext 在说：
 
 * Next.js 被 Node / Vercel 绑定
+
 * 可以完全用 Edge 重写
 
 而 Next.js 在说：
 
 * 我们也支持跨平台
+
 * 官方 Adapter 已经 ready
 
 👉 两者在讲**同一个故事**
@@ -158,7 +171,9 @@ vinext 本质上是在挑战：
 即使不是直接因果关系：
 
 * 一个“Next 替代方案”刚刚爆火
+
 * 社区开始质疑平台绑定
+
 * 官方马上强调跨平台能力
 
 👉 很难完全视为巧合
@@ -170,7 +185,9 @@ vinext 本质上是在挑战：
 从事实和节奏来看：
 
 * Adapter 是长期规划 ✅
+
 * vinext 更早发布 ✅
+
 * 社区讨论窗口存在 ✅
 
 所以更合理的说法是：
@@ -190,7 +207,9 @@ vinext 本质上是在挑战：
 ### Vercel / Next.js
 
 * 保持 Next.js 的核心地位
+
 * 通过 adapter 扩展平台
+
 * 同时维持生态控制
 
 ***
@@ -198,6 +217,7 @@ vinext 本质上是在挑战：
 ### Cloudflare
 
 * 不希望被 Next.js / Vercel 绑定
+
 * 推出 vinext，尝试“去中心化框架控制”
 
 ***
@@ -253,6 +273,7 @@ Adapter 的意义：
 ### 1️⃣ 主流：Adapter 路线
 
 * Next.js + adapter
+
 * 稳定、成熟、生态完整
 
 ***
@@ -260,6 +281,7 @@ Adapter 的意义：
 ### 2️⃣ 前沿：vinext 路线
 
 * Edge-only
+
 * 更轻量、更激进
 
 ***
@@ -267,6 +289,7 @@ Adapter 的意义：
 ### 3️⃣ 长期趋势：框架边界消失
 
 * Next / Remix / SvelteKit
+
 * 都会走向 runtime 抽象
 
 ***
