@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 interface BlogImageSkeletonProps {
   containerId: string;
@@ -23,7 +24,9 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
       }
 
       // Find all images inside blog content
-      const images = container.querySelectorAll('img') as NodeListOf<HTMLImageElement>;
+      const images = container.querySelectorAll(
+        "img",
+      ) as NodeListOf<HTMLImageElement>;
 
       if (images.length === 0) {
         timeoutId = setTimeout(initImageSkeletons, 100);
@@ -32,23 +35,27 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
 
       images.forEach((img) => {
         // Skip if this image is already processed
-        if (img.getAttribute('data-skeleton-processed')) {
+        if (img.getAttribute("data-skeleton-processed")) {
           return;
         }
 
-        img.setAttribute('data-skeleton-processed', 'true');
+        img.setAttribute("data-skeleton-processed", "true");
 
         // Create wrapper for skeleton + image
-        const wrapper = document.createElement('div');
-        wrapper.className = 'relative';
-        wrapper.style.width = '100%';
-        wrapper.style.minHeight = '321px';
-        wrapper.style.marginBottom = '32px';
+        const wrapper = document.createElement("div");
+        wrapper.className = "relative";
+        wrapper.style.width = "100%";
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        wrapper.style.minHeight = isMobile ? "168px" : "338px";
+        wrapper.style.marginBottom = "32px";
 
         // Create skeleton layer (animate-pulse + translucent background)
-        const skeleton = document.createElement('div');
-        skeleton.className = 'absolute inset-0 bg-[#171717] bg-opacity-20 animate-pulse rounded-2xl';
-        skeleton.setAttribute('data-image-skeleton', 'true');
+        const skeleton = document.createElement("div");
+        skeleton.className = cn(
+          "absolute inset-0 bg-[#171717] bg-opacity-20 animate-pulse",
+          isMobile ? "rounded-lg" : "rounded-2xl",
+        );
+        skeleton.setAttribute("data-image-skeleton", "true");
 
         // Insert wrapper at the original image position
         img.parentNode?.insertBefore(wrapper, img);
@@ -57,8 +64,8 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
         wrapper.appendChild(img);
 
         // Start with image hidden
-        img.style.opacity = '0';
-        img.style.transition = 'opacity 0.3s ease-in-out';
+        img.style.opacity = "0";
+        img.style.transition = "opacity 0.3s ease-in-out";
 
         // Keep wrapper reference for cleanup
         loadingWrappers.set(img, wrapper);
@@ -66,33 +73,33 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
         // Handle case where image is already loaded from cache
         if (img.complete && img.naturalHeight !== 0) {
           // Image is loaded, show immediately
-          img.style.opacity = '1';
+          img.style.opacity = "1";
           skeleton.remove();
           // Reset minHeight so wrapper follows actual image height
-          wrapper.style.minHeight = '';
+          wrapper.style.minHeight = "";
         } else {
           // Listen for load completion
           const handleLoad = () => {
             // Fade in image
-            img.style.opacity = '1';
+            img.style.opacity = "1";
             // Remove skeleton after fade animation
             setTimeout(() => {
               skeleton.remove();
               // Reset minHeight so wrapper follows actual image height
-              wrapper.style.minHeight = '';
+              wrapper.style.minHeight = "";
             }, 300);
           };
 
           const handleError = () => {
             // Remove skeleton even on load error
             skeleton.remove();
-            img.style.opacity = '1';
+            img.style.opacity = "1";
             // Reset minHeight
-            wrapper.style.minHeight = '';
+            wrapper.style.minHeight = "";
           };
 
-          img.addEventListener('load', handleLoad, { once: true });
-          img.addEventListener('error', handleError, { once: true });
+          img.addEventListener("load", handleLoad, { once: true });
+          img.addEventListener("error", handleError, { once: true });
         }
       });
     };
@@ -108,7 +115,7 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
 
       // Clean up all injected elements and styles
       loadingWrappers.forEach((wrapper, img) => {
-        const skeleton = wrapper.querySelector('[data-image-skeleton]');
+        const skeleton = wrapper.querySelector("[data-image-skeleton]");
         if (skeleton) {
           skeleton.remove();
         }
@@ -117,9 +124,9 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
           wrapper.parentNode.insertBefore(img, wrapper);
           wrapper.remove();
         }
-        img.removeAttribute('data-skeleton-processed');
-        img.style.opacity = '';
-        img.style.transition = '';
+        img.removeAttribute("data-skeleton-processed");
+        img.style.opacity = "";
+        img.style.transition = "";
       });
       loadingWrappers.clear();
     };
@@ -127,4 +134,3 @@ export function BlogImageSkeleton({ containerId }: BlogImageSkeletonProps) {
 
   return null;
 }
-
