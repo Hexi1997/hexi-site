@@ -1,6 +1,7 @@
 ---
 title: 'Tailwind CSS Intellisens 插件自动补全优化'
 date: '2024-09-06'
+tags: ['Tailwind CSS']
 ---
 
 

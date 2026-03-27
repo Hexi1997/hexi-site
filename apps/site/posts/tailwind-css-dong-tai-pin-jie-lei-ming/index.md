@@ -1,6 +1,7 @@
 ---
 title: 'Tailwind CSS 动态拼接类名居然有效？记一次 Code Review 引发的思考'
 date: '2025-03-13'
+tags: ['Tailwind CSS']
 ---
 
 公司最近有个后端要来前端组，Review 了一下他的代码
