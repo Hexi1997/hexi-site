@@ -244,7 +244,7 @@ function BroadcastAvatar({ user }: { user: FeedPost["user"] }) {
 function BroadcastImages({ images }: { images: string[] }) {
   if (images.length === 0) return null;
   const isSingleImage = images.length === 1;
-  const columns = isSingleImage ? "grid-cols-1" : "grid-cols-2";
+  const columns = isSingleImage ? "grid-cols-1 justify-items-start" : "grid-cols-2";
   return (
     <PhotoProvider>
       <div className={`mt-2 grid gap-2 ${columns}`}>
@@ -252,7 +252,7 @@ function BroadcastImages({ images }: { images: string[] }) {
           <PhotoView key={`${imageUrl}-${index}`} src={imageUrl}>
             <button
               type="button"
-              className={`block cursor-zoom-in overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 ${isSingleImage ? "" : "aspect-[4/3]"}`}
+              className={`block cursor-zoom-in overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 ${isSingleImage ? "w-full max-w-[380px]" : "aspect-[4/3]"}`}
               aria-label={`Preview image ${index + 1}`}
             >
               <img
