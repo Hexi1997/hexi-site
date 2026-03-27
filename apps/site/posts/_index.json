@@ -1,5 +1,5 @@
 {
-  "count": 14,
+  "count": 15,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -104,6 +104,15 @@
       "tags": [
         "Web3",
         "Frontend"
+      ]
+    },
+    {
+      "slug": "cong-qian-bao-cha-jian-luan-tan-dao",
+      "title": "从钱包乱弹现象到 EIP-6963 标准",
+      "date": "2024-06-02",
+      "pinned": false,
+      "tags": [
+        "Web3"
       ]
     },
     {
