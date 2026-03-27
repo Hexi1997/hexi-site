@@ -8,6 +8,8 @@ tags:
 
 最近，Next.js 16.2 发布了一个重要更新：
 
+<https://x.com/nextjs/status/2037186404116291603>
+
 👉 **官方 Adapter（适配器）机制正式稳定**\
 👉 提出 “Next.js Across Platforms” 的理念
 
@@ -35,23 +37,11 @@ Cloudflare 发布 **vinext**
 
 * 主打 Edge-first、去 Node 化
 
-👉 vinext 在 2 月底迅速引爆讨论
+👉 vinext 在 2 月底迅速引爆讨论，Cloudflare vs Vercel 的叙事被放大
 
 ***
 
-### 🕒 2026-03 初
-
-社区扩散
-
-* Twitter / X 开始大量讨论
-
-* “AI 重写 Next.js”成为热点
-
-* Cloudflare vs Vercel 的叙事被放大
-
-***
-
-### 🕒 2026-03-18
+### 🕒 2026-03-25
 
 Next.js 16.2 发布
 
@@ -63,7 +53,7 @@ Next.js 16.2 发布
 
 👉 关键点在这里：
 
-> vinext（2 月 24 日）→ Next 16.2（3 月 18 日）\
+> vinext（2 月 24 日）→ Next 16.2（3 月 25 日）\
 > 中间只有 **2\~3 周**
 
 ***
@@ -74,7 +64,7 @@ Next.js 16.2 发布
 
 ### 1️⃣ 官方路线：Adapter（适配）
 
-```
+```html
 Next.js → Adapter → Cloudflare / AWS / Node
 
 ```
@@ -91,7 +81,7 @@ Next.js → Adapter → Cloudflare / AWS / Node
 
 ### 2️⃣ Cloudflare 路线：vinext（重实现）
 
-```
+```html
 vinext ≈ Next API → 直接运行在 Workers
 
 ```
