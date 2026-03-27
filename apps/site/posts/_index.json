@@ -1,5 +1,5 @@
 {
-  "count": 13,
+  "count": 14,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -86,6 +86,13 @@
       "slug": "tailwind-css-dong-tai-pin-jie-lei-ming",
       "title": "Tailwind CSS 动态拼接类名居然有效？记一次 Code Review 引发的思考",
       "date": "2025-03-13",
+      "pinned": false,
+      "tags": []
+    },
+    {
+      "slug": "tailwind-css-intellisens-de-yi-xie-pei-zhi",
+      "title": "Tailwind CSS Intellisens 插件自动补全优化",
+      "date": "2024-09-06",
       "pinned": false,
       "tags": []
     },
