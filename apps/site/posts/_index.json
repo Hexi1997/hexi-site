@@ -1,5 +1,5 @@
 {
-  "count": 16,
+  "count": 17,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,17 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "nextjs-fan-hui-lie-biao-ye-bao-liu",
+      "title": "Next.js 中如何优雅地返回列表页，并保留之前的分页状态",
+      "date": "2026-03-27",
+      "pinned": false,
+      "tags": [
+        "Next.js",
+        "Frontend",
+        "Routing"
+      ]
     },
     {
       "slug": "better-auth-cloudflare-workers-d1",
