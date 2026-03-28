@@ -181,9 +181,27 @@ function buildBlogPostsMarkdown(posts) {
     `- blog_posts_page_url: ${BLOG_POST_URL_BASE}`,
     '- note: Use this file to locate posts. Read docs/blog/<slug>.md for full content.',
     '',
-    '## Catalog',
+    '## Blog Index',
+    '- This section is optimized for list-style retrieval questions such as "有哪些博客" or "博客列表".',
+    '- Each line is one complete blog index entry.',
     '',
   ];
+
+  posts.forEach(post => {
+    const tagsText = post.tags && post.tags.length > 0
+      ? post.tags.join(', ')
+      : 'none';
+    lines.push(
+      `- title: ${JSON.stringify(post.title)} | slug: ${post.slug} | date: ${post.date || 'unknown'} | ` +
+      `pinned: ${post.pinned ? 'true' : 'false'} | tags: ${tagsText} | post_page_url: ${BLOG_POST_URL_BASE}/${post.slug}`
+    );
+  });
+
+  lines.push(
+    '',
+    '## Catalog',
+    '',
+  );
 
   posts.forEach(post => {
     lines.push(`### Post: ${post.title}`);
