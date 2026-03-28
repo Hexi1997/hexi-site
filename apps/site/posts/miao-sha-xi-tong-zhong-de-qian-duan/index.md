@@ -45,7 +45,7 @@ app.get('/sse-time', (req, res) => {
   const interval = setInterval(() => {
     const serverTime = Date.now(); // ms
     res.write(`data: ${serverTime}\n\n`);
-  }, 1000); // 每秒推送一次
+  }, 1000);
 
   req.on('close', () => clearInterval(interval));
 });
