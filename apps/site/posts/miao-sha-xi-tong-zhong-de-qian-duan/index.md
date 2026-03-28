@@ -21,7 +21,7 @@ tags:
 
 * **靠谱做法**：加载页面的时候拿一次服务器时间，然后算个偏差：
 
-```html
+```js
 remain = targetTimestamp - (Date.now() + (serverNow - Date.now()))
 ```
 

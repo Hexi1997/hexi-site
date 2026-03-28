@@ -34,6 +34,6 @@ const account = accounts[0]
 
 ## 思考
 
-虽然 MetaMask 和 OKX 钱包可以通过这种方式实现需求，但是这或许是一种无奈之举。web3 钱包目前绝大部分都不支持 programmatically disconnect。不知道是出于什么考量？如果是安全问题，Dapp控制自身与钱包的连接状态，应该是合理的，不存在任何安全问题。
+虽然 MetaMask 和 OKX 钱包可以通过这种方式实现需求，但是这或许是一种无奈之举。Web3 钱包目前绝大部分都不支持 programmatically disconnect。不知道是出于什么考量？如果是安全问题，Dapp控制自身与钱包的连接状态，应该是合理的，不存在任何安全问题。
 
 

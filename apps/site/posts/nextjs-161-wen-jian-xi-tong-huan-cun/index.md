@@ -1,6 +1,7 @@
 ---
 title: 'Nextjs 16.1 文件系统缓存升级，冷启动速度提升明显'
 date: '2025-12-20'
+tag: ['Next.js']
 ---
 
 ![post cover](assets/img_1.webp)
@@ -16,5 +17,4 @@ Nextjs 16.1 版本中 **Turbopack** 文件**系统缓存（File System Caching**
   * 中型项目：冷启动 3.5s → 缓存后 700ms（约 **5× 更快**）
 
   * Vercel 内部大型应用：冷启动 15s → 缓存后 1.1s（约 **14× 更快**）
-
 

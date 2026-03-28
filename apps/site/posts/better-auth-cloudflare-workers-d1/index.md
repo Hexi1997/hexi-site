@@ -190,4 +190,4 @@ openssl rand -base64 32 | npx wrangler secret put BETTER_AUTH_SECRET
 | D1 拒绝 Date 对象 | `text` 列无法接收 JS Date | `integer timestamp` mode |
 | 线上 500 | Workers 无 `process.env`，且缺少 `baseURL`/`secret` | env bindings |
 
-Cloudflare Workers 的运行时和 Node.js 差异比想象中大，尤其是 **CPU 时限**和 **Web Crypto API 的隐性限制**，用任何涉及密码学运算的库之前都值得先查一下兼容性。
+Cloudflare Workers 的 Edge 运行时和 Node.js 差异比想象中大，尤其是 **CPU 时限**和 **Web Crypto API 的隐性限制**，用任何涉及密码学运算的库之前都值得先查一下兼容性。

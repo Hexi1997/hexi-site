@@ -124,8 +124,7 @@ VSCode 默认使用的是**内置的 TypeScript 版本**，而不是你项目中
 
 但截至目前，这仍然是一个未解决的问题：
 
-* Microsoft 官方 issue：
-  https://github.com/microsoft/vscode/issues/172732
+* Microsoft 官方 issue：<https://github.com/microsoft/vscode/issues/172732>
 
 ---
 

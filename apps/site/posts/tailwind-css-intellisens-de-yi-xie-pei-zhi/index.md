@@ -5,15 +5,13 @@ tags: ['Tailwind CSS']
 ---
 
 
-## `Tailwind CSS IntelliSens`
-
 `Tailwind CSS IntelliSens`是一个`VSCode`插件，用来做语法提示和自动补全。属于必装插件。
 
 [https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 把经常遇到问题罗列如下：
 
-### 1、需要空格才能触发自动补全
+## 1、需要空格才能触发自动补全
 `.vscode/settings.json`中如下配置，即可解决
 ```json
 "editor.quickSuggestions": {
@@ -21,7 +19,7 @@ tags: ['Tailwind CSS']
 },
 ```
 
-### 2、自定义自动补全触发时机
+## 2、自定义自动补全触发时机
 插件默认只有用户在写`className=xxx`的时候会触发自动补全，如果想要别的方式触发自动补全。可以在`settings.json`中通过配置 `tailwindCSS.experimental.classRegex` 来解决问题
 ```json
 "tailwindCSS.experimental.classRegex": [

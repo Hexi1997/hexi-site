@@ -7,7 +7,7 @@ date: '2025-06-10'
 
 <br />
 
-在 X（Twitter）刷到一条 [推文](https://x.com/sebastienlorber/status/1932367017065025675)，作者提出以下的代码存在 **timing attack 漏洞**
+在 X（Twitter）刷到一条 [推文](https://x.com/sebastienlorber/status/1932367017065025675)，作者提出以下的代码存在 **Timing Attack 漏洞**
 
 ```javascript
 if (req.body.apikey === SECRET_API_KEY) { ... }

@@ -13,7 +13,7 @@ date: '2026-02-28'
 
 * loader 样式无法自定义，不适应不同主题
 
-为了解决这些问题，我在 shadcn/ui Button 的基础上，封装了一个业务 Button 组件。
+为了解决这些问题，我在 Shadcn/UI Button 的基础上，封装了一个业务 Button 组件。
 
 ***
 

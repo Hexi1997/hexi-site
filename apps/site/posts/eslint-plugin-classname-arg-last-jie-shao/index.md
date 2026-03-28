@@ -31,7 +31,7 @@ twMerge('text-sm text-lg') // => 'text-lg'
 
 ### 3. `cn` 方法封装
 
-将以上两个库组合封装成一个统一的 \`cn\` 方法:
+将以上两个库组合封装成一个统一的 `cn` 方法:
 
 ```typescript
 import { clsx, type ClassValue } from 'clsx'

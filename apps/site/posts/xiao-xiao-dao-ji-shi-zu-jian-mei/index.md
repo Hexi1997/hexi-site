@@ -149,7 +149,7 @@ export default function Countdown() {
 
   > 要解决这个问题，需要从服务端获取当前时间，这种一般是电商平台大型活动秒杀前端才会有，参考：[秒杀系统中的前端倒计时设计](https://hexi.men/blog/miao-sha-xi-tong-zhong-de-qian-duan)
 
-### 毫秒倒计时版本
+### 毫秒倒计时
 
 ```tsx
 import React, { useEffect, useState, useRef } from "react"

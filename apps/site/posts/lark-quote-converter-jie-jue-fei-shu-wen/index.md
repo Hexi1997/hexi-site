@@ -63,7 +63,7 @@ date: '2025-05-30'
 
 ---
 
-# lark-quote-converter
+## lark-quote-converter
 
 为了解决这个问题，我做了一个很简单的 Chrome 插件：
 
