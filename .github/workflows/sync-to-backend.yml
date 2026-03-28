@@ -1,0 +1,65 @@
+name: Sync Posts to Agent Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/site/posts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-posts:
+    name: Sync posts to hexi-agent-backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout hexi-site
+        uses: actions/checkout@v4
+        with:
+          path: hexi-site
+
+      - name: Checkout hexi-agent-backend
+        uses: actions/checkout@v4
+        with:
+          repository: Hexi1997/hexi-agent-backend
+          path: hexi-agent-backend
+          token: ${{ secrets.AGENT_BACKEND_REPO_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync posts to backend
+        run: |
+          cd hexi-site
+          node tools/sync-to-backend.js
+        env:
+          BACKEND_DIR: ${{ github.workspace }}/hexi-agent-backend
+
+      - name: Commit and push changes to backend
+        run: |
+          cd hexi-agent-backend
+
+          # Check if there are changes
+          if git diff --quiet -- docs/blog/; then
+            echo "No changes to sync."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/blog/
+          git commit -m "$(cat <<'EOF'
+          docs: sync blog posts from hexi-site
+
+          Automated sync from hexi-site repository.
+          EOF
+          )"
+
+          git push
