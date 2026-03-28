@@ -186,7 +186,7 @@ function buildBlogPostsMarkdown(posts) {
   ];
 
   posts.forEach(post => {
-    lines.push(`## Post: ${post.title}`);
+    lines.push(`### Post: ${post.title}`);
     lines.push('```yaml');
     lines.push(`slug: ${post.slug}`);
     lines.push(`path: docs/blog/${post.slug}.md`);

@@ -141,7 +141,7 @@ export function Skeleton(props: ISkeletonProps) {
 
 ```typescript
 <div class="flex items-center h-6 sm:h-8">
-  <div class="animate-pulse rounded bg-[#fff] bg-opacity-10 h-4 w-32"></div>
+  <div class="animate-pulse rounded bg-white bg-opacity-10 h-4 w-32"></div>
 </div>
 ```
 
