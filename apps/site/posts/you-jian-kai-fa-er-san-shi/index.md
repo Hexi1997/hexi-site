@@ -15,7 +15,9 @@ https://www.infoq.cn/article/fxglbktqax4uztloxzd3
 https://www.caniemail.com/
 
 ## mjml
-在那个时间点（2021年），网上推荐的解决方案都是使用[mjml](https://mjml.io/)  。摘段官网的定义： MJML is a markup language designed to reduce the pain of coding a responsive email. Its semantic syntax makes it easy and straightforward and its rich standard components library speeds up your development time and lightens your email codebase. MJML’s open-source engine generates high quality responsive HTML compliant with best practices.  简单来说，mjml就是针对邮件开发的组件库，提供了各种各样的组件以供使用。不用考虑兼容性问题，它会自动兼容各个邮件客户端。
+在那个时间点（2021年），网上推荐的解决方案都是使用[mjml](https://mjml.io/)  。
+
+摘段官网的定义： MJML is a markup language designed to reduce the pain of coding a responsive email. Its semantic syntax makes it easy and straightforward and its rich standard components library speeds up your development time and lightens your email codebase. MJML’s open-source engine generates high quality responsive HTML compliant with best practices.  简单来说，mjml就是针对邮件开发的组件库，提供了各种各样的组件以供使用。不用考虑兼容性问题，它会自动兼容各个邮件客户端。
 
 简单学习了 mjml components 的用法以后，在官网的 [try it alive](https://mjml.io/try-it-live) 页面开始了开发工作，然后将 mjml 代码和 转译后的 html 代码复制到 git仓库实现备份 。如此即完成了一个邮件的开发工作。
 
