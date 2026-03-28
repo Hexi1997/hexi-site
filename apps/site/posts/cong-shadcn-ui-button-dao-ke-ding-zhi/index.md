@@ -5,7 +5,7 @@ date: '2026-02-28'
 
 ![post cover](assets/img_2.webp)
 
-在前端开发中，按钮是最常用的组件之一。shadcn/ui 提供了默认的 Button 组件，但在实际业务中，它存在一些不足：
+在前端开发中，按钮是最常用的组件之一。Shadcn/UI 提供了默认的 Button 组件，但在实际业务中，它存在一些不足：
 
 * 默认按钮没有 loading 状态
 
