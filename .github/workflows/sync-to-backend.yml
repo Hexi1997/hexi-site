@@ -45,10 +45,10 @@ jobs:
           cd hexi-agent-backend
 
           # Stage sync results first so new files and deletions are detected too.
-          git add -A docs/blog/
+          git add -A docs/blog/ docs/blog-posts.md
 
           # Check if there are staged changes
-          if git diff --cached --quiet -- docs/blog/; then
+          if git diff --cached --quiet -- docs/blog/ docs/blog-posts.md; then
             echo "No changes to sync."
             exit 0
           fi
