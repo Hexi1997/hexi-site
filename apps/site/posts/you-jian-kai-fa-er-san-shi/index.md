@@ -41,7 +41,7 @@ https://www.caniemail.com/
 
   ![image](assets/img3.png)
 
-* 支持tailwind css，使得响应式页面开发更加简单
+* 支持 tailwind css，使得响应式页面开发更加简单
 
 ```html
 import { Button } from '@react-email/button';

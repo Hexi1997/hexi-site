@@ -35,9 +35,8 @@ jobs:
           node-version: 20
 
       - name: Sync posts to backend
-        run: |
-          cd hexi-site
-          node tools/sync-to-backend.js
+        working-directory: ./hexi-site
+        run: node tools/sync-to-backend.js
         env:
           BACKEND_DIR: ${{ github.workspace }}/hexi-agent-backend
 
