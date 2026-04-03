@@ -1,5 +1,5 @@
 {
-  "count": 18,
+  "count": 19,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,15 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "claude-code-cli-ru-he-kuai-su-kai",
+      "title": "Claude Code CLI：如何快速开启「无许可模式」",
+      "date": "2026-04-03",
+      "pinned": false,
+      "tags": [
+        "AI"
+      ]
     },
     {
       "slug": "next-js-16-2-guan-fang-gua-pei",
