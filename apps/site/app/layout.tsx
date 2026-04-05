@@ -5,6 +5,7 @@ import "katex/dist/katex.min.css";
 import Providers from "./providers";
 import { BlogHeader } from "@/components/layout/blog-header";
 import { GridBackground } from "@/components/layout/grid-background";
+import { GlobalMusicPlayer } from "@/components/layout/global-music-player";
 import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({
@@ -75,6 +76,7 @@ export default function RootLayout({
           <main className="mx-auto w-full max-w-[766px] px-4">
             <Providers>{children}</Providers>
           </main>
+          <GlobalMusicPlayer />
         </div>
         <Toaster />
       </body>
