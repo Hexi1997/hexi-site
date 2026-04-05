@@ -1,5 +1,5 @@
 {
-  "count": 19,
+  "count": 20,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -50,6 +50,15 @@
       "tags": [
         "Frontend",
         "Zustand"
+      ]
+    },
+    {
+      "slug": "ru-he-gei-ni-de-github-cang-ku",
+      "title": "如何给你的 GitHub 仓库开启 Pull Request 自动 Code Review？",
+      "date": "2026-02-10",
+      "pinned": false,
+      "tags": [
+        "AI"
       ]
     },
     {
