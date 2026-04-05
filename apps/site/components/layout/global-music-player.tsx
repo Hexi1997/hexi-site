@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Minimize2, Pause, Play } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Minimize2, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const AUDIO_API_BASE = "https://audio.hexi.men";
