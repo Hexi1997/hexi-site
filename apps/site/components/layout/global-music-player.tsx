@@ -373,7 +373,7 @@ export function GlobalMusicPlayer() {
 
       <div
         className={cn(
-          "fixed right-4 bottom-4 z-[60] overflow-hidden border border-black/10 bg-white/92 text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.18)] backdrop-blur-sm transition-all duration-300 ease-out",
+          "fixed sm:right-4 sm:bottom-4 right-2 bottom-2 z-[60] overflow-hidden border border-black/10 bg-white/92 text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.18)] backdrop-blur-sm transition-all duration-300 ease-out",
           "supports-backdrop-filter:bg-white/75",
           isExpanded
             ? "h-[212px] w-[min(calc(100vw-2rem),18rem)] rounded-[1.6rem]"
