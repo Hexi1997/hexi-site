@@ -1,5 +1,5 @@
 {
-  "count": 20,
+  "count": 21,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -125,6 +125,16 @@
       "pinned": false,
       "tags": [
         "Tailwind CSS"
+      ]
+    },
+    {
+      "slug": "xie-gei-qian-duan-kai-fa-de-she",
+      "title": "写给前端开发的设计系统（ Token）简介",
+      "date": "2024-11-13",
+      "pinned": false,
+      "tags": [
+        "Frontend",
+        "Design"
       ]
     },
     {
