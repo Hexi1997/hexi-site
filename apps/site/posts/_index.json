@@ -1,5 +1,5 @@
 {
-  "count": 21,
+  "count": 22,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -116,6 +116,15 @@
       "pinned": false,
       "tags": [
         "Frontend"
+      ]
+    },
+    {
+      "slug": "react-zu-jian-wen-jian-ming-ming-zai",
+      "title": "React 组件文件命名：在 Agent 时代 PascalCase 和 kebab-case 的抉择与困惑",
+      "date": "2025-04-08",
+      "pinned": false,
+      "tags": [
+        "AI"
       ]
     },
     {
