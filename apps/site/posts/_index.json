@@ -1,5 +1,5 @@
 {
-  "count": 25,
+  "count": 26,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,15 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "agent-root-cli-tong-yi-ni-de-agent-quan-ju-zhi-ling",
+      "title": "agent-root-cli：把 Agent 全局指令收成一份",
+      "date": "2026-06-02",
+      "pinned": false,
+      "tags": [
+        "AI"
+      ]
     },
     {
       "slug": "gei-codex-cursor-claude-code-cli-pei-yi-tao-tong-yi-de-prompt-yue-shu",
