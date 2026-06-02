@@ -1,5 +1,5 @@
 {
-  "count": 23,
+  "count": 24,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,15 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "liao-liao-agents-codex-claude-code-cursor-zhi-jian-de-skills-jian-rong-xing",
+      "title": "聊聊 .agents：Codex、Claude Code、Cursor 之间的 Skills 兼容性",
+      "date": "2026-06-02",
+      "pinned": false,
+      "tags": [
+        "AI"
+      ]
     },
     {
       "slug": "preinstall-bu-zai-install-qian-zhi-xing-npm",
