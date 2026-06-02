@@ -1,5 +1,5 @@
 {
-  "count": 24,
+  "count": 25,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,16 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "gei-codex-cursor-claude-code-cli-pei-yi-tao-tong-yi-de-prompt-yue-shu",
+      "title": "给 Codex、Cursor、Claude Code CLI 配一套统一的 Prompt 约束",
+      "date": "2026-06-02",
+      "pinned": false,
+      "tags": [
+        "AI",
+        "Design"
+      ]
     },
     {
       "slug": "liao-liao-agents-codex-claude-code-cursor-zhi-jian-de-skills-jian-rong-xing",
