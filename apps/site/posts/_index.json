@@ -1,5 +1,5 @@
 {
-  "count": 26,
+  "count": 27,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,15 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "claude-code-hou-tai-fu-wu-bei-nei-cun-bu-zu-wu-sha",
+      "title": "Claude Code 后台服务总被「内存不足」停掉？其实是它自己在误杀",
+      "date": "2026-09-15",
+      "pinned": false,
+      "tags": [
+        "AI"
+      ]
     },
     {
       "slug": "agent-root-cli-tong-yi-ni-de-agent-quan-ju-zhi-ling",
