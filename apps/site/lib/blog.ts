@@ -10,6 +10,34 @@ import rehypeKatex from "rehype-katex";
 import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
 import type { BlogPost, BlogMetadata } from "@/types/blog";
+import type { Root, Element } from "hast";
+
+// Leave Mermaid source as escaped text, not highlighted HTML. Rendering is
+// browser-only; source remains readable when JavaScript or rendering fails.
+function rehypeMermaidBlocks() {
+  return (tree: Root) => {
+    function visit(parent: Root | Element) {
+      parent.children.forEach((node, index) => {
+        if (node.type !== "element") return;
+        const code = node.children[0];
+        if (node.tagName === "pre" && code?.type === "element" &&
+            code.tagName === "code" &&
+            Array.isArray(code.properties.className) &&
+            code.properties.className.includes("language-mermaid")) {
+          code.properties.className = [];
+          parent.children[index] = {
+            type: "element", tagName: "div",
+            properties: { className: ["blog-mermaid", "not-prose"], dataMermaid: "" },
+            children: [node],
+          };
+          return;
+        }
+        visit(node);
+      });
+    }
+    visit(tree);
+  };
+}
 
 const BLOG_DIRECTORY = path.join(process.cwd(), "posts");
 
@@ -285,6 +313,7 @@ export async function getBlogPostBySlug(
       .use(remarkGfm) // GitHub Flavored Markdown support
       .use(remarkMath) // LaTeX support ($...$ / $$...$$)
       .use(remarkRehype, { allowDangerousHtml: true }) // Convert to rehype (HTML AST)
+      .use(rehypeMermaidBlocks)
       .use(rehypeKatex, {
         throwOnError: false,
         strict: false,

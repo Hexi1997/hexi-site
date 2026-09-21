@@ -6,6 +6,45 @@
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 
+/* Mermaid is enhanced only in blog content; regular code blocks are unchanged. */
+.blog-mermaid {
+  margin-block: 2rem;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+  color: #171717;
+  color-scheme: light;
+}
+.blog-mermaid pre { overflow: auto; white-space: pre; }
+.blog-mermaid [hidden] { display: none !important; }
+.blog-mermaid-toolbar { display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem; }
+.blog-mermaid button { cursor: pointer; font-size: 0.8125rem; color: inherit; }
+.blog-mermaid button:hover { text-decoration: underline; }
+.blog-mermaid button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.blog-mermaid-viewport { overflow: auto; }
+.blog-mermaid-viewport svg { display: block; margin-inline: auto; height: auto; }
+.blog-mermaid-status { font-size: 0.8125rem; color: #737373; }
+.blog-mermaid-scratch { position: fixed; left: -100000px; top: 0; visibility: hidden; }
+.blog-mermaid-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: 94vw;
+  max-width: 1600px;
+  max-height: 90vh;
+  padding: 1.5rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: inherit;
+  color: inherit;
+}
+.blog-mermaid-dialog::backdrop { background: rgb(0 0 0 / 60%); }
+.blog-mermaid-dialog > button { display: block; margin-left: auto; margin-bottom: 1rem; }
+.blog-mermaid-dialog .blog-mermaid-viewport { max-height: 75vh; }
+.blog-mermaid-dialog svg { width: auto !important; max-width: none !important; }
+.dark .blog-mermaid { background: #171717; color: #e5e5e5; border-color: #404040; color-scheme: dark; }
+
 @theme inline {
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;

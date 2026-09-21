@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { BlogPhotoViewEnhancer } from "@/components/blog/photo-view-enhancer";
 import { BlogImageSkeleton } from "@/components/blog/image-skeleton";
 import { BlogCodeCopyEnhancer } from "@/components/blog/code-copy-enhancer";
+import { BlogMermaidEnhancer } from "@/components/blog/mermaid-enhancer";
 import { ShareButtons } from "@/components/blog/share-buttons";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { BlogBackLink } from "@/components/blog/blog-back-link";
@@ -173,6 +174,7 @@ export default async function BlogPostPage({
         <BlogImageSkeleton containerId={`blog-content-${post.slug}`} />
         {/* Client-only: add copy buttons for code blocks */}
         <BlogCodeCopyEnhancer containerId={`blog-content-${post.slug}`} />
+        <BlogMermaidEnhancer containerId={`blog-content-${post.slug}`} />
 
         {/* Comment section */}
         <BlogComments postSlug={slug} />
