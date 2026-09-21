@@ -11,13 +11,6 @@
       ]
     },
     {
-      "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
-      "title": "基于真实 DOM 还原 Skeleton 的工程思考",
-      "date": "2024-01-04",
-      "pinned": true,
-      "tags": []
-    },
-    {
       "slug": "claude-code-hou-tai-fu-wu-bei-nei-cun-bu-zu-wu-sha",
       "title": "Claude Code 后台服务总被「内存不足」停掉？其实是它自己在误杀",
       "date": "2026-09-15",
@@ -235,6 +228,13 @@
       "tags": [
         "Frontend"
       ]
+    },
+    {
+      "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
+      "title": "基于真实 DOM 还原 Skeleton 的工程思考",
+      "date": "2024-01-04",
+      "pinned": false,
+      "tags": []
     },
     {
       "slug": "you-jian-kai-fa-er-san-shi",
