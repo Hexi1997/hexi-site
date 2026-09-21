@@ -1,6 +1,7 @@
 ---
 title: '基于 Mastra 构建持久化 Agent 执行环境：从 Virtual FS、Scoped VFS 到 AgentController 与 run_js'
 date: '2026-09-21'
+pinned: true
 tags:
   - 'AI'
 ---
