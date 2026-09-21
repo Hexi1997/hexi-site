@@ -1,5 +1,5 @@
 {
-  "count": 27,
+  "count": 28,
   "posts": [
     {
       "slug": "ji-yu-zhen-shi-dom-huan-yuan-skeleton",
@@ -7,6 +7,15 @@
       "date": "2024-01-04",
       "pinned": true,
       "tags": []
+    },
+    {
+      "slug": "ji-yu-mastra-gou-jian-chi-jiu-hua-agent-zhi-xing-huan-jing-cong-virtual-fs-scoped-vfs-dao-agentcontroller-yu-run-js",
+      "title": "基于 Mastra 构建持久化 Agent 执行环境：从 Virtual FS、Scoped VFS 到 AgentController 与 run_js",
+      "date": "2026-09-21",
+      "pinned": false,
+      "tags": [
+        "AI"
+      ]
     },
     {
       "slug": "claude-code-hou-tai-fu-wu-bei-nei-cun-bu-zu-wu-sha",
